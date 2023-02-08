@@ -1,0 +1,7 @@
+.d-flex {
+    display: flex;
+}
+
+.justify-content-around {
+    justify-content: space-around;
+}

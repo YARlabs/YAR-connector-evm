@@ -1,0 +1,43 @@
+{
+  "chains": {
+    "yarTest": {
+      "validatorPrivateKey": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "rpcUrl": "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+      "chainId": 5,
+      "etherscan": {
+        "url": "https://goerli.etherscan.io/",
+        "apiKey": "..."
+      }
+    },
+
+    "polygonTest": {
+      "validatorPrivateKey": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "rpcUrl": "https://rpc-mumbai.maticvigil.com",
+      "chainId": 80001,
+      "etherscan": {
+        "url": "https://mumbai.polygonscan.com/",
+        "apiKey": "..."
+      }
+    },
+
+    "binanceTest": {
+      "validatorPrivateKey": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "rpcUrl": "https://data-seed-prebsc-1-s1.binance.org:8545",
+      "chainId": 97,
+      "etherscan": {
+        "url": "https://testnet.bscscan.com/",
+        "apiKey": "..."
+      }
+    },
+
+    "ethereumTest": {
+      "validatorPrivateKey": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "rpcUrl": "https://api.avax-test.network/ext/bc/C/rpc",
+      "chainId": 43113,
+      "etherscan": {
+        "url": "https://testnet.snowtrace.io/",
+        "apiKey": "..."
+      }
+    }
+  }
+}

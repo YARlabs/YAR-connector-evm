@@ -1,0 +1,36 @@
+{
+  "bridges": [
+    {
+      "chainName": "YAR",
+      "driver": "EvmBridgeDriver",
+      "blockConfirmationsCount": 1,
+      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "providerUrl": "http://95.217.57.15:18545",
+      "validatorPrivateKey": "..."
+    },
+    {
+      "chainName": "POLYGON",
+      "driver": "EvmBridgeDriver",
+      "blockConfirmationsCount": 1,
+      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "providerUrl": "https://rpc-mumbai.maticvigil.com",
+      "validatorPrivateKey": "..."
+    },
+    {
+      "chainName": "BINANCE",
+      "driver": "EvmBridgeDriver",
+      "blockConfirmationsCount": 1,
+      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "providerUrl": "https://data-seed-prebsc-2-s3.binance.org:8545",
+      "validatorPrivateKey": "..."
+    },
+    {
+      "chainName": "ETHEREUM",
+      "driver": "EvmBridgeDriver",
+      "blockConfirmationsCount": 1,
+      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "providerUrl": "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+      "validatorPrivateKey": "..."
+    }
+  ]
+}

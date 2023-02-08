@@ -1,0 +1,40 @@
+{
+  "bridges": [
+    {
+      "chainName": "YAR",
+      "driver": "EvmBridgeDriver",
+      "startFromBlock": 0,
+      "blockConfirmationsCount": 1,
+      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "providerUrl": "http://127.0.0.1:8545/",
+      "validatorPrivateKey": "0x5cf3549797256d7b49d1acd4d3ded70539ddfeb3913c45bc80d18823ec6e2ef1"
+    },
+    {
+      "chainName": "POLYGON",
+      "driver": "EvmBridgeDriver",
+      "startFromBlock": 0,
+      "blockConfirmationsCount": 1,
+      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "providerUrl": "http://127.0.0.1:8545/",
+      "validatorPrivateKey": "0x5cf3549797256d7b49d1acd4d3ded70539ddfeb3913c45bc80d18823ec6e2ef1"
+    },
+    {
+      "chainName": "BINANCE",
+      "driver": "EvmBridgeDriver",
+      "startFromBlock": 0,
+      "blockConfirmationsCount": 1,
+      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "providerUrl": "http://127.0.0.1:8545/",
+      "validatorPrivateKey": "0x5cf3549797256d7b49d1acd4d3ded70539ddfeb3913c45bc80d18823ec6e2ef1" 
+    },
+    {
+      "chainName": "ETHEREUM",
+      "driver": "EvmBridgeDriver",
+      "startFromBlock": 0,
+      "blockConfirmationsCount": 1,
+      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "providerUrl": "http://127.0.0.1:8545/",
+      "validatorPrivateKey": "0x5cf3549797256d7b49d1acd4d3ded70539ddfeb3913c45bc80d18823ec6e2ef1"
+    }
+  ]
+}

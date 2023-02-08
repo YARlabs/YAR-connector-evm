@@ -1,0 +1,86 @@
+{
+  "address": "0x9F5d30346A10e88e4bF6d33caD4Eb90925718a52",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "ValidatorTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_newValidator",
+          "type": "address"
+        }
+      ],
+      "name": "setValidator",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "validator",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x6477a159be5fd047734a186d9c327ee5b9058b9c243c03e94777f5ba89a1cd75",
+  "receipt": {
+    "to": null,
+    "from": "0xF66468335Ee9D5a5B9296fA653fa47348B57e754",
+    "contractAddress": "0x9F5d30346A10e88e4bF6d33caD4Eb90925718a52",
+    "transactionIndex": 0,
+    "gasUsed": "143709",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xdf31c9a56cbbf1668bc02e16c8c0f9c84956bbc0df358f979f6fe92665ccd458",
+    "transactionHash": "0x6477a159be5fd047734a186d9c327ee5b9058b9c243c03e94777f5ba89a1cd75",
+    "logs": [],
+    "blockNumber": 9243,
+    "cumulativeGasUsed": "143709",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "08541191232a20d41dd2483aa4db3f2b",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"ValidatorTransferred\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_newValidator\",\"type\":\"address\"}],\"name\":\"setValidator\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"validator\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/universal_bridge/facets/ValidatorControllerFacet.sol\":\"ValidatorControllerFacet\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/universal_bridge/facets/ValidatorControllerFacet.sol\":{\"content\":\"// SPDX-License-Identifier: UNLICENSED\\r\\npragma solidity 0.8.17;\\r\\n\\r\\nimport { LibValidatorController } from \\\"../libraries/LibValidatorController.sol\\\";\\r\\nimport { IValidatorController } from \\\"../interfaces/IValidatorController.sol\\\";\\r\\n\\r\\ncontract ValidatorControllerFacet is IValidatorController {\\r\\n    function setValidator(address _newValidator) external {\\r\\n        // Only validator\\r\\n        LibValidatorController.enforceIsValidator();\\r\\n        LibValidatorController.setValidator(_newValidator);\\r\\n    }\\r\\n\\r\\n    function validator() external view returns (address) {\\r\\n        return LibValidatorController.validator();\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0xe3ac8ac4b7405412ecacedd5bab4207bc1657fdcecc84d2a0e0f9b38e4119957\",\"license\":\"UNLICENSED\"},\"contracts/universal_bridge/interfaces/IValidatorController.sol\":{\"content\":\"// SPDX-License-Identifier: UNLICENSED\\r\\npragma solidity 0.8.17;\\r\\n\\r\\ninterface IValidatorController {\\r\\n    event ValidatorTransferred(address indexed previousOwner, address indexed newOwner);\\r\\n\\r\\n    function setValidator(address _newValidator) external;\\r\\n\\r\\n    function validator() external view returns (address);\\r\\n}\\r\\n\",\"keccak256\":\"0x9fd2c4788ac6abc7d178b841883d7e388b276be2a22a8c7b2aa947dfccc78f6d\",\"license\":\"UNLICENSED\"},\"contracts/universal_bridge/libraries/LibValidatorController.sol\":{\"content\":\"// SPDX-License-Identifier: UNLICENSED\\r\\npragma solidity 0.8.17;\\r\\n\\r\\nlibrary LibValidatorController {\\r\\n    bytes32 constant DIAMOND_STORAGE_POSITION = keccak256(\\\"validatorController.storage\\\");\\r\\n\\r\\n    struct ValidatorControllerStorage {\\r\\n        address validator;\\r\\n    }\\r\\n\\r\\n    function diamondStorage() internal pure returns (ValidatorControllerStorage storage ds) {\\r\\n        bytes32 position = DIAMOND_STORAGE_POSITION;\\r\\n        assembly {\\r\\n            ds.slot := position\\r\\n        }\\r\\n    }\\r\\n\\r\\n    event ValidatorTransferred(address indexed previousOwner, address indexed newOwner);\\r\\n\\r\\n    function enforceIsValidator() internal view {\\r\\n        require(\\r\\n            msg.sender == diamondStorage().validator,\\r\\n            \\\"LibValidatorController: Must be validator\\\"\\r\\n        );\\r\\n    }\\r\\n\\r\\n    function setValidator(address _newValidator) internal {\\r\\n        ValidatorControllerStorage storage ds = diamondStorage();\\r\\n        address previousValidator = ds.validator;\\r\\n        ds.validator = _newValidator;\\r\\n        emit ValidatorTransferred(previousValidator, _newValidator);\\r\\n    }\\r\\n\\r\\n    function validator() internal view returns (address) {\\r\\n        return diamondStorage().validator;\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0x0fbcfd22ae4cac441cc2bc0f5fecbc21ef02a22d757d94068bc45ac4639b851e\",\"license\":\"UNLICENSED\"}},\"version\":1}",
+  "bytecode": "0x60808060405234610016576101a2908161001c8239f35b600080fdfe608080604052600436101561001357600080fd5b600090813560e01c9081631327d3d8146100815750633a5381b51461003757600080fd5b3461007e578060031936011261007e577f0d39ce5c7c188987150498f1f6b834805bd8d7ecf27e970807b2a7a1a5207023546040516001600160a01b039091168152602090f35b80fd5b905034610168576020366003190112610168576004356001600160a01b038181169291839003610164577f0d39ce5c7c188987150498f1f6b834805bd8d7ecf27e970807b2a7a1a52070239081549081169283330361011057506001600160a01b031916831790557f8438f2d7dc7b39a7670005cc6ec64d6ecec8b57e53eb47c5085021aa7d86653d8380a380f35b62461bcd60e51b815260206004820152602960248201527f4c696256616c696461746f72436f6e74726f6c6c65723a204d757374206265206044820152683b30b634b230ba37b960b91b6064820152608490fd5b8380fd5b5080fdfea2646970667358221220b36742e0c991da0d11b008a19b24a8703530acd664f687c2d4b1c63338545e2a64736f6c63430008110033",
+  "deployedBytecode": "0x608080604052600436101561001357600080fd5b600090813560e01c9081631327d3d8146100815750633a5381b51461003757600080fd5b3461007e578060031936011261007e577f0d39ce5c7c188987150498f1f6b834805bd8d7ecf27e970807b2a7a1a5207023546040516001600160a01b039091168152602090f35b80fd5b905034610168576020366003190112610168576004356001600160a01b038181169291839003610164577f0d39ce5c7c188987150498f1f6b834805bd8d7ecf27e970807b2a7a1a52070239081549081169283330361011057506001600160a01b031916831790557f8438f2d7dc7b39a7670005cc6ec64d6ecec8b57e53eb47c5085021aa7d86653d8380a380f35b62461bcd60e51b815260206004820152602960248201527f4c696256616c696461746f72436f6e74726f6c6c65723a204d757374206265206044820152683b30b634b230ba37b960b91b6064820152608490fd5b8380fd5b5080fdfea2646970667358221220b36742e0c991da0d11b008a19b24a8703530acd664f687c2d4b1c63338545e2a64736f6c63430008110033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}
