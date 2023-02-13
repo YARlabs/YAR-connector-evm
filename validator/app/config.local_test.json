@@ -5,36 +5,36 @@
       "driver": "EvmBridgeDriver",
       "startFromBlock": 0,
       "blockConfirmationsCount": 1,
-      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "address": "0x666432Ccb747B2220875cE185f487Ed53677faC9",
       "providerUrl": "http://127.0.0.1:8545/",
-      "validatorPrivateKey": "0x5cf3549797256d7b49d1acd4d3ded70539ddfeb3913c45bc80d18823ec6e2ef1"
+      "validatorPrivateKey": "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
     },
     {
       "chainName": "POLYGON",
       "driver": "EvmBridgeDriver",
       "startFromBlock": 0,
       "blockConfirmationsCount": 1,
-      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "address": "0x09120eAED8e4cD86D85a616680151DAA653880F2",
       "providerUrl": "http://127.0.0.1:8545/",
-      "validatorPrivateKey": "0x5cf3549797256d7b49d1acd4d3ded70539ddfeb3913c45bc80d18823ec6e2ef1"
+      "validatorPrivateKey": "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"
     },
     {
       "chainName": "BINANCE",
       "driver": "EvmBridgeDriver",
       "startFromBlock": 0,
       "blockConfirmationsCount": 1,
-      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "address": "0x15Ff10fCc8A1a50bFbE07847A22664801eA79E0f",
       "providerUrl": "http://127.0.0.1:8545/",
-      "validatorPrivateKey": "0x5cf3549797256d7b49d1acd4d3ded70539ddfeb3913c45bc80d18823ec6e2ef1" 
+      "validatorPrivateKey": "0x7c852118294e51e653712a81e05800f419141751be58f605c371e15141b007a6" 
     },
     {
       "chainName": "ETHEREUM",
       "driver": "EvmBridgeDriver",
       "startFromBlock": 0,
       "blockConfirmationsCount": 1,
-      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "address": "0x75b0B516B47A27b1819D21B26203Abf314d42CCE",
       "providerUrl": "http://127.0.0.1:8545/",
-      "validatorPrivateKey": "0x5cf3549797256d7b49d1acd4d3ded70539ddfeb3913c45bc80d18823ec6e2ef1"
+      "validatorPrivateKey": "0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a"
     }
   ]
 }

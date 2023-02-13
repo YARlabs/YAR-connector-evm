@@ -4,7 +4,7 @@
       "chainName": "YAR",
       "driver": "EvmBridgeDriver",
       "blockConfirmationsCount": 1,
-      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "address": "0x983ebfF923351fA707007663f9dBF83A34A84279",
       "providerUrl": "http://95.217.57.15:18545",
       "validatorPrivateKey": "..."
     },
@@ -12,7 +12,7 @@
       "chainName": "POLYGON",
       "driver": "EvmBridgeDriver",
       "blockConfirmationsCount": 1,
-      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "address": "0x427F5831e930aF1d6dE95007e080109621Bf1eA0",
       "providerUrl": "https://rpc-mumbai.maticvigil.com",
       "validatorPrivateKey": "..."
     },
@@ -20,7 +20,7 @@
       "chainName": "BINANCE",
       "driver": "EvmBridgeDriver",
       "blockConfirmationsCount": 1,
-      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "address": "0x4992E252Ff1A7c9544b58DBbd82Ca408a24B8Ca2",
       "providerUrl": "https://data-seed-prebsc-2-s3.binance.org:8545",
       "validatorPrivateKey": "..."
     },
@@ -28,7 +28,7 @@
       "chainName": "ETHEREUM",
       "driver": "EvmBridgeDriver",
       "blockConfirmationsCount": 1,
-      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece",
+      "address": "0xf52452E644789E18878Edd32abdCff31a79Dac19",
       "providerUrl": "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
       "validatorPrivateKey": "..."
     }

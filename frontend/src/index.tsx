@@ -2,14 +2,16 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { Config, DAppProvider, Goerli, Mumbai } from "@usedapp/core";
+import { Config, DAppProvider, Mumbai, Goerli, BSCTestnet } from "@usedapp/core";
 import { config } from './config';
 
 const DAppConfig: Config = {
-  readOnlyChainId: Mumbai.chainId,// Goerli.chainId,
+  readOnlyChainId: Mumbai.chainId,
   readOnlyUrls: {
-    // [Goerli.chainId]: config.network.goerli.url,
     [Mumbai.chainId]: config.network.mumbai.url,
+    [Goerli.chainId]: config.network.goerli.url,
+    [BSCTestnet.chainId]: config.network.bsctestnet.url,
+    [38204]: config.network.yar.url,
   },
 };
 

@@ -1,9 +1,7 @@
 import { useEthers } from '@usedapp/core';
 import { useEffect, useState } from 'react';
-import { useTransferToInternalBridge } from '../../hooks/useTransferToInternalBridge';
 import { useTransferToOtherChain } from '../../hooks/useTransferToOtherChain';
-import { useApprove } from '../../hooks/useApprove';
-import { BSCTestnet, Goerli, Mumbai, AvalancheTestnet } from "@usedapp/core";
+import { BSCTestnet, Goerli, Mumbai } from "@usedapp/core";
 import { idToScanLink } from '../../utils/idToChainName';
 
 
@@ -15,56 +13,42 @@ const MumbaiTabData = () => {
     const [reciever, setReciever] = useState('');
     const [notify, setNotify] = useState('');
     const [chainIdFrom, setChainIdFrom] = useState(0);
-    const [chainNameTo, setChainNameTo] = useState('');
-
-
-    // const InternalTokens = [
-    //     ['YAR-MATIC', '1'],
-    //     ['YAR-USDC', '0xE097d6B3100777DC31B34dC2c58fB524C2e76921'],
-    //     ['YAR-USDT', '2'],
-    //     ['YAR-WETH', '3'],
-    // ]
+    const [chainIdTo, setChainIdTo] = useState(0);
+    const [isDisable, setDisable] = useState(false);
 
     const ChainsIdFrom = [
         ['BSC', BSCTestnet.chainId],
-        ['YAR', Goerli.chainId],
+        ['YAR', 38204],
         ['Polygon', Mumbai.chainId],
-        ['Ethereum', AvalancheTestnet.chainId]
+        ['Ethereum', Goerli.chainId]
     ]
 
-    const ChainsNameTo = [
-        ['Polygon', 'POLYGON'],
-        ['BSC', 'BINANCE'],
-        ['YAR', 'YAR'],
-        ['Ethereum', 'ETHEREUM']
+    const ChainsIdTo = [
+        ['Polygon', Mumbai.chainId],
+        ['BSC', BSCTestnet.chainId],
+        ['YAR', 38204],
+        ['Ethereum', Goerli.chainId]
     ]
 
     useEffect(() => {
         if (!account) return;
         // setToken('0xE097d6B3100777DC31B34dC2c58fB524C2e76921');
         setChainIdFrom(BSCTestnet.chainId);
-        setChainNameTo('POLYGON');
+        setChainIdTo(Mumbai.chainId);
         // setAmount('1');
         // setReciever(account);
     }, [account])
 
     const transferHook = useTransferToOtherChain();
     const transferToBridge = async () => {
+        setDisable(true);
         setNotify('');
         const chainId = chainIdFrom;
         
-        const tx = await transferHook(token, reciever, Number(amount), chainIdFrom, chainNameTo);
+        const tx = await transferHook(token, reciever, Number(amount), chainIdFrom, chainIdTo);
         console.log('tx', tx);
         setNotify(`Transaction: <a href="${idToScanLink[chainId]}${tx?.transactionHash}" target='_blank'>${tx?.transactionHash}</a>`);
-    }
-
-    const approveHook = useApprove();
-    const Approve = async () => {
-        setNotify('');
-        const chainId = chainIdFrom;
-        const tx = await approveHook(token, chainId);
-        console.log('tx', tx);
-        setNotify(`Transaction: <a href="${idToScanLink[chainId]}${tx?.transactionHash}" target='_blank'>${tx?.transactionHash}</a>`);
+        setDisable(false);
     }
 
     return (
@@ -73,16 +57,10 @@ const MumbaiTabData = () => {
                 <div className="row">
                     <h5 className='text-center'>
                         <a 
-                            href={`https://goerli.etherscan.io/address/${process.env.REACT_APP_UNIVERSAL_BRIDGE_CONTRACT_YAR}`} 
-                            target='_blank'
-                            rel="noreferrer"
-                        >Contract in YAR</a>
-                        <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-                        <a 
                             href={`https://mumbai.polygonscan.com/address/${process.env.REACT_APP_UNIVERSAL_BRIDGE_CONTRACT_POLYGON}`} 
                             target='_blank'
                             rel="noreferrer"
-                        >in Polygon</a>
+                        >Contract in Polygon</a>
                         <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
                         <a 
                             href={`https://testnet.bscscan.com/address/${process.env.REACT_APP_UNIVERSAL_BRIDGE_CONTRACT_BINANCE}`} 
@@ -91,16 +69,15 @@ const MumbaiTabData = () => {
                         >in BSC</a>
                         <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
                         <a 
-                            href={`https://testnet.snowtrace.io/address/${process.env.REACT_APP_UNIVERSAL_BRIDGE_CONTRACT_ETHEREUM}`} 
+                            href={`https://goerli.etherscan.io/address/${process.env.REACT_APP_UNIVERSAL_BRIDGE_CONTRACT_ETHEREUM}`} 
                             target='_blank'
                             rel="noreferrer"
                         >in Ethereum</a>
                     </h5>
-
                     <div className='col-sm-offset-1'>
                         <div className="col-sm-12">
                             <div className="form-group label-floating">
-                                <label className="control-label">Token:</label>
+                                <label className="control-label">Contract:</label>
                                 <input 
                                     type="text" 
                                     className="form-control" 
@@ -111,7 +88,7 @@ const MumbaiTabData = () => {
                         </div>
                         <div className="col-sm-12">
                             <div className="form-group label-floating">
-                                <label className="control-label">Reciever:</label>
+                                <label className="control-label">Receiver:</label>
                                 <input 
                                     type="text" 
                                     className="form-control" 
@@ -151,16 +128,16 @@ const MumbaiTabData = () => {
                                 <label className="control-label">To:</label>
                                 <select 
                                     className="form-control" 
-                                    onChange={(e) => setChainNameTo(e.target.value)}
-                                    defaultValue={chainNameTo}
+                                    onChange={(e) => setChainIdTo(Number(e.target.value))}
+                                    defaultValue={chainIdTo}
                                 >
-                                    {ChainsNameTo.map((_, i) => <option key={i} value={_[1]}>{_[0]}</option>)}
+                                    {ChainsIdTo.map((_, i) => <option key={i} value={_[1] as number}>{_[0]}</option>)}
                                 </select>
                             </div>
                         </div>
 
                         {
-                            notify ? 
+                            notify ?    
                                 <div dangerouslySetInnerHTML={{ __html: notify }}></div> 
                             : 
                                 null
@@ -171,23 +148,20 @@ const MumbaiTabData = () => {
                 </div>
                 
                 <div className="wizard-footer">
-
                     <div className="pull-right">
-                        <input 
+                        
+                        <button
                             type='button' 
                             className='btn btn-fill btn-danger btn-wd' 
                             value='Transfer' 
                             onClick={() => transferToBridge()}
-                        />
-                    </div>
-
-                    <div className="pull-left">
-                        <input 
-                            type='button' 
-                            className='btn btn-fill btn-default btn-wd' 
-                            value='Approve' 
-                            onClick={() => Approve()}
-                        />
+                            disabled={isDisable}
+                            style={{height: '42px'}}
+                        >
+                            {
+                                isDisable ?  <div className="spinner"></div> : "Transfer"
+                            }    
+                        </button>
                     </div>
 
                     <div className="clearfix"></div>

@@ -5,3 +5,25 @@
 .justify-content-around {
     justify-content: space-around;
 }
+
+.spinner {
+    width: 35px;
+    height: 35px;
+    border: 5px solid #f44336;
+    border-radius: 50%;
+    border-top-color: white;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    animation: 2s spin infinite linear;
+}
+
+@keyframes spin {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}

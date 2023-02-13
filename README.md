@@ -63,9 +63,9 @@ If you do not have this file, you must create it from validator/app/config.examp
       "driver": "EvmBridgeDriver", - Default value
       "startFromBlock": 0, - *Optional field*, if it is not present, the validator starts from the current block, if it is, it synchronizes from the specified block (or the block when the bridge was deployed, if it is higher)
       "blockConfirmationsCount": 1, - The number of blocks that must pass to within its execution. Minimum 1
-      "address": "0xb9faa35de9e69e83d5484dc64eeac2eb6ca02ece", - bridge smart contract address
+      "address": "0xCA9df7271c2411e83D3fdfD1e916C6077a8a6BD1", - bridge smart contract address
       "providerUrl": "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161", - RPC provider url
-      "validatorPrivateKey": "0x5cf3549797256d7b49d1acd4d3ded70539ddfeb3913c45bc80d18823ec6e2ef1" - private key of the validator
+      "validatorPrivateKey": "0x30265a84a58ee2c2bd9e6ec64963d098535b6a1b9f985ca45d9834ae5bf79ce8" - private key of the validator
     },
   ]
 }

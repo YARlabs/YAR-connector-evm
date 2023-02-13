@@ -272,4 +272,9 @@ contract ERC20DriverFacet is IERC20Driver {
     {
         return LibERC20Driver.getTranferId(_nonce, _initialChainName);
     }
+
+    function isIssuedToken(address _token) external view returns (bool) {
+        LibERC20Driver.ERC20DriverStorage storage ds = LibERC20Driver.diamondStorage();
+        return ds.tokenIdByIssuedToken[_token] != 0;
+    }
 }

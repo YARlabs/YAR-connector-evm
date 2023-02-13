@@ -90,4 +90,6 @@ interface IERC20Driver {
     function setIssuedTokenImplementation(address _issuedTokenImplementation) external;
 
     function getTranferIdERC20(uint256 _nonce, string calldata _initialChainName) external pure returns(bytes32);
+    
+    function isIssuedToken(address _token) external view returns(bool);
 }

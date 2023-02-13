@@ -1,17 +1,17 @@
-import { BSCTestnet, Goerli, Mumbai, AvalancheTestnet } from "@usedapp/core";
+import { BSCTestnet, Goerli, Mumbai } from "@usedapp/core";
 
 const idToChainName = {
     [BSCTestnet.chainId]: 'BINANCE',
-    [Goerli.chainId]: 'YAR',
+    [Goerli.chainId]: 'ETHEREUM',
     [Mumbai.chainId]: 'POLYGON',
-    [AvalancheTestnet.chainId]: 'ETHEREUM',
+    [38204]: 'YAR',
 }
 
 const idToScanLink = {
     [BSCTestnet.chainId]: 'https://testnet.bscscan.com/tx/',
     [Goerli.chainId]: 'https://goerli.etherscan.io/tx/',
     [Mumbai.chainId]: 'https://mumbai.polygonscan.com/tx/',
-    [AvalancheTestnet.chainId]: 'https://testnet.snowtrace.io/tx/',
+    [38204]: 'https://testnet.snowtrace.io/tx/',
 }
 
 export { idToChainName, idToScanLink };

@@ -1,5 +1,4 @@
-import { Contract } from 'ethers'
-import { ethers } from 'hardhat'
+import { Contract, ethers } from 'ethers'
 
 export class DiamondUtils {
   public static readonly FacetCutAction = { Add: 0, Replace: 1, Remove: 2 }
