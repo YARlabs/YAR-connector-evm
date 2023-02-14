@@ -59,7 +59,12 @@ export class EvmBridgeDriver implements BridgeDriver {
     if (providerUrl.startsWith('ws')) {
       this._provider = new ethers.providers.WebSocketProvider(providerUrl)
     } else if (providerUrl.startsWith('http')) {
-      this._provider = new ethers.providers.JsonRpcProvider(providerUrl)
+      this._provider = new ethers.providers.JsonRpcProvider({
+        url: providerUrl,
+        timeout: 180000,
+        throttleSlotInterval: 1000,
+        throttleLimit: 10,
+      })
     } else {
       throw Error(`Failed parse provider url ${providerUrl}`)
     }
@@ -86,7 +91,7 @@ export class EvmBridgeDriver implements BridgeDriver {
       const eventsData = await this.getEventsFromBlock(blockNumber)
       if (eventsData.length) {
         console.log(`${this.chainName}: ${key} ${blockNumber}, ${eventsData.length} events`)
-        await listener(eventsData)
+        listener(eventsData)
       }
     }
 
@@ -118,9 +123,6 @@ export class EvmBridgeDriver implements BridgeDriver {
   private readonly getEventsFromBlock = async (
     blockNumber: number,
   ): Promise<Array<ITransferToOtherChainEvent>> => {
-    if(this.chainName == 'POLYGON') {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
     return (
       await this._erc20Driver.queryFilter(
         this._erc20Driver.filters.ERC20DriverTransferToOtherChain(),
@@ -143,10 +145,15 @@ export class EvmBridgeDriver implements BridgeDriver {
     tokenAddress: string,
   ): Promise<ITokenCreateInfo> => {
     const token = IERC20Metadata__factory.connect(tokenAddress, this._provider)
+    const [tokenName, tokenSymbol, tokenDecimals] = await Promise.all([
+      token.name(),
+      token.symbol(),
+      token.decimals()
+    ])
     return {
-      tokenName: await token.name(),
-      tokenSymbol: await token.symbol(),
-      tokenDecimals: await token.decimals(),
+      tokenName,
+      tokenSymbol,
+      tokenDecimals,
     }
   }
 

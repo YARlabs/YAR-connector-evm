@@ -23,10 +23,9 @@ async function main() {
   let proxyBridge: BridgeDriver
 
   for (const bridgeConfig of CONFIG.bridges) {
-
     const driverName = bridgeConfig.driver
 
-    if(driverName == 'EvmBridgeDriver') {
+    if (driverName == 'EvmBridgeDriver') {
       bridges[bridgeConfig.chainName] = new EvmBridgeDriver({
         chainName: bridgeConfig.chainName,
         startFromBlock: bridgeConfig.startFromBlock,
@@ -54,7 +53,7 @@ async function main() {
   for (const bridge of Object.values(bridges)) {
     console.log(`${bridge.chainName}: listener enabled`)
     bridge.listenBatchTransafersERC20(async events => {
-      for (const event of events) {
+      events.map(async event => {
         // Bridges
         const originalBridge = bridges[event.originalChainName]!
         const targetBridge = bridges[event.targetChainName]!
@@ -69,8 +68,9 @@ async function main() {
 
         // transfer
         const tokenCreateInfo = await originalBridge.getTokenCreateInfo(event.originalTokenAddress)
+
         await executedBridge.transferFromOtherChain(event, tokenCreateInfo)
-      }
+      })
     })
   }
   console.log('Validator: Ready!')
