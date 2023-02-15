@@ -91,7 +91,10 @@ export class EvmBridgeDriver implements BridgeDriver {
       const eventsData = await this.getEventsFromBlock(blockNumber)
       if (eventsData.length) {
         console.log(`${this.chainName}: ${key} ${blockNumber}, ${eventsData.length} events`)
-        listener(eventsData)
+        for(const event of eventsData) {
+          console.log(`${this.chainName} event info: block - ${blockNumber}, nonce - ${event.nonce}, ${event.initialChainName} -> ${event.targetChainName}`)
+        }
+        await listener(eventsData)
       }
     }
 

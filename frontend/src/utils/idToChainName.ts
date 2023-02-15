@@ -8,10 +8,10 @@ const idToChainName = {
 }
 
 const idToScanLink = {
-    [BSCTestnet.chainId]: 'https://testnet.bscscan.com/tx/',
-    [Goerli.chainId]: 'https://goerli.etherscan.io/tx/',
-    [Mumbai.chainId]: 'https://mumbai.polygonscan.com/tx/',
-    [38204]: 'https://testnet.snowtrace.io/tx/',
+    [BSCTestnet.chainId]: 'https://testnet.bscscan.com/',
+    [Goerli.chainId]: 'https://goerli.etherscan.io/',
+    [Mumbai.chainId]: 'https://mumbai.polygonscan.com/',
+    [38204]: 'https://explorer.testnet.yarchain.org/',
 }
 
 export { idToChainName, idToScanLink };

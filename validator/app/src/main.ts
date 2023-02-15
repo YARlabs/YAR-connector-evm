@@ -53,7 +53,7 @@ async function main() {
   for (const bridge of Object.values(bridges)) {
     console.log(`${bridge.chainName}: listener enabled`)
     bridge.listenBatchTransafersERC20(async events => {
-      events.map(async event => {
+      for (const event of events) {
         // Bridges
         const originalBridge = bridges[event.originalChainName]!
         const targetBridge = bridges[event.targetChainName]!
@@ -68,9 +68,8 @@ async function main() {
 
         // transfer
         const tokenCreateInfo = await originalBridge.getTokenCreateInfo(event.originalTokenAddress)
-
         await executedBridge.transferFromOtherChain(event, tokenCreateInfo)
-      })
+      }
     })
   }
   console.log('Validator: Ready!')

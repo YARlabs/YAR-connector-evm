@@ -1,8 +1,9 @@
 import { useEthers } from '@usedapp/core';
 import { useEffect, useState } from 'react';
 import { useTransferToOtherChain } from '../../hooks/useTransferToOtherChain';
+import { useGetSecondToken } from '../../hooks/useGetSecondToken'; 
 import { BSCTestnet, Goerli, Mumbai } from "@usedapp/core";
-import { idToScanLink } from '../../utils/idToChainName';
+import { idToScanLink, idToChainName } from '../../utils/idToChainName';
 
 
 const MumbaiTabData = () => {
@@ -40,14 +41,18 @@ const MumbaiTabData = () => {
     }, [account])
 
     const transferHook = useTransferToOtherChain();
+    const getSecondTokenHook = useGetSecondToken();
     const transferToBridge = async () => {
         setDisable(true);
         setNotify('');
         const chainId = chainIdFrom;
-        
         const tx = await transferHook(token, reciever, Number(amount), chainIdFrom, chainIdTo);
+        const secondToken = await getSecondTokenHook(token, chainIdFrom, chainIdTo);
         console.log('tx', tx);
-        setNotify(`Transaction: <a href="${idToScanLink[chainId]}${tx?.transactionHash}" target='_blank'>${tx?.transactionHash}</a>`);
+        setNotify(`Transaction: <a href="${idToScanLink[chainId]}tx/${tx?.transactionHash}" target='_blank'>${tx?.transactionHash}</a><br/>
+            Second Token: <a href="${idToScanLink[chainIdTo]}address/${secondToken}" target='_blank'>${secondToken}</a><br/>
+            ${idToChainName[chainIdFrom]} -> ${idToChainName[chainIdTo]}<br/>
+        `);
         setDisable(false);
     }
 
@@ -73,6 +78,12 @@ const MumbaiTabData = () => {
                             target='_blank'
                             rel="noreferrer"
                         >in Ethereum</a>
+                        <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+                        <a 
+                            href={`https://explorer.testnet.yarchain.org/address/${process.env.REACT_APP_UNIVERSAL_BRIDGE_CONTRACT_YAR}`} 
+                            target='_blank'
+                            rel="noreferrer"
+                        >in YAR</a>
                     </h5>
                     <div className='col-sm-offset-1'>
                         <div className="col-sm-12">
