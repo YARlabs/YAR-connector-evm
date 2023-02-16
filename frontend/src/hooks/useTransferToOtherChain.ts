@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { useERC20Contracts } from "./useERC20Contracts";
 import { useERC20DriverFacet } from "./useERC20DriverFacet";
 import { idToChainName } from "../utils/idToChainName";
+import { toast } from 'react-toastify';
 BigNumber.config({ EXPONENTIAL_AT: 60 });
 
 export const useTransferToOtherChain = () => {
@@ -25,11 +26,27 @@ export const useTransferToOtherChain = () => {
         if(!isIssued) {
           const allowance = (await erc20Contract?.allowance(account as string, addressBridge))?.toString() as string;
           if(Number(allowance) < bigNumberAmount.toNumber()) {
+            toast('Approve your tokens', {
+              position: "top-center",
+              autoClose: 5000,
+              hideProgressBar: true,
+              pauseOnHover: true,
+              draggable: true,
+              theme: "colored",
+            });
             const balance = await erc20Contract?.balanceOf(account!);
             const txPromise = await erc20Contract?.approve(addressBridge, balance!);
             await txPromise?.wait();
           }
         }
+        toast('Confirm transfer', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "colored",
+        });
         const txPromise = await bridge?.tranferToOtherChainERC20(token, bigNumberAmount.toString(), idToChainName[chainIdTo], {
             evmAddress: validReciever,
             noEvmAddress: ''

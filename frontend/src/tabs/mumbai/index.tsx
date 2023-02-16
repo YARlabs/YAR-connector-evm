@@ -1,10 +1,11 @@
 import { useEthers } from '@usedapp/core';
 import { useEffect, useState } from 'react';
 import { useTransferToOtherChain } from '../../hooks/useTransferToOtherChain';
-import { useGetSecondToken } from '../../hooks/useGetSecondToken'; 
+import { useGetSecondToken } from '../../hooks/useGetSecondToken';
+import { useValidationBeforeTransfer } from '../../hooks/useValidationBeforeTransfer';  
 import { BSCTestnet, Goerli, Mumbai } from "@usedapp/core";
 import { idToScanLink, idToChainName } from '../../utils/idToChainName';
-
+import { toast } from 'react-toastify';
 
 const MumbaiTabData = () => {
     const { account } = useEthers();
@@ -13,8 +14,8 @@ const MumbaiTabData = () => {
     const [amount, setAmount] = useState('');
     const [reciever, setReciever] = useState('');
     const [notify, setNotify] = useState('');
-    const [chainIdFrom, setChainIdFrom] = useState(0);
-    const [chainIdTo, setChainIdTo] = useState(0);
+    const [chainIdFrom, setChainIdFrom] = useState(BSCTestnet.chainId);
+    const [chainIdTo, setChainIdTo] = useState(Mumbai.chainId);
     const [isDisable, setDisable] = useState(false);
 
     const ChainsIdFrom = [
@@ -32,23 +33,39 @@ const MumbaiTabData = () => {
     ]
 
     useEffect(() => {
+        // setChainIdFrom(BSCTestnet.chainId);
+        // setChainIdTo(Mumbai.chainId);
         if (!account) return;
         // setToken('0xE097d6B3100777DC31B34dC2c58fB524C2e76921');
-        setChainIdFrom(BSCTestnet.chainId);
-        setChainIdTo(Mumbai.chainId);
         // setAmount('1');
         // setReciever(account);
     }, [account])
 
     const transferHook = useTransferToOtherChain();
     const getSecondTokenHook = useGetSecondToken();
+    const validationHook = useValidationBeforeTransfer();
     const transferToBridge = async () => {
         setDisable(true);
         setNotify('');
         const chainId = chainIdFrom;
+        const valid = await validationHook(token, reciever, Number(amount), chainIdFrom, chainIdTo);
+        if(!valid) {
+            setDisable(false);
+            return;
+        } 
         const tx = await transferHook(token, reciever, Number(amount), chainIdFrom, chainIdTo);
         const secondToken = await getSecondTokenHook(token, chainIdFrom, chainIdTo);
         console.log('tx', tx);
+        toast(`First Token: ${token}; Second Token: ${secondToken}; ${idToChainName[chainIdFrom]} -> ${idToChainName[chainIdTo]} \n `, {
+            position: "bottom-left",
+            autoClose: false,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: false,
+            draggable: false,
+            progress: undefined,
+            theme: "light",
+        });
         setNotify(`Transaction: <a href="${idToScanLink[chainId]}tx/${tx?.transactionHash}" target='_blank'>${tx?.transactionHash}</a><br/>
             Second Token: <a href="${idToScanLink[chainIdTo]}address/${secondToken}" target='_blank'>${secondToken}</a><br/>
             ${idToChainName[chainIdFrom]} -> ${idToChainName[chainIdTo]}<br/>
@@ -129,7 +146,7 @@ const MumbaiTabData = () => {
                                     onChange={(e) => setChainIdFrom(Number(e.target.value))}
                                     defaultValue={chainIdFrom}
                                 >
-                                    {ChainsIdFrom.map((_, i) => <option key={i} value={_[1] as number}>{_[0]}</option>)}
+                                    {ChainsIdFrom.map((_, i) => <option key={i + 'from'} value={_[1] as number}>{_[0]}</option>)}
                                 </select>
                             </div>
                         </div>
@@ -142,7 +159,7 @@ const MumbaiTabData = () => {
                                     onChange={(e) => setChainIdTo(Number(e.target.value))}
                                     defaultValue={chainIdTo}
                                 >
-                                    {ChainsIdTo.map((_, i) => <option key={i} value={_[1] as number}>{_[0]}</option>)}
+                                    {ChainsIdTo.map((_, i) => <option key={i + 'to'} value={_[1] as number}>{_[0]}</option>)}
                                 </select>
                             </div>
                         </div>
