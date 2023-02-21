@@ -74,4 +74,9 @@ async function main() {
   }
   console.log('Validator: Ready!')
 }
+
 main()
+process.on('uncaughtException', function (error) {
+  console.log('FAIL')
+  main()
+})

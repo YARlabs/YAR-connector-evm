@@ -6,6 +6,7 @@ import { useValidationBeforeTransfer } from '../../hooks/useValidationBeforeTran
 import { BSCTestnet, Goerli, Mumbai } from "@usedapp/core";
 import { idToScanLink, idToChainName } from '../../utils/idToChainName';
 import { toast } from 'react-toastify';
+import { useGetTicker } from '../../hooks/useGetTicker';
 
 const MumbaiTabData = () => {
     const { account } = useEthers();
@@ -17,6 +18,7 @@ const MumbaiTabData = () => {
     const [chainIdFrom, setChainIdFrom] = useState(BSCTestnet.chainId);
     const [chainIdTo, setChainIdTo] = useState(Mumbai.chainId);
     const [isDisable, setDisable] = useState(false);
+    const [ticker, setTicker] = useState('');
 
     const ChainsIdFrom = [
         ['BSC', BSCTestnet.chainId],
@@ -56,7 +58,7 @@ const MumbaiTabData = () => {
         const tx = await transferHook(token, reciever, Number(amount), chainIdFrom, chainIdTo);
         const secondToken = await getSecondTokenHook(token, chainIdFrom, chainIdTo);
         console.log('tx', tx);
-        toast(`First Token: ${token}; Second Token: ${secondToken}; ${idToChainName[chainIdFrom]} -> ${idToChainName[chainIdTo]} \n `, {
+        toast(`First Token: ${"      "}${token}; Target Token: ${"  "}${secondToken}; from ${idToChainName[chainIdFrom]} to ${idToChainName[chainIdTo]} \n `, {
             position: "bottom-left",
             autoClose: false,
             hideProgressBar: false,
@@ -66,11 +68,44 @@ const MumbaiTabData = () => {
             progress: undefined,
             theme: "light",
         });
-        setNotify(`Transaction: <a href="${idToScanLink[chainId]}tx/${tx?.transactionHash}" target='_blank'>${tx?.transactionHash}</a><br/>
-            Second Token: <a href="${idToScanLink[chainIdTo]}address/${secondToken}" target='_blank'>${secondToken}</a><br/>
-            ${idToChainName[chainIdFrom]} -> ${idToChainName[chainIdTo]}<br/>
+        setNotify(`
+            <table>
+                <tr>
+                    <td>Transaction:</td>
+                    <td><a href="${idToScanLink[chainId]}tx/${tx?.transactionHash}" target='_blank'>${tx?.transactionHash}</a></td>
+                </tr>
+                <tr>
+                    <td>Target Token:&nbsp;&nbsp;</td>
+                    <td><a href="${idToScanLink[chainIdTo]}address/${secondToken}" target='_blank'>${secondToken}</a></td>
+                </tr>
+                <tr>
+                    <td>from ${idToChainName[chainIdFrom]}&nbsp;&nbsp;</td>
+                    <td>to ${idToChainName[chainIdTo]}</td>
+                </tr>
+            </table>
         `);
         setDisable(false);
+    }
+
+    const tickerHook = useGetTicker()
+    const setContract = async (address: string) => {
+        setToken(address);
+        if(address.length === 42) {
+            const ticker = await tickerHook(address, chainIdFrom);
+            setTicker(ticker);
+        } else {
+            setTicker('');
+        }
+    }
+
+    const changeChainIdFrom = async (chainId: number) => {
+        setChainIdFrom(chainId);
+        if(token.length === 42) {
+            const ticker = await tickerHook(token, chainId);
+            setTicker(ticker);
+        } else {
+            setTicker('');
+        }
     }
 
     return (
@@ -110,7 +145,7 @@ const MumbaiTabData = () => {
                                     type="text" 
                                     className="form-control" 
                                     defaultValue={reciever} 
-                                    onChange={(e) => setToken(e.target.value)} 
+                                    onChange={(e) => setContract(e.target.value)} 
                                 />
                             </div>
                         </div>
@@ -126,7 +161,7 @@ const MumbaiTabData = () => {
                             </div>
                         </div>
                         
-                        <div className="col-sm-4">
+                        <div className="col-sm-3">
                             <div className="form-group label-floating">
                                 <label className="control-label">Amount:</label>
                                 <input 
@@ -138,12 +173,25 @@ const MumbaiTabData = () => {
                             </div>
                         </div>
 
-                        <div className="col-sm-4">
+                        <div className="col-sm-3">
+                            <div className="form-group label-floating">
+                                <label className="control-label">Ticker:</label>
+                                <div
+                                    className="form-control"
+                                >
+                                    {
+                                        ticker ? ticker : "-"
+                                    }    
+                                </div>    
+                            </div>
+                        </div>
+
+                        <div className="col-sm-3">
                             <div className="form-group label-floating">
                                 <label className="control-label">From:</label>
                                 <select 
                                     className="form-control" 
-                                    onChange={(e) => setChainIdFrom(Number(e.target.value))}
+                                    onChange={(e) => changeChainIdFrom(Number(e.target.value))}
                                     defaultValue={chainIdFrom}
                                 >
                                     {ChainsIdFrom.map((_, i) => <option key={i + 'from'} value={_[1] as number}>{_[0]}</option>)}
@@ -151,7 +199,7 @@ const MumbaiTabData = () => {
                             </div>
                         </div>
 
-                        <div className="col-sm-4">
+                        <div className="col-sm-3">
                             <div className="form-group label-floating">
                                 <label className="control-label">To:</label>
                                 <select 
@@ -191,7 +239,6 @@ const MumbaiTabData = () => {
                             }    
                         </button>
                     </div>
-
                     <div className="clearfix"></div>
                 </div>
             </div>

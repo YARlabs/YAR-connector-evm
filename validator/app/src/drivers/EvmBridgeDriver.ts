@@ -12,6 +12,7 @@ import { IERC20Metadata__factory } from '../typechain-types'
 import { Provider } from '@ethersproject/abstract-provider'
 import { UniqueBlockListener } from '../utils/UniqueBlockListener'
 import { BridgeDriver, ITokenCreateInfo, ITransferToOtherChainEvent } from './BridgeDriver'
+import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 
 export class EvmBridgeDriver implements BridgeDriver {
   // @override
@@ -20,7 +21,7 @@ export class EvmBridgeDriver implements BridgeDriver {
   public readonly _validator: NonceManager
   public readonly _provider: Provider
   public readonly _blockConfirmationsCount: number
-  public readonly _startFromBlock: number | undefined
+  public _startFromBlock: number | undefined
 
   public readonly _chainInfo: IChainInfo
   public readonly _erc20Driver: IERC20Driver
@@ -61,8 +62,8 @@ export class EvmBridgeDriver implements BridgeDriver {
     } else if (providerUrl.startsWith('http')) {
       this._provider = new ethers.providers.JsonRpcProvider({
         url: providerUrl,
-        timeout: 180000,
-        throttleSlotInterval: 1000,
+        timeout: 240000,
+        throttleSlotInterval: 5000,
         throttleLimit: 10,
       })
     } else {
@@ -86,30 +87,33 @@ export class EvmBridgeDriver implements BridgeDriver {
     const lastBlock = await this._provider.getBlockNumber()
     const lastBlockToSync = lastBlock - this._blockConfirmationsCount
 
+    const blocksCacheFile = 'blocks_cache.json'
+    if (existsSync(blocksCacheFile)) {
+      const blocksCache = JSON.parse(readFileSync(blocksCacheFile, 'utf-8'))
+      this._startFromBlock = blocksCache[this.chainName]
+    }
+
     // execute listener function
     const execute = async (key: string, blockNumber: number) => {
+      const blocksCache = existsSync(blocksCacheFile)
+        ? JSON.parse(readFileSync(blocksCacheFile, 'utf-8'))
+        : {}
+      blocksCache[this.chainName] = blockNumber
+      writeFileSync(blocksCacheFile, JSON.stringify(blocksCache))
+
       const eventsData = await this.getEventsFromBlock(blockNumber)
       if (eventsData.length) {
         console.log(`${this.chainName}: ${key} ${blockNumber}, ${eventsData.length} events`)
-        for(const event of eventsData) {
-          console.log(`${this.chainName} event info: block - ${blockNumber}, nonce - ${event.nonce}, ${event.initialChainName} -> ${event.targetChainName}`)
+        for (const event of eventsData) {
+          console.log(
+            `${this.chainName} event info: block - ${blockNumber}, nonce - ${event.nonce}, ${event.initialChainName} -> ${event.targetChainName}`,
+          )
         }
         await listener(eventsData)
       }
     }
 
-    // listen
-    UniqueBlockListener.listenNewBlocks({
-      provider: this._provider,
-      listener: async blockNumber => {
-        if (this._startFromBlock !== undefined && this._startFromBlock > blockNumber) {
-          return
-        }
-        const confirmedBlock = blockNumber - this._blockConfirmationsCount
-        await execute('Listen block', confirmedBlock)
-      },
-    })
-
+    let tmpSyncBlock
     // sync
     if (this._startFromBlock !== undefined) {
       const initialBlock = this._startFromBlock > firstBlock ? this._startFromBlock : firstBlock
@@ -118,9 +122,45 @@ export class EvmBridgeDriver implements BridgeDriver {
         syncBlockBumber < lastBlockToSync;
         syncBlockBumber++
       ) {
+        tmpSyncBlock = syncBlockBumber
         await execute('Sync block', syncBlockBumber)
       }
     }
+
+    let singleFlag = false
+
+    // listen
+    UniqueBlockListener.listenNewBlocks({
+      provider: this._provider,
+      listener: async blockNumber => {
+        if (!singleFlag) {
+          singleFlag = true
+          if (blockNumber != tmpSyncBlock + 1) {
+            const errorFilePath = 'errors.json'
+            const errorFile = existsSync(errorFilePath)
+              ? JSON.parse(readFileSync(errorFilePath, 'utf-8'))
+              : {}
+            errorFile[this.chainName] ??= []
+            errorFile[this.chainName].push(
+              `blockNumber ${blockNumber}, tmpSyncBlock ${tmpSyncBlock}`,
+            )
+            writeFileSync(errorFilePath, JSON.stringify(errorFile, null, 4))
+          }
+
+          // Resync
+          for (let block = tmpSyncBlock + 1; block < blockNumber; block++) {
+            console.log(`${this.chainName}: Resync block ${block}`)
+            await execute('ReSync block', block)
+          }
+        }
+
+        if (this._startFromBlock !== undefined && this._startFromBlock > blockNumber) {
+          return
+        }
+        const confirmedBlock = blockNumber - this._blockConfirmationsCount
+        await execute('Listen block', confirmedBlock)
+      },
+    })
   }
 
   private readonly getEventsFromBlock = async (
@@ -151,7 +191,7 @@ export class EvmBridgeDriver implements BridgeDriver {
     const [tokenName, tokenSymbol, tokenDecimals] = await Promise.all([
       token.name(),
       token.symbol(),
-      token.decimals()
+      token.decimals(),
     ])
     return {
       tokenName,
