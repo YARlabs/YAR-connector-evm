@@ -1,6 +1,6 @@
 import React from 'react';
 import ConnectWallet from '../components/wallet/connect';
-import MumbaiTabData from '../tabs/mumbai';
+import MainTab from '../tabs/main-tab';
 
 const main = () => {
     return (
@@ -16,7 +16,7 @@ const main = () => {
                                         { <ConnectWallet /> }
                                     </div>
                                     <div className="tab-content">
-                                        { <MumbaiTabData /> }
+                                        { <MainTab /> }
                                     </div>
                                 </form>
                             </div>

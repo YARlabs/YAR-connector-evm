@@ -8,7 +8,7 @@ import { idToScanLink, idToChainName } from '../../utils/idToChainName';
 import { toast } from 'react-toastify';
 import { useGetTicker } from '../../hooks/useGetTicker';
 
-const MumbaiTabData = () => {
+const MainTab = () => {
     const { account } = useEthers();
 
     const [token, setToken] = useState('');
@@ -247,4 +247,4 @@ const MumbaiTabData = () => {
     )
 }
 
-export default MumbaiTabData;
+export default MainTab;
