@@ -90,7 +90,7 @@ export class EvmBridgeDriver implements BridgeDriver {
     const blocksCacheFile = 'blocks_cache.json'
     if (existsSync(blocksCacheFile)) {
       const blocksCache = JSON.parse(readFileSync(blocksCacheFile, 'utf-8'))
-      this._startFromBlock = blocksCache[this.chainName]
+      this._startFromBlock = blocksCache[this.chainName] ?? this._startFromBlock
     }
 
     // execute listener function
