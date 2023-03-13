@@ -77,6 +77,6 @@ async function main() {
 
 main()
 process.on('uncaughtException', function (error) {
-  console.log('FAIL')
+  console.log(`FAIL ${error.name} ${error.message} ${error.stack}`)
   main()
 })
