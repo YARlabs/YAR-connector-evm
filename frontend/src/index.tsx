@@ -11,7 +11,7 @@ const DAppConfig: Config = {
     [Mumbai.chainId]: config.network.mumbai.url,
     [Goerli.chainId]: config.network.goerli.url,
     [BSCTestnet.chainId]: config.network.bsctestnet.url,
-    [38204]: config.network.yar.url,
+    [10226688]: config.network.yar.url,
   },
 };
 

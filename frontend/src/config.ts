@@ -12,7 +12,7 @@ export const config = {
       url: "https://data-seed-prebsc-2-s3.binance.org:8545",
     },
     yar: {
-      url: "http://95.217.57.15:18545/",
+      url: "https://rpc1.testnet.yarchain.org",
     },
   },
 };

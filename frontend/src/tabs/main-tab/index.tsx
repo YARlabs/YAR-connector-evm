@@ -22,7 +22,7 @@ const MainTab = () => {
 
     const ChainsIdFrom = [
         ['BSC', BSCTestnet.chainId],
-        ['YAR', 38204],
+        ['YAR', 10226688],
         ['Polygon', Mumbai.chainId],
         ['Ethereum', Goerli.chainId]
     ]
@@ -30,7 +30,7 @@ const MainTab = () => {
     const ChainsIdTo = [
         ['Polygon', Mumbai.chainId],
         ['BSC', BSCTestnet.chainId],
-        ['YAR', 38204],
+        ['YAR', 10226688],
         ['Ethereum', Goerli.chainId]
     ]
 
