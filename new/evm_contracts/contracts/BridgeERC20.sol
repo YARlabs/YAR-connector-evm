@@ -3,8 +3,9 @@ pragma solidity 0.8.17;
 
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { ERC1967ProxyCreate2 } from "./utils/ERC1967ProxyCreate2.sol";
 
-import { IIssuedERC20 } from "./IIssuedERC20.sol";
+import { IIssuedERC20 } from "./interfaces/IIssuedERC20.sol";
 
 contract BridgeERC20 {
     using SafeERC20 for IERC20Metadata;
@@ -21,6 +22,10 @@ contract BridgeERC20 {
 
     mapping(address => bool) public issuedTokens;
 
+    mapping(bytes32 => mapping(uint256 => bool)) registeredNonces;
+
+    address issuedTokenImplementation;
+
     event TransferToOtherChain(
         bytes32 indexed transferId,
         uint256 nonce,
@@ -34,6 +39,18 @@ contract BridgeERC20 {
         string tokenName,
         string tokenSymbol,
         uint8 tokenDecimals
+    );
+
+    event ERC20DriverTransferFromOtherChain(
+        bytes32 indexed transferId,
+        uint256 externalNonce,
+        bytes32 originalChain,
+        bytes originalToken,
+        bytes32 initialChain,
+        bytes32 targetChain,
+        uint256 amount,
+        bytes sender,
+        bytes recipient
     );
 
     function enforceIsValidator(address account) internal view {
@@ -65,8 +82,9 @@ contract BridgeERC20 {
         if (isIssuedToken) {
             // There ISSUED token
             IIssuedERC20 issuedToken = IIssuedERC20(_transferedToken);
-            (originalChain, originalToken, tokenName, tokenSymbol, tokenDecimals) = issuedToken.getOriginalTokenInfo();
-            if(originalChain == _targetChain && isProxyChain) {
+            (originalChain, originalToken, tokenName, tokenSymbol, tokenDecimals) = issuedToken
+                .getOriginalTokenInfo();
+            if (originalChain == _targetChain && isProxyChain) {
                 issuedToken.permissionedTransferFrom(msg.sender, address(this), _amount);
             } else {
                 issuedToken.burn(msg.sender, _amount);
@@ -113,8 +131,128 @@ contract BridgeERC20 {
         uint256 _amount,
         bytes calldata _sender,
         bytes calldata _recipient,
-        TokenInfo _tokenCreateInfo
+        TokenInfo calldata _tokenInfo
     ) external {
         enforceIsValidator(msg.sender);
+
+        require(
+            registeredNonces[_initialChain][_externalNonce],
+            "BridgeERC20: nonce already registered"
+        );
+
+        registeredNonces[_initialChain][_externalNonce] = true;
+
+        bytes32 _currentChain = currentChain;
+
+        require(_initialChain != _currentChain, "BridgeERC20: initialChain == currentChain");
+
+        require(registeredChains[_initialChain], "BridgeERC20: Initial chain not registered");
+
+        address recipientAddress = abi.decode(_recipient, (address));
+
+        if (_currentChain == _targetChain) {
+            // This is TARGET chain
+            if (currentChain == _originalChain) {
+                // This is ORIGINAL chain
+                address originalTokenAddress = abi.decode(_originalToken, (address));
+                IERC20Metadata(originalTokenAddress).safeTransfer(recipientAddress, _amount);
+            } else {
+                // This is SECONDARY chain
+                address issuedTokenAddress = getIssuedTokenAddress(_originalChain, _originalToken);
+                if (!isIssuedTokenPublished(issuedTokenAddress))
+                    publishNewToken(_originalChain, _originalToken, _tokenInfo);
+                IIssuedERC20(issuedTokenAddress).mint(recipientAddress, _amount);
+            }
+
+            emit ERC20DriverTransferFromOtherChain(
+                getTransferId(_externalNonce, _initialChain),
+                _externalNonce,
+                _originalChain,
+                _originalToken,
+                _initialChain,
+                _targetChain,
+                _amount,
+                _sender,
+                _recipient
+            );
+        } else {
+            // This is PROXY chain
+            require(isProxyChain, "BridgeERC20: Only proxy bridge!");
+
+            address issuedTokenAddress = getIssuedTokenAddress(_originalChain, _originalToken);
+            if (!isIssuedTokenPublished(issuedTokenAddress))
+                publishNewToken(_originalChain, _originalToken, _tokenInfo);
+
+            if (_targetChain == _originalChain) {
+                // BURN PROXY ISSUED TOKENS
+                IIssuedERC20(issuedTokenAddress).burn(recipientAddress, _amount);
+            } else {
+                // LOCK PROXY ISSUED TOKENS
+                IIssuedERC20(issuedTokenAddress).mint(recipientAddress, _amount);
+            }
+
+            emit TransferToOtherChain(
+                getTransferId(_externalNonce, _initialChain),
+                _externalNonce,
+                _initialChain,
+                _originalChain,
+                _originalToken,
+                _targetChain,
+                _amount,
+                abi.encode(msg.sender),
+                abi.encode(_recipient),
+                _tokenInfo.name,
+                _tokenInfo.symbol,
+                _tokenInfo.decimals
+            );
+        }
+    }
+
+    function isIssuedTokenPublished(address _issuedToken) public returns (bool) {
+        return issuedTokens[_issuedToken];
+    }
+
+    function getIssuedTokenAddress(
+        bytes32 _originalChain,
+        bytes calldata _originalToken
+    ) public returns (address) {
+        bytes32 salt = keccak256(abi.encodePacked(_originalChain, _originalToken));
+        return
+            address(
+                uint160(
+                    uint(
+                        keccak256(
+                            abi.encodePacked(
+                                bytes1(0xff),
+                                address(this),
+                                salt,
+                                keccak256(abi.encodePacked(type(ERC1967ProxyCreate2).creationCode))
+                            )
+                        )
+                    )
+                )
+            );
+    }
+
+    function publishNewToken(
+        bytes32 _originalChain,
+        bytes calldata _originalToken,
+        TokenInfo calldata _tokenInfo
+    ) internal returns (address) {
+        bytes32 salt = keccak256(abi.encodePacked(_originalChain, _originalToken));
+        ERC1967ProxyCreate2 issuedToken = new ERC1967ProxyCreate2{ salt: salt }();
+        issuedToken.initialize(
+            issuedTokenImplementation,
+            abi.encodeWithSelector(
+                IIssuedERC20.initialize.selector,
+                _originalChain,
+                _originalToken,
+                _tokenInfo.name,
+                _tokenInfo.symbol,
+                _tokenInfo.decimals
+            )
+        );
+
+        return address(issuedToken);
     }
 }
