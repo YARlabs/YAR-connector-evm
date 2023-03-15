@@ -3,11 +3,12 @@ pragma solidity 0.8.17;
 
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { ERC1967ProxyCreate2 } from "./utils/ERC1967ProxyCreate2.sol";
 
+import { ERC1967ProxyCreate2 } from "./utils/ERC1967ProxyCreate2.sol";
+import { ExecutedBlocksList } from "./utils/ExecutedBlocksList.sol";
 import { IIssuedERC20 } from "./interfaces/IIssuedERC20.sol";
 
-contract BridgeERC20 {
+contract BridgeERC20 is ExecutedBlocksList {
     using SafeERC20 for IERC20Metadata;
 
     address public validator;
@@ -100,6 +101,7 @@ contract BridgeERC20 {
             token.safeTransferFrom(msg.sender, address(this), _amount);
         }
 
+        addExecutedBlock();
         emit TransferToOtherChain(
             getTransferId(_nonce, initialChain),
             _nonce,
@@ -191,6 +193,7 @@ contract BridgeERC20 {
                 IIssuedERC20(issuedTokenAddress).mint(recipientAddress, _amount);
             }
 
+            addExecutedBlock();
             emit TransferToOtherChain(
                 getTransferId(_externalNonce, _initialChain),
                 _externalNonce,
