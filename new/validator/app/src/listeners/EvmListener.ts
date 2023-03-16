@@ -16,6 +16,8 @@ export class EvmListener {
   private readonly _limitOfBlocksForGetLogs = 1000
   private readonly _syncFrom?: number
 
+  private readonly _proxyChain: string
+
   constructor({
     name,
     bridgeAddress,
@@ -23,6 +25,7 @@ export class EvmListener {
     numberOfBlocksToConfirm,
     poolingInterval,
     syncFrom,
+    proxyChain,
   }: {
     name: string
     bridgeAddress: string
@@ -30,9 +33,11 @@ export class EvmListener {
     numberOfBlocksToConfirm: number
     poolingInterval: number
     syncFrom?: number
+    proxyChain: string
   }) {
     this._name = name
     this._currentChain = ethers.utils.keccak256(this._name)
+    this._proxyChain = ethers.utils.keccak256(proxyChain)
     this._numberOfBlocksToConfirm = numberOfBlocksToConfirm
     this._poolingInterval = poolingInterval
     this._jobQueue = new Queue(this._name)
@@ -69,9 +74,8 @@ export class EvmListener {
 
   private _addTask(transfer: TransferModel) {
     let taskName = transfer.targetChain
-    if( this._name != CONFIG.proxyBridge && this._currentChain != transfer.targetChain ) {
-      taskName = ethers.utils.keccak256(CONFIG.proxyBridge)
-    }
+    if (this._currentChain != this._proxyChain && transfer.targetChain != this._proxyChain)
+      taskName = this._proxyChain
     this._jobQueue.add(taskName, transfer)
   }
 
