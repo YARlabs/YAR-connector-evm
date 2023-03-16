@@ -5,10 +5,9 @@ import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/I
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import { ERC1967ProxyCreate2 } from "./utils/ERC1967ProxyCreate2.sol";
-import { ExecutedBlocksList } from "./utils/ExecutedBlocksList.sol";
 import { IIssuedERC20 } from "./interfaces/IIssuedERC20.sol";
 
-contract BridgeERC20 is ExecutedBlocksList {
+contract BridgeERC20 {
     using SafeERC20 for IERC20Metadata;
 
     address public validator;
@@ -26,6 +25,8 @@ contract BridgeERC20 is ExecutedBlocksList {
     mapping(bytes32 => mapping(uint256 => bool)) registeredNonces;
 
     address public issuedTokenImplementation;
+
+    uint256 public initBlock;
 
     event TransferToOtherChain(
         bytes32 indexed transferId,
@@ -61,6 +62,7 @@ contract BridgeERC20 is ExecutedBlocksList {
         address _issuedTokenImplementation,
         address _validator  
     ) {
+        initBlock = block.number;
         currentChain = _currentChain;
         isProxyChain = _isProxyChain;
         issuedTokenImplementation = _issuedTokenImplementation;
@@ -124,7 +126,6 @@ contract BridgeERC20 is ExecutedBlocksList {
             token.safeTransferFrom(msg.sender, address(this), _amount);
         }
 
-        addExecutedBlock();
         emit TransferToOtherChain(
             getTransferId(_nonce, initialChain),
             _nonce,
@@ -216,7 +217,6 @@ contract BridgeERC20 is ExecutedBlocksList {
                 IIssuedERC20(issuedTokenAddress).mint(recipientAddress, _amount);
             }
 
-            addExecutedBlock();
             emit TransferToOtherChain(
                 getTransferId(_externalNonce, _initialChain),
                 _externalNonce,

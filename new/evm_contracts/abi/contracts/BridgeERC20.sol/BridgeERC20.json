@@ -186,35 +186,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_page",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_count",
-        "type": "uint256"
-      }
-    ],
-    "name": "getExecutedBlocks",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "_originalChain",
         "type": "bytes32"
@@ -258,6 +229,19 @@
       }
     ],
     "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "initBlock",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
