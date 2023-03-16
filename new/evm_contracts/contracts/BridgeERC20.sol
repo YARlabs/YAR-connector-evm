@@ -25,7 +25,7 @@ contract BridgeERC20 is ExecutedBlocksList {
 
     mapping(bytes32 => mapping(uint256 => bool)) registeredNonces;
 
-    address issuedTokenImplementation;
+    address public issuedTokenImplementation;
 
     event TransferToOtherChain(
         bytes32 indexed transferId,
@@ -54,8 +54,31 @@ contract BridgeERC20 is ExecutedBlocksList {
         bytes recipient
     );
 
+    constructor(
+        bytes32 _currentChain,
+        bool _isProxyChain,
+        bytes32[] memory _registeredChains,
+        address _issuedTokenImplementation,
+        address _validator  
+    ) {
+        currentChain = _currentChain;
+        isProxyChain = _isProxyChain;
+        issuedTokenImplementation = _issuedTokenImplementation;
+        validator = _validator;
+
+        uint256 l = _registeredChains.length;
+        for(uint256 i; i < l; i++) {
+            registeredChains[_registeredChains[i]] = true;
+        }
+    }
+
     function enforceIsValidator(address account) internal view {
         require(account == validator, "BridgeERC20: Only validator!");
+    }
+
+    function setValidator(address _newValidator) external {
+        enforceIsValidator(msg.sender);
+        validator = _newValidator;
     }
 
     function getTransferId(uint256 _nonce, bytes32 _initialChain) public pure returns (bytes32) {

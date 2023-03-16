@@ -3,45 +3,45 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "address",
-        "name": "previousOwner",
+        "name": "previousAdmin",
         "type": "address"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "address",
-        "name": "newOwner",
+        "name": "newAdmin",
         "type": "address"
       }
     ],
-    "name": "ValidatorTransferred",
+    "name": "AdminChanged",
     "type": "event"
   },
   {
+    "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
         "internalType": "address",
-        "name": "_newValidator",
+        "name": "beacon",
         "type": "address"
       }
     ],
-    "name": "setValidator",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "name": "BeaconUpgraded",
+    "type": "event"
   },
   {
-    "inputs": [],
-    "name": "validator",
-    "outputs": [
+    "anonymous": false,
+    "inputs": [
       {
+        "indexed": true,
         "internalType": "address",
-        "name": "",
+        "name": "implementation",
         "type": "address"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
+    "name": "Upgraded",
+    "type": "event"
   }
 ]
