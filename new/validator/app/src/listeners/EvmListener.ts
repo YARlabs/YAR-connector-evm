@@ -2,6 +2,7 @@ import { ethers } from 'ethers'
 import { Queue } from 'bullmq'
 import { TransferModel } from '../models/TransferModel'
 import { BridgeERC20, BridgeERC20__factory } from '../typechain-types'
+import CONFIG from '../../config.json'
 
 export class EvmListener {
   private readonly _provider: ethers.providers.JsonRpcProvider
@@ -11,6 +12,7 @@ export class EvmListener {
   private _previousBlock: number
   private readonly _jobQueue: Queue
   private readonly _name: string
+  private readonly _currentChain: string
   private readonly _limitOfBlocksForGetLogs = 1000
   private readonly _syncFrom?: number
 
@@ -30,6 +32,7 @@ export class EvmListener {
     syncFrom?: number
   }) {
     this._name = name
+    this._currentChain = ethers.utils.keccak256(this._name)
     this._numberOfBlocksToConfirm = numberOfBlocksToConfirm
     this._poolingInterval = poolingInterval
     this._jobQueue = new Queue(this._name)
@@ -57,11 +60,19 @@ export class EvmListener {
 
       this._previousBlock = confirmedBlock
 
-      const events = await this._getTransfers(startBlock, confirmedBlock)
-      for (const event of events) {
-        this._jobQueue.add(event.originalChainName, event)
+      const transfers = await this._getTransfers(startBlock, confirmedBlock)
+      for (const transfer of transfers) {
+        this._addTask(transfer)
       }
     }, this._poolingInterval)
+  }
+
+  private _addTask(transfer: TransferModel) {
+    let taskName = transfer.targetChain
+    if( this._name != CONFIG.proxyBridge && this._currentChain != transfer.targetChain ) {
+      taskName = ethers.utils.keccak256(CONFIG.proxyBridge)
+    }
+    this._jobQueue.add(taskName, transfer)
   }
 
   private async _getTransfers(startBlock: number, endBlock: number): Promise<Array<TransferModel>> {

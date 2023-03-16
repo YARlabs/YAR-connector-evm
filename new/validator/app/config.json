@@ -1,0 +1,29 @@
+{
+    "proxyBridge": "YAR",
+    "bridges": [
+        {
+            "name": "YAR",
+            "rpcUrl": "...",
+            "address": "...",
+            "privateKey": "..."
+        },
+        {
+            "name": "POLYGON",
+            "rpcUrl": "...",
+            "address": "...",
+            "privateKey": "..."
+        },
+        {
+            "name": "BINANCE",
+            "rpcUrl": "...",
+            "address": "...",
+            "privateKey": "..."
+        },
+        {
+            "name": "ETHEREUM",
+            "rpcUrl": "...",
+            "address": "...",
+            "privateKey": "..."
+        }
+    ]
+}
