@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import { Queue } from 'bullmq'
-import { TransferModel } from '../models/TransferModel'
+import { ITransferModel } from '../models/TransferModel'
 import { BridgeERC20, BridgeERC20__factory } from '../typechain-types'
 import CONFIG from '../../config.json'
 
@@ -10,7 +10,7 @@ export class EvmListener {
   private readonly _numberOfBlocksToConfirm: number
   private readonly _poolingInterval: number
   private _previousBlock: number
-  private readonly _jobQueue: Queue
+  private readonly _tasksQueue: Queue
   private readonly _name: string
   private readonly _currentChain: string
   private readonly _limitOfBlocksForGetLogs = 1000
@@ -20,6 +20,7 @@ export class EvmListener {
 
   constructor({
     name,
+    tasksQueueName,
     bridgeAddress,
     providerUrl,
     numberOfBlocksToConfirm,
@@ -28,6 +29,7 @@ export class EvmListener {
     proxyChain,
   }: {
     name: string
+    tasksQueueName: string
     bridgeAddress: string
     providerUrl: string
     numberOfBlocksToConfirm: number
@@ -40,7 +42,7 @@ export class EvmListener {
     this._proxyChain = ethers.utils.keccak256(proxyChain)
     this._numberOfBlocksToConfirm = numberOfBlocksToConfirm
     this._poolingInterval = poolingInterval
-    this._jobQueue = new Queue(this._name)
+    this._tasksQueue = new Queue(tasksQueueName)
     this._provider = new ethers.providers.JsonRpcProvider(providerUrl)
     this._bridgeERC20 = BridgeERC20__factory.connect(bridgeAddress, this._provider)
     this._syncFrom = syncFrom
@@ -52,6 +54,8 @@ export class EvmListener {
       this._previousBlock = this._syncFrom!
       const initBlock = (await this._bridgeERC20.initBlock()).toNumber()
       if (initBlock > this._previousBlock) this._previousBlock = initBlock
+    } else {
+      this._previousBlock = await this._provider.getBlockNumber()
     }
 
     setInterval(async () => {
@@ -72,20 +76,37 @@ export class EvmListener {
     }, this._poolingInterval)
   }
 
-  private _addTask(transfer: TransferModel) {
+  private _addTask(transfer: ITransferModel) {
     let taskName = transfer.targetChain
     if (this._currentChain != this._proxyChain && transfer.targetChain != this._proxyChain)
       taskName = this._proxyChain
-    this._jobQueue.add(taskName, transfer)
+    this._tasksQueue.add(taskName, transfer)
   }
 
-  private async _getTransfers(startBlock: number, endBlock: number): Promise<Array<TransferModel>> {
+  private async _getTransfers(
+    startBlock: number,
+    endBlock: number,
+  ): Promise<Array<ITransferModel>> {
     return (
       await this._bridgeERC20.queryFilter(
         this._bridgeERC20.filters.TransferToOtherChain(),
         startBlock,
         endBlock,
       )
-    ).map(event => TransferModel.fromEvent(event))
+    ).map(event => ({
+      nonce: event.args.nonce,
+      initialChain: event.args.initialChain,
+      originalChain: event.args.originalChain,
+      originalToken: event.args.originalTokenAddress,
+      targetChain: event.args.targetChain,
+      tokenAmount: event.args.tokenAmount,
+      sender: event.args.sender,
+      recipient: event.args.recipient,
+      tokenInfo: {
+        name: event.args.tokenName,
+        symbol: event.args.tokenSymbol,
+        decimals: event.args.tokenDecimals,
+      },
+    }))
   }
 }
