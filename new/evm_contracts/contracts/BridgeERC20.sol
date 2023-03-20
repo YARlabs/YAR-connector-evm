@@ -60,7 +60,7 @@ contract BridgeERC20 {
         bool _isProxyChain,
         bytes32[] memory _registeredChains,
         address _issuedTokenImplementation,
-        address _validator  
+        address _validator
     ) {
         initBlock = block.number;
         currentChain = _currentChain;
@@ -69,7 +69,7 @@ contract BridgeERC20 {
         validator = _validator;
 
         uint256 l = _registeredChains.length;
-        for(uint256 i; i < l; i++) {
+        for (uint256 i; i < l; i++) {
             registeredChains[_registeredChains[i]] = true;
         }
     }
@@ -234,14 +234,14 @@ contract BridgeERC20 {
         }
     }
 
-    function isIssuedTokenPublished(address _issuedToken) public returns (bool) {
+    function isIssuedTokenPublished(address _issuedToken) public view returns (bool) {
         return issuedTokens[_issuedToken];
     }
 
     function getIssuedTokenAddress(
         bytes32 _originalChain,
         bytes calldata _originalToken
-    ) public returns (address) {
+    ) public view returns (address) {
         bytes32 salt = keccak256(abi.encodePacked(_originalChain, _originalToken));
         return
             address(
@@ -280,5 +280,26 @@ contract BridgeERC20 {
         );
 
         return address(issuedToken);
+    }
+
+    function getTranferId(
+        uint256 _nonce,
+        bytes32 _initialChain
+    ) external pure returns (bytes32) {
+        return keccak256(abi.encodePacked(_nonce, _initialChain));
+    }
+
+    function balances(
+        bytes32 _originalChain,
+        bytes calldata _originalToken,
+        address _account
+    ) internal view returns (uint256) {
+        if(currentChain == _originalChain) 
+            return IERC20Metadata(abi.decode(_originalToken, (address))).balanceOf(_account);
+        
+        address issuedTokenAddress = getIssuedTokenAddress(_originalChain, _originalToken);
+        if(!isIssuedTokenPublished(issuedTokenAddress)) 
+            return 0;
+        return IERC20Metadata(issuedTokenAddress).balanceOf(_account);
     }
 }
