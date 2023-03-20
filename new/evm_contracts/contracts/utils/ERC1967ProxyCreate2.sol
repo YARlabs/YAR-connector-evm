@@ -3,19 +3,20 @@ pragma solidity 0.8.17;
 
 import { Proxy } from "@openzeppelin/contracts/proxy/Proxy.sol";
 import { ERC1967Upgrade } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol";
-import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 
-contract ERC1967ProxyCreate2 is Proxy, ERC1967Upgrade, Initializable {
+contract ERC1967ProxyCreate2 is Proxy, ERC1967Upgrade {
     /**
      * @dev Initializes the upgradeable proxy with an initial implementation specified by `_logic`.
      *
      * If `_data` is nonempty, it's used as data in a delegate call to `_logic`. This will typically be an encoded
      * function call, and allows initializing the storage of the proxy like a Solidity constructor.
      */
-    function initialize(
-        address _logic, bytes memory _data
-    ) external payable initializer {
-       _upgradeToAndCall(_logic, _data, false);
+    bool internal isInit;
+
+    function init(address _logic, bytes memory _data) external {
+        require(!isInit, "ERC1967ProxyCreate2: already init");
+        _upgradeToAndCall(_logic, _data, false);
+        isInit = true;
     }
 
     /**

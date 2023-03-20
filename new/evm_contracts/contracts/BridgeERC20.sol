@@ -6,6 +6,7 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 
 import { ERC1967ProxyCreate2 } from "./utils/ERC1967ProxyCreate2.sol";
 import { IIssuedERC20 } from "./interfaces/IIssuedERC20.sol";
+import "hardhat/console.sol";
 
 contract BridgeERC20 {
     using SafeERC20 for IERC20Metadata;
@@ -135,7 +136,7 @@ contract BridgeERC20 {
             _targetChain,
             _amount,
             abi.encode(msg.sender),
-            abi.encode(_recipient),
+            _recipient,
             tokenName,
             tokenSymbol,
             tokenDecimals
@@ -159,10 +160,11 @@ contract BridgeERC20 {
         bytes calldata _recipient,
         TokenInfo calldata _tokenInfo
     ) external {
+        console.log("TTTEST");
         enforceIsValidator(msg.sender);
 
         require(
-            registeredNonces[_initialChain][_externalNonce],
+            !registeredNonces[_initialChain][_externalNonce],
             "BridgeERC20: nonce already registered"
         );
 
@@ -174,10 +176,13 @@ contract BridgeERC20 {
 
         require(registeredChains[_initialChain], "BridgeERC20: Initial chain not registered");
 
-        address recipientAddress = abi.decode(_recipient, (address));
-
         if (_currentChain == _targetChain) {
+            
+        console.log("1");
             // This is TARGET chain
+
+            address recipientAddress = abi.decode(_recipient, (address));
+
             if (currentChain == _originalChain) {
                 // This is ORIGINAL chain
                 address originalTokenAddress = abi.decode(_originalToken, (address));
@@ -201,7 +206,9 @@ contract BridgeERC20 {
                 _sender,
                 _recipient
             );
+
         } else {
+        console.log("2");
             // This is PROXY chain
             require(isProxyChain, "BridgeERC20: Only proxy bridge!");
 
@@ -211,12 +218,13 @@ contract BridgeERC20 {
 
             if (_targetChain == _originalChain) {
                 // BURN PROXY ISSUED TOKENS
-                IIssuedERC20(issuedTokenAddress).burn(recipientAddress, _amount);
-            } else {
+                IIssuedERC20(issuedTokenAddress).burn(address(this), _amount);
+            } else if(_initialChain == _originalChain) {
                 // LOCK PROXY ISSUED TOKENS
-                IIssuedERC20(issuedTokenAddress).mint(recipientAddress, _amount);
+                IIssuedERC20(issuedTokenAddress).mint(address(this), _amount);
             }
 
+            bytes memory sender = _sender; // TODO: fix Error HH600
             emit TransferToOtherChain(
                 getTransferId(_externalNonce, _initialChain),
                 _externalNonce,
@@ -225,8 +233,8 @@ contract BridgeERC20 {
                 _originalToken,
                 _targetChain,
                 _amount,
-                abi.encode(msg.sender),
-                abi.encode(_recipient),
+                sender,
+                _recipient,
                 _tokenInfo.name,
                 _tokenInfo.symbol,
                 _tokenInfo.decimals
@@ -267,7 +275,7 @@ contract BridgeERC20 {
     ) internal returns (address) {
         bytes32 salt = keccak256(abi.encodePacked(_originalChain, _originalToken));
         ERC1967ProxyCreate2 issuedToken = new ERC1967ProxyCreate2{ salt: salt }();
-        issuedToken.initialize(
+        issuedToken.init(
             issuedTokenImplementation,
             abi.encodeWithSelector(
                 IIssuedERC20.initialize.selector,
@@ -279,13 +287,12 @@ contract BridgeERC20 {
             )
         );
 
-        return address(issuedToken);
+        address issuedTokenAddress = address(issuedToken);
+        issuedTokens[issuedTokenAddress] = true;
+        return issuedTokenAddress;
     }
 
-    function getTranferId(
-        uint256 _nonce,
-        bytes32 _initialChain
-    ) external pure returns (bytes32) {
+    function getTranferId(uint256 _nonce, bytes32 _initialChain) external pure returns (bytes32) {
         return keccak256(abi.encodePacked(_nonce, _initialChain));
     }
 
@@ -293,13 +300,17 @@ contract BridgeERC20 {
         bytes32 _originalChain,
         bytes calldata _originalToken,
         address _account
-    ) internal view returns (uint256) {
-        if(currentChain == _originalChain) 
+    ) external view returns (uint256) {
+        console.logBytes32(currentChain);
+        console.logBytes32(_originalChain);
+        if (currentChain == _originalChain)
             return IERC20Metadata(abi.decode(_originalToken, (address))).balanceOf(_account);
-        
+
         address issuedTokenAddress = getIssuedTokenAddress(_originalChain, _originalToken);
-        if(!isIssuedTokenPublished(issuedTokenAddress)) 
-            return 0;
+
+        console.log(issuedTokenAddress);
+        console.log(isIssuedTokenPublished(issuedTokenAddress));
+        if (!isIssuedTokenPublished(issuedTokenAddress)) return 0;
         return IERC20Metadata(issuedTokenAddress).balanceOf(_account);
     }
 }

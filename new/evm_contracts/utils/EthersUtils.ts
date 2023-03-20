@@ -8,4 +8,8 @@ export class EthersUtils {
   public static addressToBytes(address: string): string {
     return ethers.utils.defaultAbiCoder.encode(['address'], [address])
   }
+
+  public static bytesToAddress(data: ethers.utils.BytesLike): string {
+    return ethers.utils.defaultAbiCoder.decode(['address'], data)[0]
+  }
 }

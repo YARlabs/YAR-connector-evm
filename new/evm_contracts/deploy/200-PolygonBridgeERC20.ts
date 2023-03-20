@@ -33,4 +33,5 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 }
 
 deploy.tags = ['PolygonBridgeERC20']
+deploy.dependencies = ['IssuedERC20']
 export default deploy

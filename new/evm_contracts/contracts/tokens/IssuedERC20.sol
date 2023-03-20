@@ -9,6 +9,8 @@ contract IssuedERC20 is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     bytes32 public originalChain;
     bytes public originalToken;
     uint8 internal originalTokenDecimals;
+    string public originalTokenName;
+    string public originalTokenSymbol;
 
     function initialize(
         bytes32 _originalChain,
@@ -17,18 +19,21 @@ contract IssuedERC20 is Initializable, ERC20Upgradeable, OwnableUpgradeable {
         string memory _originalTokenSymbol,
         uint8 _originalTokenDecimals
     ) external initializer {
+
         ERC20Upgradeable.__ERC20_init(
             string(abi.encodePacked("YAR_", _originalTokenName)),
             string(abi.encodePacked("YAR_", _originalTokenSymbol))
         );
         OwnableUpgradeable.__Ownable_init();
+        originalTokenName = _originalTokenName;
+        originalTokenSymbol = _originalTokenSymbol;
         originalChain = _originalChain;
         originalToken = _originalToken;
         originalTokenDecimals = _originalTokenDecimals;
     }
 
     function getOriginalTokenInfo() external view returns (bytes32, bytes memory, string memory, string memory, uint8) {
-        return (originalChain, originalToken, name(), symbol(), decimals());
+        return (originalChain, originalToken, originalTokenName, originalTokenSymbol, decimals());
     }
 
     function mint(address _recipient, uint256 _amount) external onlyOwner {
