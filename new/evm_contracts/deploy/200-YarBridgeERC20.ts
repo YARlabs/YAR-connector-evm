@@ -1,5 +1,6 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
+import { EthersUtils } from '../utils/EthersUtils'
 
 const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { ethers, deployments } = hre
@@ -9,12 +10,12 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const deployer = signers[0]
   const validator = signers[1]
 
-  const currentChain = ethers.utils.keccak256('YAR')
+  const currentChain = EthersUtils.keccak256('YAR')
   const isProxyChain = true
   const registeredChains = [
-    ethers.utils.keccak256('POLYGON'),
-    ethers.utils.keccak256('BINANCE'),
-    ethers.utils.keccak256('ETHEREUM'),
+    EthersUtils.keccak256('POLYGON'),
+    EthersUtils.keccak256('BINANCE'),
+    EthersUtils.keccak256('ETHEREUM'),
   ]
   const IssuedERC20Deployment = await get('IssuedERC20')
 
