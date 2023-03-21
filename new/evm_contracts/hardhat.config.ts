@@ -49,6 +49,9 @@ const config: HardhatUserConfig = {
   mocha: {
     timeout: 100000000,
   },
+  tracer: {
+    tasks: ['node', 'deploy']
+  }
 }
 
 export default config

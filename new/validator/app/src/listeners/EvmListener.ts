@@ -3,6 +3,7 @@ import { Queue } from 'bullmq'
 import { ITransferModel } from '../models/TransferModel'
 import { BridgeERC20, BridgeERC20__factory } from '../typechain-types'
 import CONFIG from '../../config.json'
+import { EthersUtils } from '../utils/EthersUtils'
 
 export class EvmListener {
   private readonly _provider: ethers.providers.JsonRpcProvider
@@ -20,7 +21,6 @@ export class EvmListener {
 
   constructor({
     name,
-    tasksQueueName,
     bridgeAddress,
     providerUrl,
     numberOfBlocksToConfirm,
@@ -29,7 +29,6 @@ export class EvmListener {
     proxyChain,
   }: {
     name: string
-    tasksQueueName: string
     bridgeAddress: string
     providerUrl: string
     numberOfBlocksToConfirm: number
@@ -37,12 +36,20 @@ export class EvmListener {
     syncFrom?: number
     proxyChain: string
   }) {
+    console.log(syncFrom)
+    console.log(typeof syncFrom)
     this._name = name
-    this._currentChain = ethers.utils.keccak256(this._name)
-    this._proxyChain = ethers.utils.keccak256(proxyChain)
+    this._currentChain = EthersUtils.keccak256(this._name)
+    this._proxyChain = EthersUtils.keccak256(proxyChain)
     this._numberOfBlocksToConfirm = numberOfBlocksToConfirm
     this._poolingInterval = poolingInterval
-    this._tasksQueue = new Queue(tasksQueueName)
+    this._tasksQueue = new Queue('redisQueue', {
+      connection: {
+        host: 'localhost',
+        port: 6379,
+      },
+    })
+    console.log(`PROVIDERURL ${providerUrl}`)
     this._provider = new ethers.providers.JsonRpcProvider(providerUrl)
     this._bridgeERC20 = BridgeERC20__factory.connect(bridgeAddress, this._provider)
     this._syncFrom = syncFrom
@@ -65,15 +72,20 @@ export class EvmListener {
       if (confirmedBlock - startBlock > this._limitOfBlocksForGetLogs)
         confirmedBlock = startBlock + this._limitOfBlocksForGetLogs
 
-      if (startBlock < confirmedBlock) return
+        console.log(`startBlock ${startBlock}`)
+
+      if (startBlock > confirmedBlock) return
 
       this._previousBlock = confirmedBlock
 
       const transfers = await this._getTransfers(startBlock, confirmedBlock)
+      if(transfers.length) console.log(`Pooling ${transfers.length} events on blocks ${startBlock}-${confirmedBlock}`)
       for (const transfer of transfers) {
         this._addTask(transfer)
       }
     }, this._poolingInterval)
+
+    console.log()
   }
 
   private _addTask(transfer: ITransferModel) {
@@ -81,6 +93,7 @@ export class EvmListener {
     if (this._currentChain != this._proxyChain && transfer.targetChain != this._proxyChain)
       taskName = this._proxyChain
     this._tasksQueue.add(taskName, transfer)
+    console.log('_addTask')
   }
 
   private async _getTransfers(

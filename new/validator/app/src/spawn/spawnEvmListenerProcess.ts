@@ -4,7 +4,6 @@ import { CliArgsParser } from '../utils/CliArgsParser'
 async function main() {
   const {
     name,
-    tasksQueueName,
     bridgeAddress,
     providerUrl,
     numberOfBlocksToConfirm,
@@ -13,7 +12,6 @@ async function main() {
     proxyChain,
   }: {
     name: string
-    tasksQueueName: string
     bridgeAddress: string
     providerUrl: string
     numberOfBlocksToConfirm: number
@@ -24,7 +22,6 @@ async function main() {
 
   const evmListener = new EvmListener({
     name,
-    tasksQueueName,
     bridgeAddress,
     providerUrl,
     numberOfBlocksToConfirm,

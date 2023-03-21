@@ -1,30 +1,29 @@
 {
     "proxyBridge": "YAR",
-    "tasksQueueName": "YAR",
     "bridges": [
         {
             "name": "YAR",
-            "rpcUrl": "...",
-            "address": "...",
-            "privateKey": "..."
+            "rpcUrl": "http://host.docker.internal:8545/",
+            "address": "0x398E4948e373Db819606A459456176D31C3B1F91",
+            "privateKey": "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
         },
         {
             "name": "POLYGON",
-            "rpcUrl": "...",
-            "address": "...",
-            "privateKey": "..."
+            "rpcUrl": "http://host.docker.internal:8545/",
+            "address": "0xFCFE742e19790Dd67a627875ef8b45F17DB1DaC6",
+            "privateKey": "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
         },
         {
             "name": "BINANCE",
-            "rpcUrl": "...",
-            "address": "...",
-            "privateKey": "..."
+            "rpcUrl": "http://host.docker.internal:8545/",
+            "address": "0x1D3EDBa836caB11C26A186873abf0fFeB8bbaE63",
+            "privateKey": "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
         },
         {
             "name": "ETHEREUM",
-            "rpcUrl": "...",
-            "address": "...",
-            "privateKey": "..."
+            "rpcUrl": "http://host.docker.internal:8545/",
+            "address": "0x9C85258d9A00C01d00ded98065ea3840dF06f09c",
+            "privateKey": "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
         }
     ]
 }

@@ -3,7 +3,8 @@ export class CliArgsParser {
     var args = process.argv.slice(2)
     const result = {} as T
     for (const arg of args) {
-      const [name, value] = arg.split('=')
+      let [name, value] = arg.split('=')
+      if(value == 'undefined') value = undefined
       result[name!] = value
     }
     return result

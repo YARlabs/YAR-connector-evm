@@ -4,12 +4,14 @@ export class RenewableProcess {
   private _currentProcess?: ChildProcessWithoutNullStreams
   private _isShutdown: boolean
   private _cmd: string
+  private _timeout: number
   public readonly name: string
 
-  constructor({ name, cmd }: { name: string; cmd: string }) {
+  constructor({ name, timeout = 0, cmd }: { name: string; timeout?: number; cmd: string }) {
     this.name = name
     this._isShutdown = false
     this._cmd = cmd
+    this._timeout = timeout
 
     this._runNewProcess()
   }
@@ -30,7 +32,9 @@ export class RenewableProcess {
     this._currentProcess!.on('close', code => {
       console.log(`${this.name} child process exited with code ${code}`)
       if (!this._isShutdown) {
-        this._runNewProcess()
+        setTimeout(() => {
+          this._runNewProcess()
+        }, this._timeout)
       }
     })
   }
