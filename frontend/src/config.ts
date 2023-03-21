@@ -5,7 +5,7 @@ export const config = {
       accounts: [process.env.GOERLI_PRIV_KEY],
     },
     mumbai: {
-      url: "https://matic-mumbai.chainstacklabs.com",
+      url: "https://polygon-mumbai.g.alchemy.com/v2/EUUYrmuHGhuCzkc4ZAbEeNN9XsEj5s6Z",
       accounts: [process.env.MUMBAI_PRIV_KEY],
     },
     bsctestnet: {
