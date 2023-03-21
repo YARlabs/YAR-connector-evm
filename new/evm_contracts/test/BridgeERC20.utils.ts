@@ -3,35 +3,8 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers'
 import { assert, expect } from 'chai'
 import { ContractReceiptUtils } from '../utils/ContractReceiptUtils'
 import { BigNumber } from 'ethers'
-import { ethers } from 'hardhat'
 import { EthersUtils } from '../utils/EthersUtils'
-
-export interface IEventTranferToOtherChainERC20 {
-  nonce: BigNumber
-  originalChainName: string
-  originalTokenAddress: string
-  initialChainName: string
-  targetChainName: string
-  tokenAmount: BigNumber
-  sender: string
-  recipient: string
-}
-
-export interface IParsedEventTranferToOtherChainERC20 {
-  nonce: BigNumber
-  originalChainName: string
-  originalTokenAddress: string
-  initialChainName: string
-  targetChainName: string
-  tokenAmount: BigNumber
-  sender: string
-  recipient: string
-  tokenCreateInfo: {
-    name: string
-    symbol: string
-    decimals: number
-  }
-}
+import { TransferToOtherChainEventObject } from '../typechain-types/contracts/BridgeERC20'
 
 export async function tranferToOtherChainERC20({
   logId,
@@ -53,7 +26,7 @@ export async function tranferToOtherChainERC20({
   targetChain: BridgeERC20
   sender: SignerWithAddress
   recipient: SignerWithAddress
-}): Promise<IEventTranferToOtherChainERC20> {
+}): Promise<TransferToOtherChainEventObject> {
   // Token
   const transferedToken = IERC20Metadata__factory.connect(transferedTokenAddress, sender)
 
@@ -73,10 +46,10 @@ export async function tranferToOtherChainERC20({
   await expect(txStep1).to.emit(initialChain, 'TransferToOtherChain').withArgs(
     transferId, // transferId
     nonce, // nonce
-    await initialChain.currentChain(), // initialChainName
-    await originalChain.currentChain(), // originalChainName
+    await initialChain.currentChain(), // initialChain
+    await originalChain.currentChain(), // originalChain
     EthersUtils.addressToBytes(originalTokenAddress), // originalTokenAddress
-    await targetChain.currentChain(), // targetChainName
+    await targetChain.currentChain(), // targetChain
     amount, // tokenAmount
     EthersUtils.addressToBytes(sender.address), // sender
     EthersUtils.addressToBytes(recipient.address), // recipient
@@ -99,184 +72,138 @@ export async function tranferToOtherChainERC20({
     initialChain,
     initialChain.filters.TransferToOtherChain(),
   )
-
-  return {
-    nonce: eventStep1.args.nonce,
-    originalChainName: eventStep1.args.originalChain,
-    originalTokenAddress: eventStep1.args.originalTokenAddress,
-    initialChainName: eventStep1.args.initialChain,
-    targetChainName: eventStep1.args.targetChain,
-    tokenAmount: eventStep1.args.tokenAmount,
-    sender: eventStep1.args.sender,
-    recipient: eventStep1.args.recipient,
-  }
-}
-
-export async function parseBridgeTransferEvent({
-  callSigner,
-  event,
-  hasTokenCreateInfo = false,
-}: {
-  callSigner: SignerWithAddress
-  event: IEventTranferToOtherChainERC20
-  hasTokenCreateInfo?: boolean
-}): Promise<IParsedEventTranferToOtherChainERC20> {
-  const originalToken = IERC20Metadata__factory.connect(EthersUtils.bytesToAddress(event.originalTokenAddress), callSigner)
-  return {
-    nonce: event.nonce,
-    originalChainName: event.originalChainName,
-    originalTokenAddress: event.originalTokenAddress,
-    initialChainName: event.initialChainName,
-    targetChainName: event.targetChainName,
-    tokenAmount: event.tokenAmount,
-    sender: event.sender,
-    recipient: event.recipient,
-    tokenCreateInfo: {
-      name: await originalToken.name(),
-      symbol: await originalToken.symbol() ,
-      decimals: await originalToken.decimals(),
-    },
-  }
+  return eventStep1.args
 }
 
 export async function tranferFromOtherChainERC20({
   logId,
-  parsedEvent,
+  event,
   targetChain,
   validator,
 }: {
   logId: string
-  parsedEvent: IParsedEventTranferToOtherChainERC20
+  event: TransferToOtherChainEventObject
   targetChain: BridgeERC20
   validator: SignerWithAddress
 }): Promise<string> {
-  console.log(`aw1`)
   // Recipent balance
   const recipientBalanceBefore = await targetChain.balances(
-    parsedEvent.originalChainName,
-    parsedEvent.originalTokenAddress,
-    EthersUtils.bytesToAddress(parsedEvent.recipient),
+    event.originalChain,
+    event.originalTokenAddress,
+    EthersUtils.bytesToAddress(event.recipient),
   )
 
-  console.log(`aw12`)
   // Validator from SECONDARY to YAR(ORIGINAL)
   const tx = await targetChain.connect(validator).tranferFromOtherChain(
-    parsedEvent.nonce, // externalNonce
-    parsedEvent.originalChainName, // originalChainName,
-    parsedEvent.originalTokenAddress, // originalTokenAddress
-    parsedEvent.initialChainName, // initialChainName
-    parsedEvent.targetChainName, // targetChainName
-    parsedEvent.tokenAmount, // amount,
-    parsedEvent.sender, // sender
-    parsedEvent.recipient, // recipient
-    parsedEvent.tokenCreateInfo, // tokenCreateInfo
+    event.nonce, // externalNonce
+    event.originalChain, // originalChain,
+    event.originalTokenAddress, // originalTokenAddress
+    event.initialChain, // initialChain
+    event.targetChain, // targetChain
+    event.tokenAmount, // amount,
+    event.sender, // sender
+    event.recipient, // recipient
+    {
+      name: event.tokenName,
+      symbol: event.tokenSymbol,
+      decimals: event.tokenDecimals,
+    }, // tokenCreateInfo
   )
 
-  console.log(`aw13 ${parsedEvent.originalTokenAddress}`)
   // Assert balance
   const recipientBalanceAfter = await targetChain.balances(
-    parsedEvent.originalChainName,
-    parsedEvent.originalTokenAddress,
-    EthersUtils.bytesToAddress(parsedEvent.recipient),
+    event.originalChain,
+    event.originalTokenAddress,
+    EthersUtils.bytesToAddress(event.recipient),
   )
   const balancesDiff = recipientBalanceAfter.sub(recipientBalanceBefore)
   assert(
-    balancesDiff.eq(parsedEvent.tokenAmount) || balancesDiff.add(1).eq(parsedEvent.tokenAmount), // or add 1 - some tokens less 1 wei
-    `${logId} | Tokens not transfered, balancesDiff != tokenAmount. ${balancesDiff} != ${parsedEvent.tokenAmount}`,
+    balancesDiff.eq(event.tokenAmount) || balancesDiff.add(1).eq(event.tokenAmount), // or add 1 - some tokens less 1 wei
+    `${logId} | Tokens not transfered, balancesDiff != tokenAmount. ${balancesDiff} != ${event.tokenAmount}`,
   )
 
-  console.log(`aw14`)
   const issuedTokenAddress = await targetChain.getIssuedTokenAddress(
-    parsedEvent.originalChainName,
-    parsedEvent.originalTokenAddress,
+    event.originalChain,
+    event.originalTokenAddress,
   )
 
-  console.log(`aw15`)
   return issuedTokenAddress
 }
 
 export async function proxyTranferFromOtherChainERC20({
   logId,
-  parsedEvent,
+  event,
   yarChain,
   targetChain,
-  yarValidator,
-  targetValidator,
+  validator,
 }: {
   logId: string
-  parsedEvent: IParsedEventTranferToOtherChainERC20
+  event: TransferToOtherChainEventObject
   yarChain: BridgeERC20
   targetChain: BridgeERC20
-  yarValidator: SignerWithAddress
-  targetValidator: SignerWithAddress
+  validator: SignerWithAddress
 }): Promise<string> {
-  console.log(`aw1`)
   // Bridge balance
   let bridgeBalanceBeforeStep1 = await yarChain.balances(
-    parsedEvent.originalChainName,
-    parsedEvent.originalTokenAddress,
+    event.originalChain,
+    event.originalTokenAddress,
     yarChain.address,
   )
 
-  console.log(`aw12`)
   // Validator from INITIAL to YAR
-  const txStep1 = await yarChain.connect(yarValidator).tranferFromOtherChain(
-    parsedEvent.nonce, // externalNonce
-    parsedEvent.originalChainName, // originalChainName,
-    parsedEvent.originalTokenAddress, // originalTokenAddress
-    parsedEvent.initialChainName, // initialChainName
-    parsedEvent.targetChainName, // targetChainName
-    parsedEvent.tokenAmount, // amount,
-    parsedEvent.sender, // sender
-    parsedEvent.recipient, // recipient
-    parsedEvent.tokenCreateInfo, // tokenCreateInfo
+  const txStep1 = await yarChain.connect(validator).tranferFromOtherChain(
+    event.nonce, // externalNonce
+    event.originalChain, // originalChain,
+    event.originalTokenAddress, // originalTokenAddress
+    event.initialChain, // initialChain
+    event.targetChain, // targetChain
+    event.tokenAmount, // amount,
+    event.sender, // sender
+    event.recipient, // recipient
+    {
+      name: event.tokenName,
+      symbol: event.tokenSymbol,
+      decimals: event.tokenDecimals,
+    }, // tokenCreateInfo
   )
 
-  console.log(`aw13`)
   // Expect event
   console.log(`${logId}`)
-  const originalToken = IERC20Metadata__factory.connect(EthersUtils.bytesToAddress(parsedEvent.originalTokenAddress), yarValidator)
-  const transferId = await yarChain.getTranferId(parsedEvent.nonce, parsedEvent.initialChainName)
+  const originalToken = IERC20Metadata__factory.connect(EthersUtils.bytesToAddress(event.originalTokenAddress), validator)
+  const transferId = await yarChain.getTranferId(event.nonce, event.initialChain)
   await expect(txStep1).to.emit(yarChain, 'TransferToOtherChain').withArgs(
     transferId, // transferId
-    parsedEvent.nonce, // nonce
-    parsedEvent.initialChainName, // initialChainName
-    parsedEvent.originalChainName, // originalChainName
-    parsedEvent.originalTokenAddress, // originalTokenAddress
-    await targetChain.currentChain(), // targetChainName
-    parsedEvent.tokenAmount, // tokenAmount
-    parsedEvent.sender, // sender
-    parsedEvent.recipient, // recipient
+    event.nonce, // nonce
+    event.initialChain, // initialChain
+    event.originalChain, // originalChain
+    event.originalTokenAddress, // originalTokenAddress
+    await targetChain.currentChain(), // targetChain
+    event.tokenAmount, // tokenAmount
+    event.sender, // sender
+    event.recipient, // recipient
     await originalToken.name(),
     await originalToken.symbol(),
     await originalToken.decimals(),
   )
 
-  console.log(`aw14`)
   // Assert blances
   let bridgeBalanceAfterStep1 = await yarChain.balances(
-    parsedEvent.originalChainName,
-    parsedEvent.originalTokenAddress,
+    event.originalChain,
+    event.originalTokenAddress,
     yarChain.address,
   )
-  const issuedToken = IERC20Metadata__factory.connect(await yarChain.getIssuedTokenAddress(parsedEvent.originalChainName,
-    parsedEvent.originalTokenAddress), yarValidator)
-  console.log(`bridgeBalanceAfterStep1 ${bridgeBalanceAfterStep1}`)
-  console.log(`yarChain.address ${await issuedToken.balanceOf(yarChain.address)}`)
-  console.log(`yarChain.sender ${await issuedToken.balanceOf(EthersUtils.bytesToAddress(parsedEvent.sender))}`)
-  console.log(`yarChain.recipient ${await issuedToken.balanceOf(EthersUtils.bytesToAddress(parsedEvent.recipient))}`)
-  console.log(`aw15`)
-  if ((await targetChain.currentChain()) == parsedEvent.originalChainName) {
+  
+  if ((await targetChain.currentChain()) == event.originalChain) {
     // BURN. transfer to ORIGINAL chain
     assert(
-      bridgeBalanceBeforeStep1.sub(parsedEvent.tokenAmount).eq(bridgeBalanceAfterStep1),
-      `${logId} | Tokens not burned, bridgeBalanceBeforeStep1 - tokenAmount != bridgeBalanceAfterStep1. ${bridgeBalanceBeforeStep1} - ${parsedEvent.tokenAmount} != ${bridgeBalanceAfterStep1}`,
+      bridgeBalanceBeforeStep1.sub(event.tokenAmount).eq(bridgeBalanceAfterStep1),
+      `${logId} | Tokens not burned, bridgeBalanceBeforeStep1 - tokenAmount != bridgeBalanceAfterStep1. ${bridgeBalanceBeforeStep1} - ${event.tokenAmount} != ${bridgeBalanceAfterStep1}`,
     )
-  } else if (parsedEvent.initialChainName == parsedEvent.originalChainName) {
+  } else if (event.initialChain == event.originalChain) {
     // LOCK. transfer to SECONDARY chain
     assert(
-      bridgeBalanceBeforeStep1.add(parsedEvent.tokenAmount).eq(bridgeBalanceAfterStep1),
-      `${logId} | Tokens not locked, bridgeBalanceBeforeStep1 + tokenAmount != bridgeBalanceAfterStep1. ${bridgeBalanceBeforeStep1} + ${parsedEvent.tokenAmount} != ${bridgeBalanceAfterStep1}`,
+      bridgeBalanceBeforeStep1.add(event.tokenAmount).eq(bridgeBalanceAfterStep1),
+      `${logId} | Tokens not locked, bridgeBalanceBeforeStep1 + tokenAmount != bridgeBalanceAfterStep1. ${bridgeBalanceBeforeStep1} + ${event.tokenAmount} != ${bridgeBalanceAfterStep1}`,
     )
   } else {
     // Nothing
@@ -286,48 +213,47 @@ export async function proxyTranferFromOtherChainERC20({
     )
   }
 
-  console.log(`aw16`)
   // Bridge balance
   let recipientBalanceBeforeStep2 = await targetChain.balances(
-    parsedEvent.originalChainName,
-    parsedEvent.originalTokenAddress,
-    EthersUtils.bytesToAddress(parsedEvent.recipient),
+    event.originalChain,
+    event.originalTokenAddress,
+    EthersUtils.bytesToAddress(event.recipient),
   )
 
-  console.log(`aw17`)
   // Validator from YAR to TARGET
-  const txStep2 = await targetChain.connect(targetValidator).tranferFromOtherChain(
-    parsedEvent.nonce, // externalNonce
-    parsedEvent.originalChainName, // originalChainName,
-    parsedEvent.originalTokenAddress, // originalTokenAddress
-    parsedEvent.initialChainName, // initialChainName
-    parsedEvent.targetChainName, // targetChainName
-    parsedEvent.tokenAmount, // amount,
-    parsedEvent.sender, // sender
-    parsedEvent.recipient, // recipient
-    parsedEvent.tokenCreateInfo, // tokenCreateInfo
+  const txStep2 = await targetChain.connect(validator).tranferFromOtherChain(
+    event.nonce, // externalNonce
+    event.originalChain, // originalChain,
+    event.originalTokenAddress, // originalTokenAddress
+    event.initialChain, // initialChain
+    event.targetChain, // targetChain
+    event.tokenAmount, // amount,
+    event.sender, // sender
+    event.recipient, // recipient
+    {
+      name: event.tokenName,
+      symbol: event.tokenSymbol,
+      decimals: event.tokenDecimals,
+    }, // tokenCreateInfo
   )
 
-  console.log(`aw18`)
   // Assert blances
   let recipientBalanceAfterStep2 = await targetChain.balances(
-    parsedEvent.originalChainName,
-    parsedEvent.originalTokenAddress,
-    EthersUtils.bytesToAddress(parsedEvent.recipient),
+    event.originalChain,
+    event.originalTokenAddress,
+    EthersUtils.bytesToAddress(event.recipient),
   )
   const recipeintBalancesDiffStep2 = recipientBalanceAfterStep2.sub(recipientBalanceBeforeStep2)
   assert(
-    recipeintBalancesDiffStep2.eq(parsedEvent.tokenAmount) ||
-      recipeintBalancesDiffStep2.add(1).eq(parsedEvent.tokenAmount), // or add 1 - some tokens less 1 wei
-    `${logId} | Tokens not transfered, recipeintBalancesDiffStep2 != tokenAmount. ${recipeintBalancesDiffStep2} != ${parsedEvent.tokenAmount}`,
+    recipeintBalancesDiffStep2.eq(event.tokenAmount) ||
+      recipeintBalancesDiffStep2.add(1).eq(event.tokenAmount), // or add 1 - some tokens less 1 wei
+    `${logId} | Tokens not transfered, recipeintBalancesDiffStep2 != tokenAmount. ${recipeintBalancesDiffStep2} != ${event.tokenAmount}`,
   )
 
-  console.log(`aw19`)
   const issuedTokenAddress = await targetChain.getIssuedTokenAddress(
-    parsedEvent.originalChainName,
-    parsedEvent.originalTokenAddress,
+    event.originalChain,
+    event.originalTokenAddress,
   )
 
-  console.log(`aw110`)
   return issuedTokenAddress
 }

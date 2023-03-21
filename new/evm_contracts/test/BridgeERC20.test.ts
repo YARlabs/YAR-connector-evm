@@ -19,7 +19,6 @@ import {
 } from '../constants/externalAddresses'
 import ERC20MinterV2 from './utils/ERC20MinterV2'
 import {
-  parseBridgeTransferEvent,
   proxyTranferFromOtherChainERC20,
   tranferFromOtherChainERC20,
   tranferToOtherChainERC20,
@@ -33,39 +32,39 @@ const testCases: Array<ITestCase> = [
   {
     token: USDT,
   },
-  // {
-  //   token: DAI,
-  // },
-  // {
-  //   token: USDC,
-  // },
-  // {
-  //   token: CRV3,
-  // },
-  // {
-  //   token: FRAX,
-  // },
-  // {
-  //   token: HBTC,
-  // },
-  // {
-  //   token: MIM,
-  // },
-  // {
-  //   token: RENBTC,
-  // },
-  // {
-  //   token: ALETH,
-  // },
-  // {
-  //   token: STETH,
-  // },
-  // {
-  //   token: LUSD,
-  // },
-  // {
-  //   token: SBTC,
-  // },
+  {
+    token: DAI,
+  },
+  {
+    token: USDC,
+  },
+  {
+    token: CRV3,
+  },
+  {
+    token: FRAX,
+  },
+  {
+    token: HBTC,
+  },
+  {
+    token: MIM,
+  },
+  {
+    token: RENBTC,
+  },
+  {
+    token: ALETH,
+  },
+  {
+    token: STETH,
+  },
+  {
+    token: LUSD,
+  },
+  {
+    token: SBTC,
+  },
 ]
 
 describe('BridgeERC20 Unit test', () => {
@@ -147,17 +146,10 @@ function test(testCase: ITestCase) {
         recipient: user2,
       })
 
-      // Get event data
-      const parsedEventStep1 = await parseBridgeTransferEvent({
-        callSigner: user1,
-        event: eventStep1,
-        hasTokenCreateInfo: true,
-      })
-
       // VALIDATOR ORIGINAL -> YAR
       const yarIssuedTokenAddress = await tranferFromOtherChainERC20({
         logId: 'logId-200',
-        parsedEvent: parsedEventStep1,
+        event: eventStep1,
         targetChain: yarBridge,
         validator: validator,
       })
@@ -177,17 +169,10 @@ function test(testCase: ITestCase) {
         recipient: user1,
       })
 
-      // Get event data
-      const parsedEventStep2 = await parseBridgeTransferEvent({
-        callSigner: user1,
-        event: eventStep2,
-        hasTokenCreateInfo: false,
-      })
-
       // VALIDATOR YAR -> ORIGINAL
       await tranferFromOtherChainERC20({
         logId: 'logId-400',
-        parsedEvent: parsedEventStep2,
+        event: eventStep2,
         targetChain: originalBridge,
         validator: validator,
       })
@@ -222,17 +207,10 @@ function test(testCase: ITestCase) {
         recipient: user2,
       })
 
-      // Get event data
-      const parsedEventStep1 = await parseBridgeTransferEvent({
-        callSigner: user1,
-        event: eventStep1,
-        hasTokenCreateInfo: true,
-      })
-
       // VALIDATOR ORIGINAL -> YAR
       const yarIssuedTokenAddress = await tranferFromOtherChainERC20({
         logId: 'logId-600',
-        parsedEvent: parsedEventStep1,
+        event: eventStep1,
         targetChain: yarBridge,
         validator: validator,
       })
@@ -252,17 +230,10 @@ function test(testCase: ITestCase) {
         recipient: user1,
       })
 
-      // Get event data
-      const parsedEventStep2 = await parseBridgeTransferEvent({
-        callSigner: user1,
-        event: eventStep2,
-        hasTokenCreateInfo: true,
-      })
-
       // VALIDATOR YAR -> SECONDARY
       const secondaryIssuedTokenAddress = await tranferFromOtherChainERC20({
         logId: 'logId-800',
-        parsedEvent: parsedEventStep2,
+        event: eventStep2,
         targetChain: secondaryBridge,
         validator: validator,
       })
@@ -282,18 +253,11 @@ function test(testCase: ITestCase) {
         recipient: user2,
       })
 
-      // Get event data
-      const parsedEventStep3 = await parseBridgeTransferEvent({
-        callSigner: user1,
-        event: eventStep3,
-        hasTokenCreateInfo: false,
-      })
-
       // VALIDATOR SECONDARY -> YAR
       // const yarIssuedTokenAddress =
       await tranferFromOtherChainERC20({
         logId: 'logId-1000',
-        parsedEvent: parsedEventStep3,
+        event: eventStep3,
         targetChain: yarBridge,
         validator: validator,
       })
@@ -325,21 +289,13 @@ function test(testCase: ITestCase) {
         recipient: user2,
       })
 
-      // Get event data
-      const parsedEventStep1 = await parseBridgeTransferEvent({
-        callSigner: user1,
-        event: eventStep1,
-        hasTokenCreateInfo: true,
-      })
-
       // VALIDATOR ORIGINAL --PROXY--> SECONDARY
       const secondaryIssuedTokenAddress = await proxyTranferFromOtherChainERC20({
         logId: 'logId-1200',
-        parsedEvent: parsedEventStep1,
+        event: eventStep1,
         yarChain: yarBridge,
         targetChain: secondaryBridge,
-        yarValidator: validator,
-        targetValidator: validator,
+        validator,
       })
 
       // *** REVERSE
@@ -357,21 +313,13 @@ function test(testCase: ITestCase) {
         recipient: user1,
       })
 
-      // Get event data
-      const parsedEventStep2 = await parseBridgeTransferEvent({
-        callSigner: user1,
-        event: eventStep2,
-        hasTokenCreateInfo: false,
-      })
-
       // VALIDATOR SECONDARY --PROXY--> ORIGINAL
       await proxyTranferFromOtherChainERC20({
         logId: 'logId-1400',
-        parsedEvent: parsedEventStep2,
+        event: eventStep2,
         yarChain: yarBridge,
         targetChain: originalBridge,
-        yarValidator: validator,
-        targetValidator: validator,
+        validator,
       })
     })
 
@@ -404,21 +352,13 @@ function test(testCase: ITestCase) {
         recipient: user2,
       })
 
-      // Get event data
-      const parsedEventStep1 = await parseBridgeTransferEvent({
-        callSigner: user1,
-        event: eventStep1,
-        hasTokenCreateInfo: true,
-      })
-
       // VALIDATOR ORIGINAL --PROXY--> SECONDARY
       const secondaryIssuedTokenAddress = await proxyTranferFromOtherChainERC20({
         logId: 'logId-1600',
-        parsedEvent: parsedEventStep1,
+        event: eventStep1,
         yarChain: yarBridge,
         targetChain: secondaryBridge,
-        yarValidator: validator,
-        targetValidator: validator,
+        validator,
       })
 
       // *** Then test
@@ -436,21 +376,13 @@ function test(testCase: ITestCase) {
         recipient: user1,
       })
 
-      // Get event data
-      const parsedEventStep2 = await parseBridgeTransferEvent({
-        callSigner: user1,
-        event: eventStep2,
-        hasTokenCreateInfo: true,
-      })
-
       // VALIDATOR SECONDARY --PROXY--> THIRD
       const thirdIssuedTokenAddress = await proxyTranferFromOtherChainERC20({
         logId: 'logId-1800',
-        parsedEvent: parsedEventStep2,
+        event: eventStep2,
         yarChain: yarBridge,
         targetChain: thirdBridge,
-        yarValidator: validator,
-        targetValidator: validator,
+        validator,
       })
 
       // *** REVERSE
@@ -468,21 +400,13 @@ function test(testCase: ITestCase) {
         recipient: user2,
       })
 
-      // Get event data
-      const parsedEventStep3 = await parseBridgeTransferEvent({
-        callSigner: user1,
-        event: eventStep3,
-        hasTokenCreateInfo: false,
-      })
-
       // VALIDATOR THIRD --PROXY--> SECONDARY
       await proxyTranferFromOtherChainERC20({
         logId: 'logId-2000',
-        parsedEvent: parsedEventStep3,
+        event: eventStep3,
         yarChain: yarBridge,
         targetChain: secondaryBridge,
-        yarValidator: validator,
-        targetValidator: validator,
+        validator,
       })
     })
 
@@ -513,17 +437,10 @@ function test(testCase: ITestCase) {
         recipient: user2,
       })
 
-      // Get event data
-      const parsedEventStep1 = await parseBridgeTransferEvent({
-        callSigner: user1,
-        event: eventStep1,
-        hasTokenCreateInfo: true,
-      })
-
       // VALIDATOR YAR(Original) --PROXY--> SECONDARY
       const secondaryIssuedTokenAddress = await tranferFromOtherChainERC20({
         logId: 'logId-2200',
-        parsedEvent: parsedEventStep1,
+        event: eventStep1,
         targetChain: secondaryBridge,
         validator: validator,
       })
@@ -543,17 +460,10 @@ function test(testCase: ITestCase) {
         recipient: user1,
       })
 
-      // Get event data
-      const parsedEventStep2 = await parseBridgeTransferEvent({
-        callSigner: user1,
-        event: eventStep2,
-        hasTokenCreateInfo: false,
-      })
-
       // VALIDATOR SECONDARY ---> YAR(Original)
       await tranferFromOtherChainERC20({
         logId: 'logId-2400',
-        parsedEvent: parsedEventStep2,
+        event: eventStep2,
         targetChain: originalBridge,
         validator: validator,
       })

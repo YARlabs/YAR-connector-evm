@@ -6,8 +6,6 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 
 import { ERC1967ProxyCreate2 } from "./utils/ERC1967ProxyCreate2.sol";
 import { IIssuedERC20 } from "./interfaces/IIssuedERC20.sol";
-import "hardhat/console.sol";
-
 contract BridgeERC20 {
     using SafeERC20 for IERC20Metadata;
 
@@ -160,7 +158,6 @@ contract BridgeERC20 {
         bytes calldata _recipient,
         TokenInfo calldata _tokenInfo
     ) external {
-        console.log("TTTEST");
         enforceIsValidator(msg.sender);
 
         require(
@@ -177,10 +174,7 @@ contract BridgeERC20 {
         require(registeredChains[_initialChain], "BridgeERC20: Initial chain not registered");
 
         if (_currentChain == _targetChain) {
-            
-        console.log("1");
             // This is TARGET chain
-
             address recipientAddress = abi.decode(_recipient, (address));
 
             if (currentChain == _originalChain) {
@@ -208,7 +202,6 @@ contract BridgeERC20 {
             );
 
         } else {
-        console.log("2");
             // This is PROXY chain
             require(isProxyChain, "BridgeERC20: Only proxy bridge!");
 
@@ -301,15 +294,11 @@ contract BridgeERC20 {
         bytes calldata _originalToken,
         address _account
     ) external view returns (uint256) {
-        console.logBytes32(currentChain);
-        console.logBytes32(_originalChain);
         if (currentChain == _originalChain)
             return IERC20Metadata(abi.decode(_originalToken, (address))).balanceOf(_account);
 
         address issuedTokenAddress = getIssuedTokenAddress(_originalChain, _originalToken);
 
-        console.log(issuedTokenAddress);
-        console.log(isIssuedTokenPublished(issuedTokenAddress));
         if (!isIssuedTokenPublished(issuedTokenAddress)) return 0;
         return IERC20Metadata(issuedTokenAddress).balanceOf(_account);
     }
