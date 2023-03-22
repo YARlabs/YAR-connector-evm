@@ -32,10 +32,14 @@ export default class ERC20MinterV2 {
         console.log(`maxAmountFormated ${maxAmountFormated}`)
         console.log(`holderBalance ${holderBalance}`)
 
+        if(holderBalance.eq(0)) continue
+
         if (holderBalance.gte(amount)) {
           await (await token.transfer(recipient, amount)).wait()
-          break
+        } else {
+          await (await token.transfer(recipient, holderBalance)).wait()
         }
+        break
       }
     }
   }
