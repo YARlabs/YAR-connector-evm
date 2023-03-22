@@ -27,19 +27,17 @@ export class EvmExecutor {
     console.log(`PROVIDERURL ${providerUrl}`)
     this._provider = new ethers.providers.JsonRpcProvider(providerUrl)
     this._wallet = new ethers.Wallet(privateKey, this._provider)
-    this._bridgeERC20 = BridgeERC20__factory.connect(bridgeAddress, this._provider)
+    this._bridgeERC20 = BridgeERC20__factory.connect(bridgeAddress, this._wallet)
   }
 
   public init() {
     const worker = new Worker(
-      'redisQueue',
+      this._currentChain,
       async job => {
-        if (job.name == this._currentChain) {
-          console.log(`NEW JOB ${job.data}`)
-          const transfer = job.data as ITransferModel
-          await this._tarsferFromOtherChain(transfer)
-          await job.remove()
-        }
+        console.log(`NEW JOB ${job.data}`)
+        const transfer = job.data as ITransferModel
+        await this._tarsferFromOtherChain(transfer)
+        await job.remove()
       },
       {
         connection: {

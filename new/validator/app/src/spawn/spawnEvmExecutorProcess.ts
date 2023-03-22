@@ -6,16 +6,19 @@ async function main() {
     name,
     bridgeAddress,
     providerUrl,
+    privateKey,
   }: {
     name: string
     bridgeAddress: string
     providerUrl: string
+    privateKey: string
   } = CliArgsParser.parse(process.argv)
 
   const evmExecutor = new EvmExecutor({
     name,
     bridgeAddress,
     providerUrl,
+    privateKey,
   })
   evmExecutor.init()
 }

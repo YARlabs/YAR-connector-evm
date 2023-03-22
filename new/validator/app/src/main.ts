@@ -1,7 +1,15 @@
 import { RenewableProcess } from './utils/RenewableProcess'
 import CONFIG from '../config.json'
+import { EthersUtils } from './utils/EthersUtils'
 
 async function main() {
+  new RenewableProcess({
+    name: `QueueRouter`,
+    cmd: `npx ts-node ./src/spawn/spawnQueueRouterProcess.ts \
+    chains=[${CONFIG.bridges.map(bridge => EthersUtils.keccak256(bridge.name)).join(',')}]
+    `,
+  })
+  
   for (const bridgeConfig of CONFIG.bridges) {
     new RenewableProcess({
       name: `${bridgeConfig.name} EvmListener`,
@@ -22,6 +30,7 @@ async function main() {
       name=${bridgeConfig.name} \
       bridgeAddress=${bridgeConfig.address} \
       providerUrl=${bridgeConfig.rpcUrl} \
+      privateKey=${bridgeConfig.privateKey} \
       `,
     })
   }

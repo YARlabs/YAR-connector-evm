@@ -6,6 +6,7 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 
 import { ERC1967ProxyCreate2 } from "./utils/ERC1967ProxyCreate2.sol";
 import { IIssuedERC20 } from "./interfaces/IIssuedERC20.sol";
+
 contract BridgeERC20 {
     using SafeERC20 for IERC20Metadata;
 

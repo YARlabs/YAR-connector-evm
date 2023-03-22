@@ -43,7 +43,7 @@ export class EvmListener {
     this._proxyChain = EthersUtils.keccak256(proxyChain)
     this._numberOfBlocksToConfirm = numberOfBlocksToConfirm
     this._poolingInterval = poolingInterval
-    this._tasksQueue = new Queue('redisQueue', {
+    this._tasksQueue = new Queue('QueueRouter', {
       connection: {
         host: 'localhost',
         port: 6379,
