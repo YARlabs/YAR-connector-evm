@@ -22,7 +22,7 @@ contract BridgeERC20 {
 
     mapping(address => bool) public issuedTokens;
 
-    mapping(bytes32 => mapping(uint256 => bool)) registeredNonces;
+    mapping(bytes32 => mapping(uint256 => bool)) public registeredNonces;
 
     address public issuedTokenImplementation;
 

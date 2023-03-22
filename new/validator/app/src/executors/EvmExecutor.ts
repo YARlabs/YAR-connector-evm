@@ -34,10 +34,16 @@ export class EvmExecutor {
     const worker = new Worker(
       this._currentChain,
       async job => {
-        console.log(`NEW JOB ${job.data}`)
-        const transfer = job.data as ITransferModel
-        await this._tarsferFromOtherChain(transfer)
-        await job.remove()
+        try {
+          console.log(`NEW JOB ${job.data}`)
+          const transfer = job.data as ITransferModel
+          await this._tarsferFromOtherChain(transfer)
+          await job.remove()
+        } catch (e) {
+          // Cant throw error from bullmq worker
+          console.log(e)
+          process.exit()
+        }
       },
       {
         connection: {
@@ -50,7 +56,6 @@ export class EvmExecutor {
 
   private async _tarsferFromOtherChain(transfer: ITransferModel) {
     console.log('SEND TX')
-
     const tx = await this._bridgeERC20.tranferFromOtherChain(
       transfer.nonce,
       transfer.originalChain,

@@ -29,8 +29,13 @@ const config: HardhatUserConfig = {
       chainId: 1337,
       forking: {
         url: 'https://mainnet.infura.io/v3/32c869b2294046f4931f3d8b93b2dae0',
-        blockNumber: 16370780,
+        blockNumber: 16884580,
       },
+      mining: {
+        auto: false,
+        interval: 1000
+      },
+      blockGasLimit: 30000000,
       accounts: {
         count: 10,
         accountsBalance: '1000000000000000000000000000',

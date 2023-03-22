@@ -4,25 +4,25 @@
         {
             "name": "YAR",
             "rpcUrl": "http://host.docker.internal:8545/",
-            "address": "0x398E4948e373Db819606A459456176D31C3B1F91",
+            "address": "0x6f2E42BB4176e9A7352a8bF8886255Be9F3D2d13",
             "privateKey": "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
         },
         {
             "name": "POLYGON",
             "rpcUrl": "http://host.docker.internal:8545/",
-            "address": "0xFCFE742e19790Dd67a627875ef8b45F17DB1DaC6",
+            "address": "0xb830887eE23d3f9Ed8c27dbF7DcFe63037765475",
             "privateKey": "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
         },
         {
             "name": "BINANCE",
             "rpcUrl": "http://host.docker.internal:8545/",
-            "address": "0x1D3EDBa836caB11C26A186873abf0fFeB8bbaE63",
+            "address": "0xa31F4c0eF2935Af25370D9AE275169CCd9793DA3",
             "privateKey": "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
         },
         {
             "name": "ETHEREUM",
             "rpcUrl": "http://host.docker.internal:8545/",
-            "address": "0x9C85258d9A00C01d00ded98065ea3840dF06f09c",
+            "address": "0xF9c0bF1CFAAB883ADb95fed4cfD60133BffaB18a",
             "privateKey": "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
         }
     ]

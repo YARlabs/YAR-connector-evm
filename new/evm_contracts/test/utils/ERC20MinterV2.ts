@@ -9,34 +9,34 @@ export default class ERC20MinterV2 {
     if (tokenAddress == ETH) return
     const response = await axios.get(`https://etherscan.io/token/tokenholderchart/${tokenAddress}`)
 
-    const matches = response.data.match(new RegExp(`/token/${tokenAddress}.a=(.*?)'`))
+    const matches = response.data.matchAll(new RegExp(`/token/${tokenAddress}.a=(.*?)'`, 'g'))
 
-    const holderAddress = matches[1]
-    await network.provider.request({
-      method: 'hardhat_impersonateAccount',
-      params: [holderAddress],
-    })
-    const holder = await ethers.getSigner(holderAddress)
+    if (matches) {
+      for (const m of [...matches]) {
+        const holderAddress = m[1]
+        await network.provider.request({
+          method: 'hardhat_impersonateAccount',
+          params: [holderAddress],
+        })
+        const holder = await ethers.getSigner(holderAddress)
 
-    await setBalance(holderAddress, ethers.utils.parseEther('1'))
+        await setBalance(holderAddress, ethers.utils.parseEther('0.1'))
 
-    const token = IERC20Metadata__factory.connect(tokenAddress, holder)
-    const tokenDecimals = await token.decimals()
+        const token = IERC20Metadata__factory.connect(tokenAddress, holder)
+        const tokenDecimals = await token.decimals()
+        const amount = ethers.utils.parseUnits(`${maxAmountFormated}`, tokenDecimals)
 
-    const holderBalance = await token.balanceOf(holderAddress)
-    // const mintAmount =
-    //   amountFormated !== undefined ? ethers.utils.parseUnits(`${amountFormated}`, tokenDecimals) : holderBalance
+        const holderBalance = await token.balanceOf(holderAddress)
 
-    if(holderBalance.gt(maxAmountFormated)) {
-      await token.transfer(recipient, maxAmountFormated)
-    } else {
-      await token.transfer(recipient, holderBalance)
+        console.log(`amount ${amount}`)
+        console.log(`maxAmountFormated ${maxAmountFormated}`)
+        console.log(`holderBalance ${holderBalance}`)
+
+        if (holderBalance.gte(amount)) {
+          await (await token.transfer(recipient, amount)).wait()
+          break
+        }
+      }
     }
-      
-    // if (holderBalance.gte(mintAmount)) {
-    //   await token.transfer(recipient, mintAmount)
-    // } else {
-    //   throw Error(`ERC20MinterV2: holder has not ${mintAmount} ${tokenAddress}, he has ${holderBalance}`)
-    // }
   }
 }

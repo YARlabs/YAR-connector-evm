@@ -34,9 +34,10 @@ export async function tranferToOtherChainERC20({
   const txStep1 = await initialChain.connect(sender).tranferToOtherChain(
     transferedToken.address, // _transferedToken
     amount, // _amount
-    targetChain.currentChain(), // _targetChainName
+    await targetChain.currentChain(), // _targetChainName
     EthersUtils.addressToBytes(recipient.address), // _recipient
   )
+  const receiptStep1 = await txStep1.wait()
 
   // Expect event
   console.log(`${logId}`)
@@ -66,7 +67,6 @@ export async function tranferToOtherChainERC20({
   )
 
   // Get event data
-  const receiptStep1 = await txStep1.wait()
   const eventStep1 = ContractReceiptUtils.getEvent(
     receiptStep1.events,
     initialChain,
@@ -109,6 +109,7 @@ export async function tranferFromOtherChainERC20({
       decimals: event.tokenDecimals,
     }, // tokenCreateInfo
   )
+  await tx.wait()
 
   // Assert balance
   const recipientBalanceAfter = await targetChain.balances(
@@ -166,6 +167,7 @@ export async function proxyTranferFromOtherChainERC20({
       decimals: event.tokenDecimals,
     }, // tokenCreateInfo
   )
+  await txStep1.wait()
 
   // Expect event
   console.log(`${logId}`)
@@ -236,6 +238,7 @@ export async function proxyTranferFromOtherChainERC20({
       decimals: event.tokenDecimals,
     }, // tokenCreateInfo
   )
+  await txStep2.wait()
 
   // Assert blances
   let recipientBalanceAfterStep2 = await targetChain.balances(
