@@ -6,7 +6,6 @@
     "typechain": "typechain --target=ethers-v5 --out-dir ./src/typechain-types './src/abi/**/*.json'",
     "postinstall": "npm run typechain",
     "start": "ts-node ./src/main.ts",
-    "dev": "ts-node ./src/main.ts config.local_test.json",
     "docker": "cd ../ && docker compose build --no-cache && docker compose up"
   },
   "keywords": [],

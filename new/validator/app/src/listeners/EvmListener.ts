@@ -2,7 +2,6 @@ import { ethers } from 'ethers'
 import { Queue } from 'bullmq'
 import { ITransferModel } from '../models/TransferModel'
 import { BridgeERC20, BridgeERC20__factory } from '../typechain-types'
-import CONFIG from '../../config.json'
 import { EthersUtils } from '../utils/EthersUtils'
 
 export class EvmListener {
@@ -36,8 +35,6 @@ export class EvmListener {
     syncFrom?: number
     proxyChain: string
   }) {
-    console.log(syncFrom)
-    console.log(typeof syncFrom)
     this._name = name
     this._currentChain = EthersUtils.keccak256(this._name)
     this._proxyChain = EthersUtils.keccak256(proxyChain)
@@ -49,8 +46,7 @@ export class EvmListener {
         port: 6379,
       },
     })
-    console.log(`PROVIDERURL ${providerUrl}`)
-    this._provider = new ethers.providers.JsonRpcProvider(providerUrl)
+    this._provider = new ethers.providers.JsonRpcProvider({url: providerUrl, timeout: 30000})
     this._bridgeERC20 = BridgeERC20__factory.connect(bridgeAddress, this._provider)
     this._syncFrom = syncFrom
     this._previousBlock = -1
@@ -72,8 +68,6 @@ export class EvmListener {
       if (confirmedBlock - startBlock > this._limitOfBlocksForGetLogs)
         confirmedBlock = startBlock + this._limitOfBlocksForGetLogs
 
-        console.log(`startBlock ${startBlock}`)
-
       if (startBlock > confirmedBlock) return
 
       this._previousBlock = confirmedBlock
@@ -85,7 +79,7 @@ export class EvmListener {
       }
     }, this._poolingInterval)
 
-    console.log()
+    console.log(`Ready`)
   }
 
   private _addTask(transfer: ITransferModel) {
@@ -93,7 +87,6 @@ export class EvmListener {
     if (this._currentChain != this._proxyChain && transfer.targetChain != this._proxyChain)
       taskName = this._proxyChain
     this._tasksQueue.add(taskName, transfer)
-    console.log('_addTask')
   }
 
   private async _getTransfers(
@@ -107,19 +100,17 @@ export class EvmListener {
         endBlock,
       )
     ).map(event => ({
-      nonce: event.args.nonce,
+      nonce: event.args.nonce.toNumber(),
       initialChain: event.args.initialChain,
       originalChain: event.args.originalChain,
       originalToken: event.args.originalTokenAddress,
       targetChain: event.args.targetChain,
-      tokenAmount: event.args.tokenAmount,
+      tokenAmount: event.args.tokenAmount.toString(),
       sender: event.args.sender,
       recipient: event.args.recipient,
-      tokenInfo: {
-        name: event.args.tokenName,
-        symbol: event.args.tokenSymbol,
-        decimals: event.args.tokenDecimals,
-      },
+      tokenName: event.args.tokenName,
+      tokenSymbol: event.args.tokenSymbol,
+      tokenDecimals: event.args.tokenDecimals,
     }))
   }
 }

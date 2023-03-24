@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { ITransferModel } from '../models/TransferModel'
 import { BridgeERC20, BridgeERC20__factory } from '../typechain-types'
-import { Queue, Worker } from 'bullmq'
+import { Worker } from 'bullmq'
 import { EthersUtils } from '../utils/EthersUtils'
 
 export class EvmExecutor {
@@ -24,8 +24,7 @@ export class EvmExecutor {
   }) {
     this._name = name
     this._currentChain = EthersUtils.keccak256(this._name)
-    console.log(`PROVIDERURL ${providerUrl}`)
-    this._provider = new ethers.providers.JsonRpcProvider(providerUrl)
+    this._provider = new ethers.providers.JsonRpcProvider({url: providerUrl, timeout: 30000})
     this._wallet = new ethers.Wallet(privateKey, this._provider)
     this._bridgeERC20 = BridgeERC20__factory.connect(bridgeAddress, this._wallet)
   }
@@ -38,10 +37,10 @@ export class EvmExecutor {
           console.log(`NEW JOB ${job.data}`)
           const transfer = job.data as ITransferModel
           await this._tarsferFromOtherChain(transfer)
-          await job.remove()
+          // setTimeout(async () => await job.remove())
         } catch (e) {
           // Cant throw error from bullmq worker
-          console.log(e)
+          console.log(`$error ${e}`)
           process.exit()
         }
       },
@@ -52,6 +51,16 @@ export class EvmExecutor {
         },
       },
     )
+    worker.on('failed', (job, error) => {
+      // Do something with the return value.
+      console.log(`worker.on('failed' ${error}`);
+    });
+    worker.on('error', err => {
+      // log the error
+      console.log(`worker.on('error' ${err}`);
+    });
+
+    console.log('Ready')
   }
 
   private async _tarsferFromOtherChain(transfer: ITransferModel) {

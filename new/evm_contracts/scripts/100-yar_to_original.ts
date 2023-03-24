@@ -5,10 +5,7 @@ import { EthersUtils } from '../utils/EthersUtils'
 
 async function main() {
   const accounts = await ethers.getSigners()
-  const yarValidator = accounts[1]
-  const polygonValidator = accounts[2]
-  const binanceValidator = accounts[3]
-  const ethereumValidator = accounts[4]
+  const validator = accounts[1]
   const user1 = accounts[8]
   const user2 = accounts[9]
 
@@ -19,19 +16,19 @@ async function main() {
 
   const yarBridge = BridgeERC20__factory.connect(
     YarBridgeDeployment.address,
-    yarValidator,
+    validator,
   )
   const polygonBridge = BridgeERC20__factory.connect(
     PolygonBridgeDeployment.address,
-    polygonValidator,
+    validator,
   )
   const binanceBridge = BridgeERC20__factory.connect(
     BinanceBridgeDeployment.address,
-    binanceValidator,
+    validator,
   )
   const ethereumBridge = BridgeERC20__factory.connect(
     EthereumBridgeDeployment.address,
-    ethereumValidator,
+    validator,
   )
 
   const originalBridge = polygonBridge
@@ -48,6 +45,15 @@ async function main() {
   const issuedToken = IERC20Metadata__factory.connect(issuedTokenAddress, user2)
   const issuedTokenBalance = await issuedToken.balanceOf(user2.address)
 
+  console.log("await originalBridge.registeredNonces('0x88243e88525a258200bf5ca869571208956d07a0fa57c175fe0c198c7a0c5c26', 0)")
+  console.log(await yarBridge.nonce())
+  console.log(await originalBridge.registeredNonces('0x88243e88525a258200bf5ca869571208956d07a0fa57c175fe0c198c7a0c5c26', 0))
+  console.log(await originalBridge.registeredNonces('0x88243e88525a258200bf5ca869571208956d07a0fa57c175fe0c198c7a0c5c26', 1))
+  console.log(await originalBridge.registeredNonces('0x88243e88525a258200bf5ca869571208956d07a0fa57c175fe0c198c7a0c5c26', 2))
+  console.log("await originalBridge.registeredNonces('0x88243e88525a258200bf5ca869571208956d07a0fa57c175fe0c198c7a0c5c26', 22)")
+  console.log(await yarBridge.registeredNonces('0x88243e88525a258200bf5ca869571208956d07a0fa57c175fe0c198c7a0c5c26', 0))
+  console.log(await yarBridge.registeredNonces('0x88243e88525a258200bf5ca869571208956d07a0fa57c175fe0c198c7a0c5c26', 1))
+  console.log(await yarBridge.registeredNonces('0x88243e88525a258200bf5ca869571208956d07a0fa57c175fe0c198c7a0c5c26', 2))
   await yarBridge.connect(sender).tranferToOtherChain(
     issuedToken.address, // _transferedToken
     issuedTokenBalance, // _amount

@@ -7,14 +7,17 @@ export class QueueRouter {
   constructor({ chains }: { chains: string }) {
     this._chains = chains
     this._queues = {}
+  }
 
-    for (const chain of chains) {
+  public async init() {
+    for (const chain of this._chains) {
       this._queues[chain] = new Queue(chain, {
         connection: {
           host: 'localhost',
           port: 6379,
         },
       })
+      await this._queues[chain]?.obliterate()
     }
 
     new Worker('QueueRouter', async job => {
@@ -25,5 +28,13 @@ export class QueueRouter {
         port: 6379,
       },
     })
+    
+    const q = new Queue('QueueRouter', {
+      connection: {
+        host: 'localhost',
+        port: 6379,
+      },
+    })
+    await q.obliterate()
   }
 }

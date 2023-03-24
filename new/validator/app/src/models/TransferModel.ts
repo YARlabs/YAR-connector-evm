@@ -1,17 +1,15 @@
 import { ethers } from 'ethers'
 
 export interface ITransferModel {
-  nonce: ethers.BigNumber
+  nonce: number
   initialChain: string
   originalChain: string
   originalToken: string
   targetChain: string
-  tokenAmount: ethers.BigNumber
+  tokenAmount: string
   sender: string
   recipient: string
-  tokenInfo: {
-    name: string
-    symbol: string
-    decimals: number
-  }
+  tokenName: string
+  tokenSymbol: string
+  tokenDecimals: number
 }

@@ -10,6 +10,7 @@ async function main() {
   } = CliArgsParser.parse(process.argv)
 
   const queueRouter = new QueueRouter({chains})
+  await queueRouter.init()
 }
 
 main()

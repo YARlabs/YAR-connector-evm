@@ -2,18 +2,17 @@ import axios from 'axios'
 import { ethers, network } from 'hardhat'
 import { IERC20Metadata__factory } from '../../typechain-types'
 import { setBalance } from '@nomicfoundation/hardhat-network-helpers'
-import { ETH } from '../../constants/externalAddresses'
 
 export default class ERC20MinterV2 {
   public static async mint(tokenAddress: string, recipient: string, maxAmountFormated?: number) {
-    if (tokenAddress == ETH) return
-    const response = await axios.get(`https://etherscan.io/token/tokenholderchart/${tokenAddress}`)
-
-    const matches = response.data.matchAll(new RegExp(`/token/${tokenAddress}.a=(.*?)'`, 'g'))
-
+    // const response = await axios.get(`https://etherscan.io/token/tokenholderchart/${tokenAddress}`)
+    const response = await axios.get(`https://ethplorer.io/service/service.php?tabName=holders&data=${tokenAddress}&page=chart%3Dcandlestick%26pageTab%3Dholders&showTx=all`)
+    // const matches = response.data.matchAll(new RegExp(`/token/${tokenAddress}.a=(.*?)'`, 'g'))
+    const matches = response.data.holders
     if (matches) {
       for (const m of [...matches]) {
-        const holderAddress = m[1]
+        // const holderAddress = m[1]
+        const holderAddress = m.address
         await network.provider.request({
           method: 'hardhat_impersonateAccount',
           params: [holderAddress],
@@ -27,10 +26,6 @@ export default class ERC20MinterV2 {
         const amount = ethers.utils.parseUnits(`${maxAmountFormated}`, tokenDecimals)
 
         const holderBalance = await token.balanceOf(holderAddress)
-
-        console.log(`amount ${amount}`)
-        console.log(`maxAmountFormated ${maxAmountFormated}`)
-        console.log(`holderBalance ${holderBalance}`)
 
         if(holderBalance.eq(0)) continue
 

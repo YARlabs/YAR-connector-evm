@@ -1,7 +1,7 @@
 import { deployments, ethers, network } from 'hardhat'
 import { BridgeERC20__factory, IERC20Metadata__factory } from '../typechain-types'
 import ERC20MinterV2 from '../test/utils/ERC20MinterV2'
-import { WETH } from '../constants/externalAddresses'
+import { USDT, WBTC, WETH } from '../constants/externalAddresses'
 import { EthersUtils } from '../utils/EthersUtils'
 
 async function main() {
@@ -12,7 +12,6 @@ async function main() {
   const validator = accounts[1]
   const user1 = accounts[8]
   const user2 = accounts[9]
-
   const YarBridgeDeployment = await deployments.get('YarBridgeERC20')
   const PolygonBridgeDeployment = await deployments.get('PolygonBridgeERC20')
   const BinanceBridgeDeployment = await deployments.get('BinanceBridgeERC20')
@@ -23,24 +22,37 @@ async function main() {
   const binanceBridge = BridgeERC20__factory.connect(BinanceBridgeDeployment.address, validator)
   const ethereumBridge = BridgeERC20__factory.connect(EthereumBridgeDeployment.address, validator)
 
-  const originalBridge = polygonBridge
   const sender = user1
   const recipient = user2
 
-  // Token
-  const testToken = IERC20Metadata__factory.connect(WETH, sender)
-  await ERC20MinterV2.mint(testToken.address, sender.address, 10000)
-  const testTokenAmount = await testToken.balanceOf(sender.address)
-  console.log('TEST token amount', testTokenAmount)
+  const allPromises: Array<Promise<any>> = []
 
-  await testToken.approve(originalBridge.address, testTokenAmount)
+  for(const tokenAddress of [WETH, USDT, WBTC]) {
+    for(let i = 0; i < 1000; i++) {
+      for(const initialBridge of [yarBridge, polygonBridge, binanceBridge, ethereumBridge]) {
+        allPromises.push((async () => {
+          const testToken = IERC20Metadata__factory.connect(tokenAddress, sender)
+          await ERC20MinterV2.mint(testToken.address, sender.address, 10)
+          const testTokenAmount = await testToken.balanceOf(sender.address)
+          await testToken.approve(initialBridge.address, testTokenAmount)
+          const targets = [yarBridge, polygonBridge, binanceBridge, ethereumBridge].filter(i => i != initialBridge)
+          const targetBridge = targets[Math.floor(Math.random() * targets.length)]
+          await initialBridge.connect(sender).tranferToOtherChain(
+            testToken.address, // _transferedToken
+            testTokenAmount, // _amount
+            await targetBridge.currentChain(), // _targetChainName
+            EthersUtils.addressToBytes(recipient.address), // _recipient
+          )
+        })())
+       
+      }
+      
+    }
+  }
 
-  await originalBridge.connect(sender).tranferToOtherChain(
-    testToken.address, // _transferedToken
-    testTokenAmount, // _amount
-    await yarBridge.currentChain(), // _targetChainName
-    EthersUtils.addressToBytes(recipient.address), // _recipient
-  )
+  await Promise.all(allPromises)
+  console.log('ALL')
+ 
 }
 
 main().catch(error => {

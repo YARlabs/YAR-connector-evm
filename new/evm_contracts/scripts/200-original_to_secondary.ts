@@ -6,10 +6,7 @@ import ERC20MinterV2 from '../test/utils/ERC20MinterV2'
 
 async function main() {
   const accounts = await ethers.getSigners()
-  const yarValidator = accounts[1]
-  const polygonValidator = accounts[2]
-  const binanceValidator = accounts[3]
-  const ethereumValidator = accounts[4]
+  const validator = accounts[1]
   const user1 = accounts[8]
   const user2 = accounts[9]
 
@@ -20,19 +17,19 @@ async function main() {
 
   const yarBridge = BridgeERC20__factory.connect(
     YarBridgeDeployment.address,
-    yarValidator,
+    validator,
   )
   const polygonBridge = BridgeERC20__factory.connect(
     PolygonBridgeDeployment.address,
-    polygonValidator,
+    validator,
   )
   const binanceBridge = BridgeERC20__factory.connect(
     BinanceBridgeDeployment.address,
-    binanceValidator,
+    validator,
   )
   const ethereumBridge = BridgeERC20__factory.connect(
     EthereumBridgeDeployment.address,
-    ethereumValidator,
+    validator,
   )
 
   const originalBridge = polygonBridge

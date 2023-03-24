@@ -33,7 +33,7 @@ const config: HardhatUserConfig = {
       },
       mining: {
         auto: false,
-        interval: 1000
+        interval: 5000
       },
       blockGasLimit: 30000000,
       accounts: {

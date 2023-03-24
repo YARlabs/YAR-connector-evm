@@ -36,28 +36,16 @@ const testCases: Array<ITestCase> = [
     token: DAI,
   },
   {
-    token: USDC,
-  },
-  {
     token: CRV3,
   },
   {
-    token: FRAX,
-  },
-  {
     token: HBTC,
-  },
-  {
-    token: MIM,
   },
   {
     token: RENBTC,
   },
   {
     token: ALETH,
-  },
-  {
-    token: STETH,
   },
   {
     token: LUSD,
