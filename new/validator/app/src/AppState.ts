@@ -1,4 +1,4 @@
-import { Db, MongoClient } from 'mongodb'
+import { Db, MongoClient, ObjectId } from 'mongodb'
 
 export class AppState {
   private static _client?: MongoClient
@@ -18,11 +18,12 @@ export class AppState {
   }
 
   private static readonly _awaitingTrasfersDB = 'AwatingTransfers'
+
   public static async addAwatingTrasfer(queueName: string, transfer: any) {
     const db = this._getDB(this._awaitingTrasfersDB)
     const collection = db.collection(queueName)
     await collection.insertOne({
-      _id: transfer.transferId,
+      transferId: transfer.transferId,
       inProgress: false,
       transfer,
     })
@@ -55,7 +56,7 @@ export class AppState {
     const res = await collection.deleteOne({
       transferId
     })
-    console.log(`completeAwaitingTrasfer ${res.deletedCount} ${res.acknowledged}`)
+
   }
 
   public static async getAppStatus() {

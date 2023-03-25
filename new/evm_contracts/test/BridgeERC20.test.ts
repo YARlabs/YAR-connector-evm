@@ -72,15 +72,13 @@ function test(testCase: ITestCase) {
 
     let initSnapshot: string
 
-    let owner: SignerWithAddress
     let validator: SignerWithAddress
     let user1: SignerWithAddress
     let user2: SignerWithAddress
 
     before(async () => {
       const accounts = await ethers.getSigners()
-      owner = accounts[0]
-      validator = accounts[1]
+      validator = accounts[0]
       user1 = accounts[9]
       user2 = accounts[8]
 

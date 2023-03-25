@@ -5,7 +5,7 @@ import { EthersUtils } from '../utils/EthersUtils'
 
 async function main() {
 const accounts = await ethers.getSigners()
-const validator = accounts[1]
+const validator = accounts[0]
 const user1 = accounts[8]
 const user2 = accounts[9]
 

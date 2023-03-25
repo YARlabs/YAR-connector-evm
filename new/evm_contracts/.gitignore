@@ -11,4 +11,3 @@ typechain-types
 cache
 artifacts
 deployments/localhost
-config.json

@@ -7,8 +7,7 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy, get } = deployments
 
   const signers = await ethers.getSigners()
-  const deployer = signers[0]
-  const validator = signers[1]
+  const validator = signers[0]
 
   const currentChain = EthersUtils.keccak256('ETHEREUM')
   const isProxyChain = true
@@ -21,7 +20,7 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const deployment = await deploy('EthereumBridgeERC20', {
     contract: 'BridgeERC20',
-    from: deployer.address,
+    from: validator.address,
     args: [
       currentChain, // _currentChain,
       isProxyChain, // _isProxyChain,

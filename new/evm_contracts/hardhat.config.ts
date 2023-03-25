@@ -8,6 +8,7 @@ import 'hardhat-abi-exporter'
 import '@nomicfoundation/hardhat-chai-matchers'
 import 'hardhat-contract-sizer'
 
+import CONFIG from './config.json'
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -33,7 +34,7 @@ const config: HardhatUserConfig = {
       },
       mining: {
         auto: false,
-        interval: 5000
+        interval: 5000,
       },
       blockGasLimit: 30000000,
       accounts: {
@@ -41,6 +42,22 @@ const config: HardhatUserConfig = {
         accountsBalance: '1000000000000000000000000000',
       },
       loggingEnabled: true,
+    },
+    yarTest: {
+      url: CONFIG.chains.yarTest.rpcUrl,
+      accounts: [CONFIG.chains.yarTest.validatorPrivateKey],
+    },
+    polygonTest: {
+      url: CONFIG.chains.polygonTest.rpcUrl,
+      accounts: [CONFIG.chains.polygonTest.validatorPrivateKey],
+    },
+    binanceTest: {
+      url: CONFIG.chains.binanceTest.rpcUrl,
+      accounts: [CONFIG.chains.binanceTest.validatorPrivateKey],
+    },
+    ethereumTest: {
+      url: CONFIG.chains.ethereumTest.rpcUrl,
+      accounts: [CONFIG.chains.ethereumTest.validatorPrivateKey],
     },
   },
   abiExporter: {
@@ -55,8 +72,8 @@ const config: HardhatUserConfig = {
     timeout: 100000000,
   },
   tracer: {
-    tasks: ['node', 'deploy']
-  }
+    tasks: ['node', 'deploy'],
+  },
 }
 
 export default config

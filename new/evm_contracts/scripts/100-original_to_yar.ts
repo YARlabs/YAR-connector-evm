@@ -9,7 +9,7 @@ async function main() {
 //   await network.provider.send('evm_setIntervalMining', [2000])
 // return;
   const accounts = await ethers.getSigners()
-  const validator = accounts[1]
+  const validator = accounts[0]
   const user1 = accounts[8]
   const user2 = accounts[9]
 

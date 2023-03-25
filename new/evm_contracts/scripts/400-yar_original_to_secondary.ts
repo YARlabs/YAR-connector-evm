@@ -6,7 +6,7 @@ import ERC20MinterV2 from '../test/utils/ERC20MinterV2'
 
 async function main() {
     const accounts = await ethers.getSigners()
-    const validator = accounts[1]
+    const validator = accounts[0]
     const user1 = accounts[8]
     const user2 = accounts[9]
   

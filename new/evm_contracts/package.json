@@ -4,7 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "deploy:YarTest": "hardhat deploy --network yarTest --tags YarBridgeERC20",
+    "deploy:PolygonTest": "hardhat deploy --network polygonTest --tags PolygonBridgeERC20",
+    "deploy:BinanceTest": "hardhat deploy --network binanceTest --tags BinanceBridgeERC20",
+    "deploy:EthereumTest": "hardhat deploy --network ethereumTest --tags EthereumBridgeERC20",
+    "verify:YarTest": "hardhat --network yarTest etherscan-verify --api-key HDP4N8IE4ZUIWJ6123YIH2U2MCH7VJM7S9",
+    "verify:PolygonTest": "hardhat --network polygonTest etherscan-verify --api-key Z7A9E2BVJJCAUAMID1RYNBMJ321MVR97QG",
+    "verify:BinanceTest": "hardhat --network binanceTest etherscan-verify --api-key GNQF3EEPIDJK9T48BT224NRQA8AEMF8JBR",
+    "verify:EthereumTest": "hardhat --network ethereumTest etherscan-verify --api-key HDP4N8IE4ZUIWJ6123YIH2U2MCH7VJM7S9"
   },
   "author": "",
   "license": "ISC",
