@@ -6,7 +6,7 @@
     "typechain": "typechain --target=ethers-v5 --out-dir ./src/typechain-types './src/abi/**/*.json'",
     "postinstall": "npm run typechain",
     "start": "ts-node ./src/main.ts",
-    "docker": "cd ../ && docker compose build --no-cache && docker compose up"
+    "docker": "docker compose rm && cd ../ && docker compose build --no-cache && docker compose up"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +20,7 @@
   "dependencies": {
     "@ethersproject/experimental": "^5.7.0",
     "bullmq": "^3.10.1",
-    "ethers": "^5.7.2"
+    "ethers": "^5.7.2",
+    "mongodb": "^5.1.0"
   }
 }

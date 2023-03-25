@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 
 export interface ITransferModel {
+  transferId: string
   nonce: number
   initialChain: string
   originalChain: string

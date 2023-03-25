@@ -1,5 +1,5 @@
 import { spawn, ChildProcessWithoutNullStreams } from 'node:child_process'
-import { Logger } from './Logger'
+import { AppState } from '../AppState'
 
 export class RenewableProcess {
   private _currentProcess?: ChildProcessWithoutNullStreams
@@ -30,28 +30,24 @@ export class RenewableProcess {
     this._currentProcess?.kill()
   }
 
-  private _runNewProcess() {
+  private async _runNewProcess() {
     this._currentProcess = spawn(this._cmd, { shell: true })
-    this._currentProcess.stdout.on('data', (data: string) => {
-      if(data.slice(0, 6) == '$error') {
-        Logger.error(this.name, `${data.toString().trim()}`)
-      } else {
-        Logger.data(this.name, data.toString().trim())
-      }
+    this._currentProcess.stdout.on('data', async data => {
+      console.log(`${this.name} ${data}`)
     })
-    this._currentProcess.stderr.on('error', error => {
-      Logger.error(this.name, `${error}`)
+    this._currentProcess.stderr.on('error', async error => {
+      await AppState.addAppError(this.name, `${error}`)
     })
-    this._currentProcess!.on('close', code => {
+    this._currentProcess!.on('close', async code => {
       if (!this._isShutdown) {
-        Logger.status(this.name, `reloading`)
+        await AppState.setAppStatus(this.name, 'reloading')
         setTimeout(() => {
           this._runNewProcess()
         }, this._timeout)
       } else {
-        Logger.status(this.name, `stopped`)
+        await AppState.setAppStatus(this.name, 'stopped')
       }
     })
-    Logger.status(this.name, `loading`)
+    await AppState.setAppStatus(this.name, 'loading')
   }
 }

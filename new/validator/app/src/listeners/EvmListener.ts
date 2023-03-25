@@ -1,8 +1,9 @@
 import { ethers } from 'ethers'
-import { Queue } from 'bullmq'
 import { ITransferModel } from '../models/TransferModel'
 import { BridgeERC20, BridgeERC20__factory } from '../typechain-types'
 import { EthersUtils } from '../utils/EthersUtils'
+import { AppState } from '../AppState'
+
 
 export class EvmListener {
   private readonly _provider: ethers.providers.JsonRpcProvider
@@ -10,11 +11,11 @@ export class EvmListener {
   private readonly _numberOfBlocksToConfirm: number
   private readonly _poolingInterval: number
   private _previousBlock: number
-  private readonly _tasksQueue: Queue
+  // private readonly _tasksQueue: Queue
   private readonly _name: string
   private readonly _currentChain: string
   private readonly _limitOfBlocksForGetLogs = 1000
-  private readonly _syncFrom?: number
+  private _syncFrom?: number
 
   private readonly _proxyChain: string
 
@@ -40,12 +41,6 @@ export class EvmListener {
     this._proxyChain = EthersUtils.keccak256(proxyChain)
     this._numberOfBlocksToConfirm = numberOfBlocksToConfirm
     this._poolingInterval = poolingInterval
-    this._tasksQueue = new Queue('QueueRouter', {
-      connection: {
-        host: 'localhost',
-        port: 6379,
-      },
-    })
     this._provider = new ethers.providers.JsonRpcProvider({url: providerUrl, timeout: 30000})
     this._bridgeERC20 = BridgeERC20__factory.connect(bridgeAddress, this._provider)
     this._syncFrom = syncFrom
@@ -53,6 +48,11 @@ export class EvmListener {
   }
 
   public async init() {
+    const previousBlockFromDb = await AppState.getPreviousBlock(this._name)
+    if(previousBlockFromDb !== undefined) {
+      this._syncFrom = previousBlockFromDb
+    }
+
     if (this._syncFrom !== undefined) {
       this._previousBlock = this._syncFrom!
       const initBlock = (await this._bridgeERC20.initBlock()).toNumber()
@@ -77,16 +77,18 @@ export class EvmListener {
       for (const transfer of transfers) {
         this._addTask(transfer)
       }
+      
+      await AppState.setPreviousBlock(this._name, confirmedBlock)
     }, this._poolingInterval)
 
-    console.log(`Ready`)
+    await AppState.setAppStatus(this._name, 'ready')
   }
 
-  private _addTask(transfer: ITransferModel) {
-    let taskName = transfer.targetChain
+  private async _addTask(transfer: ITransferModel) {
+    let queueName = transfer.targetChain
     if (this._currentChain != this._proxyChain && transfer.targetChain != this._proxyChain)
-      taskName = this._proxyChain
-    this._tasksQueue.add(taskName, transfer)
+    queueName = this._proxyChain
+    await AppState.addAwatingTrasfer(queueName, transfer)
   }
 
   private async _getTransfers(
@@ -100,6 +102,7 @@ export class EvmListener {
         endBlock,
       )
     ).map(event => ({
+      transferId: event.args.transferId,
       nonce: event.args.nonce.toNumber(),
       initialChain: event.args.initialChain,
       originalChain: event.args.originalChain,

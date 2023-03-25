@@ -1,8 +1,8 @@
 import { ethers } from 'ethers'
 import { ITransferModel } from '../models/TransferModel'
 import { BridgeERC20, BridgeERC20__factory } from '../typechain-types'
-import { Worker } from 'bullmq'
 import { EthersUtils } from '../utils/EthersUtils'
+import { AppState } from '../AppState'
 
 export class EvmExecutor {
   private readonly _provider: ethers.providers.JsonRpcProvider
@@ -24,47 +24,38 @@ export class EvmExecutor {
   }) {
     this._name = name
     this._currentChain = EthersUtils.keccak256(this._name)
-    this._provider = new ethers.providers.JsonRpcProvider({url: providerUrl, timeout: 30000})
+    this._provider = new ethers.providers.JsonRpcProvider({ url: providerUrl, timeout: 30000 })
     this._wallet = new ethers.Wallet(privateKey, this._provider)
     this._bridgeERC20 = BridgeERC20__factory.connect(bridgeAddress, this._wallet)
   }
 
-  public init() {
-    const worker = new Worker(
-      this._currentChain,
-      async job => {
-        try {
-          console.log(`NEW JOB ${job.data}`)
-          const transfer = job.data as ITransferModel
-          await this._tarsferFromOtherChain(transfer)
-          // setTimeout(async () => await job.remove())
-        } catch (e) {
-          // Cant throw error from bullmq worker
-          console.log(`$error ${e}`)
-          process.exit()
-        }
-      },
-      {
-        connection: {
-          host: 'localhost',
-          port: 6379,
-        },
-      },
-    )
-    worker.on('failed', (job, error) => {
-      // Do something with the return value.
-      console.log(`worker.on('failed' ${error}`);
-    });
-    worker.on('error', err => {
-      // log the error
-      console.log(`worker.on('error' ${err}`);
-    });
 
-    console.log('Ready')
+  public async init() {
+    const savedTrasfers = await AppState.getAwaitingTrasfers(this._currentChain, false)
+    await this._executeTrasfers(savedTrasfers)
+    setInterval(async () => {
+      const transfers = await AppState.getAwaitingTrasfers(this._currentChain)
+      await this._executeTrasfers(transfers)
+    }, 5000)
+
+    await AppState.setAppStatus(this._name, 'ready')
+  }
+
+  private async _executeTrasfers(trasfers: Array<ITransferModel>) {
+    for(const trasfer of trasfers) {
+      await this._tarsferFromOtherChain(trasfer)
+      await AppState.completeAwaitingTrasfer(this._currentChain, trasfer.transferId)
+    }
   }
 
   private async _tarsferFromOtherChain(transfer: ITransferModel) {
-    console.log('SEND TX')
+    const alreadyRegistered = await this._bridgeERC20.registeredNonces(transfer.initialChain, transfer.nonce)
+    if(alreadyRegistered) {
+      console.log(`${transfer.transferId.slice(0, 8)} Already completed`)
+      return
+    }
+
+    console.log(`SEND TX ${transfer.transferId.slice(0, 8)}`)
     const tx = await this._bridgeERC20.tranferFromOtherChain(
       transfer.nonce,
       transfer.originalChain,
@@ -74,11 +65,15 @@ export class EvmExecutor {
       transfer.tokenAmount,
       transfer.sender,
       transfer.recipient,
-      transfer.tokenInfo,
+      {
+        name: transfer.tokenName,
+        symbol: transfer.tokenSymbol,
+        decimals: transfer.tokenDecimals,
+      },
     )
-    console.log('TX SENEDED')
+    console.log(`TX ${transfer.transferId.slice(0, 8)} SENEDED`)
 
     await tx.wait()
-    console.log(`Execute transfer ${transfer}`)
+    console.log(`TX ${transfer.transferId.slice(0, 8)} COMPLETED`)
   }
 }

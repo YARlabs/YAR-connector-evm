@@ -53,14 +53,14 @@
   {
     "inputs": [
       {
-        "internalType": "string",
+        "internalType": "bytes32",
         "name": "_originalChain",
-        "type": "string"
+        "type": "bytes32"
       },
       {
-        "internalType": "string",
+        "internalType": "bytes",
         "name": "_originalToken",
-        "type": "string"
+        "type": "bytes"
       },
       {
         "internalType": "string",

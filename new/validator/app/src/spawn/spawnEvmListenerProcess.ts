@@ -1,3 +1,4 @@
+import { AppState } from '../AppState'
 import { EvmListener } from '../listeners/EvmListener'
 import { CliArgsParser } from '../utils/CliArgsParser'
 
@@ -20,16 +21,21 @@ async function main() {
     proxyChain: string
   } = CliArgsParser.parse(process.argv)
 
-  const evmListener = new EvmListener({
-    name,
-    bridgeAddress,
-    providerUrl,
-    numberOfBlocksToConfirm,
-    poolingInterval,
-    syncFrom,
-    proxyChain,
-  })
-  await evmListener.init()
+  try {
+    const evmListener = new EvmListener({
+      name,
+      bridgeAddress,
+      providerUrl,
+      numberOfBlocksToConfirm,
+      poolingInterval,
+      syncFrom,
+      proxyChain,
+    })
+    await evmListener.init()
+  } catch (e) {
+    AppState.addAppError(`${name} spawn`, `${e}`)
+    throw e
+  }
 }
 
 main()

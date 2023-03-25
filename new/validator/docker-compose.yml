@@ -1,11 +1,28 @@
 version: "3.9"
+
 services:
   app:
-    build: ./app 
-    network_mode: host
+    build: ./app
     depends_on:
-      - redis
-  redis:
-    image: "redis:alpine"
+        - mongo
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo
+    networks:
+      - app-network
+
+  mongo-express:
+    image: mongo-express
+    depends_on:
+        - mongo
+    networks:
+      - app-network
     ports:
-      - 6379:6379
+      - "8888:8081"
+
+networks:
+  app-network:
+    driver: bridge
+
