@@ -1,5 +1,5 @@
 FROM node:18-alpine
-WORKDIR ./
+WORKDIR ./bridge/packages/validator/app
 COPY ./ ./
 RUN npm install
 EXPOSE 3000

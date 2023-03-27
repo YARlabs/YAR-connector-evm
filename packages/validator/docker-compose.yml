@@ -7,14 +7,16 @@ services:
         - mongo
     networks:
       - app-network
+    volumes:
+      - ../../configs:/bridge/configs
     environment:
       - MONGO_EXPRESS_AUTH=${MONGO_EXPRESS_AUTH}
+      - MONGO_EXPRESS_USER=${MONGO_EXPRESS_USER}
       - MODE=${MODE}
       - YAR_VALIDATOR_PRIVATE_KEY=${YAR_VALIDATOR_PRIVATE_KEY}
       - POLYGON_VALIDATOR_PRIVATE_KEY=${POLYGON_VALIDATOR_PRIVATE_KEY}
       - BINANCE_VALIDATOR_PRIVATE_KEY=${BINANCE_VALIDATOR_PRIVATE_KEY}
       - ETHEREUM_VALIDATOR_PRIVATE_KEY=${ETHEREUM_VALIDATOR_PRIVATE_KEY}
-
 
   mongo:
     image: mongo

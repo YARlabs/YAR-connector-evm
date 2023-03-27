@@ -7,6 +7,11 @@ async function main() {
       ? (await import('../config.development')).default
       : (await import('../config.production')).default
 
+
+      console.log(`process.env.MODE ${process.env.MODE}`)
+      console.log(`process.env.MONGO_EXPRESS_USER ${process.env.MONGO_EXPRESS_USER}`)
+      console.log(`process.env.MONGO_EXPRESS_AUTH ${process.env.MONGO_EXPRESS_AUTH}`)
+
   for (const bridgeConfig of CONFIG.bridges) {
     await AppState.resetFails(bridgeConfig.name + 'Listener')
     new RenewableProcess({

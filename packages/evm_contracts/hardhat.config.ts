@@ -8,7 +8,7 @@ import 'hardhat-abi-exporter'
 import '@nomicfoundation/hardhat-chai-matchers'
 import 'hardhat-contract-sizer'
 
-import CONFIG from './config.js'
+import CONFIG from './config'
 
 const config: HardhatUserConfig = {
   solidity: {

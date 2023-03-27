@@ -7,7 +7,7 @@
     "postinstall": "npm run typechain",
     "start": "ts-node ./src/main.ts",
     "docker": "cross-env MONGO_EXPRESS_AUTH=true npm run _docker",
-    "docker_dev": "cross-env MODE=development MONGO_EXPRESS_AUTH=false npm run _docker",
+    "docker_dev": "cross-env MODE=development MONGO_EXPRESS_AUTH=false MONGO_EXPRESS_USER=\"\" MONGO_EXPRESS_PASSWORD=\"\"  npm run _docker",
     "_docker": "cd ../ && docker compose --env-file ../../.env.secrets build --no-cache && docker compose --env-file ../../.env.secrets up",
     "docker_clean": "docker compose rm"
   },

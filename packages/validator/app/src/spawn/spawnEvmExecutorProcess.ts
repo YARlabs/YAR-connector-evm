@@ -3,8 +3,6 @@ import { EvmExecutor } from '../executors/EvmExecutor'
 import { CliArgsParser } from '../utils/CliArgsParser'
 
 async function main() {    
-  console.log('SPAWNNNER CREATE EXEC PROC')
-console.log('PARSE START')
   const {
     name,
     processName,
