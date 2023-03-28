@@ -2,15 +2,17 @@ import { useEthers } from "@usedapp/core";
 import BigNumber from "bignumber.js";
 import { useCallback } from "react";
 import { useERC20Contracts } from "./useERC20Contracts";
-import { useERC20DriverFacet } from "./useERC20DriverFacet";
+import { useBridgeContract } from "./useERC20DriverFacet";
 import { idToChainName } from "../utils/idToChainName";
 import { toast } from 'react-toastify';
+import { EthersUtils } from "../utils/ethers"; 
 BigNumber.config({ EXPONENTIAL_AT: 60 });
+
 
 export const useTransferToOtherChain = () => {
   const { account, switchNetwork } = useEthers();
   const erc20ContractTemplate = useERC20Contracts();
-  const erc20DriverFacetInstanse = useERC20DriverFacet();  
+  const erc20DriverFacetInstanse = useBridgeContract();  
 
   return useCallback(
     async (token: string, reciever: string, amount: number, chainIdFrom: number, chainIdTo: number) => {
@@ -18,13 +20,12 @@ export const useTransferToOtherChain = () => {
       await switchNetwork(chainIdFrom);
       const erc20Contract = erc20ContractTemplate(token);
       const bridge = erc20DriverFacetInstanse(addressBridge);
-      const validReciever = reciever.toLowerCase();
       try {
         const decimals = await erc20Contract?.decimals() as number;
         const bigNumberAmount = new BigNumber(amount).shiftedBy(+decimals); 
-        const isIssued = await bridge?.isIssuedToken(token);
+        const isIssued = await bridge?.isIssuedTokenPublished(token);
         if(!isIssued) {
-          const allowance = (await erc20Contract?.allowance(account as string, addressBridge))?.toString() as string;
+          const allowance = (await erc20Contract?.allowance(account as string, addressBridge))?.toString() as string;          
           if(Number(allowance) < bigNumberAmount.toNumber()) {
             toast('Approve your tokens', {
               position: "top-center",
@@ -47,10 +48,9 @@ export const useTransferToOtherChain = () => {
           draggable: true,
           theme: "colored",
         });
-        const txPromise = await bridge?.tranferToOtherChainERC20(token, bigNumberAmount.toString(), idToChainName[chainIdTo], {
-            evmAddress: validReciever,
-            noEvmAddress: ''
-        });
+        const targetChainBytes32 = EthersUtils.keccak256(idToChainName[chainIdTo]);
+        const recipientBytes = EthersUtils.addressToBytes(reciever);
+        const txPromise = await bridge?.tranferToOtherChain(token, bigNumberAmount.toString(), targetChainBytes32, recipientBytes);
         const tx = txPromise?.wait();
         return tx;
       } catch (error: any) {
@@ -62,6 +62,6 @@ export const useTransferToOtherChain = () => {
         console.error(errorMessage);
       }     
     },
-    [account, erc20ContractTemplate, useERC20DriverFacet, switchNetwork]
+    [account, erc20ContractTemplate, useBridgeContract, switchNetwork]
   );
 };

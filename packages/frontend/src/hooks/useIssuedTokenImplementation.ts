@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { useEthers } from "@usedapp/core"
-import { IssuedTokenImplementation__factory } from '../typechain';
+import { IssuedERC20__factory } from '../typechain';
 
 
 export const useIssuedTokenImplementation = () => {
@@ -8,7 +8,7 @@ export const useIssuedTokenImplementation = () => {
 
     return (contractAddress: string) => {
         if (library) {
-            return IssuedTokenImplementation__factory.connect(contractAddress!, (library as JsonRpcProvider)?.getSigner());
+            return IssuedERC20__factory.connect(contractAddress!, (library as JsonRpcProvider)?.getSigner());
         }
     };
 }

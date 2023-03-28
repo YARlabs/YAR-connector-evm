@@ -1,13 +1,13 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { useEthers } from "@usedapp/core"
-import { ERC20DriverFacet__factory } from '../typechain';
+import { BridgeERC20__factory } from '../typechain';
 
-export const useERC20DriverFacet = () => {
+export const useBridgeContract = () => {
     const { library } = useEthers();
 
     return (contractAddress: string) => {
         if (library) {
-            return ERC20DriverFacet__factory.connect(contractAddress!, (library as JsonRpcProvider)?.getSigner());
+            return BridgeERC20__factory.connect(contractAddress!, (library as JsonRpcProvider)?.getSigner());
         }
     };
 }

@@ -1,15 +1,16 @@
 import { useCallback } from "react"; 
 import { idToChainName, idToRpcUrl } from "../utils/idToChainName";
 import { Contract, providers } from "ethers";
-import BridgeABI from '../abi/ERC20DriverFacet.json';
-import IssuedTokenImplementationABI from '../abi/IssuedTokenImplementation.json';
+import { EthersUtils } from "../utils/ethers";
+import BridgeABI from '../abi/BridgeERC20.json';
+import IssuedTokenImplementationABI from '../abi/IssuedERC20.json';
 
 export const useGetSecondToken = () => {
 
     return useCallback(
         async (token: string, chainIdFrom: number, chainIdTo: number) => {
             
-            const chainNameFrom = idToChainName[chainIdFrom];
+            const chainNameFrom = idToChainName[chainIdFrom]; 
             const chainNameTo = idToChainName[chainIdTo];
             const addressBridgeFrom = process.env[`REACT_APP_UNIVERSAL_BRIDGE_CONTRACT_${chainNameFrom}`] as string;
             const addressBridgeTo = process.env[`REACT_APP_UNIVERSAL_BRIDGE_CONTRACT_${chainNameTo}`] as string;
@@ -18,26 +19,30 @@ export const useGetSecondToken = () => {
             
             let bridgeContract = new Contract(addressBridgeFrom, BridgeABI, providerFrom);
             try {
-                const isIssued = await bridgeContract.isIssuedToken(token);
+                const isIssued = await bridgeContract.isIssuedTokenPublished(token);
                 if(isIssued) {
                     let issuedTokenImplementationContract = new Contract(token, IssuedTokenImplementationABI, providerFrom);
-                    const originalChainName = await issuedTokenImplementationContract.originalChainName() as string;
-                    const originalTokenAddress = await issuedTokenImplementationContract.originalTokenAddress() as string;
-                    if(originalChainName === chainNameTo) {
+                    const originalChainBytes32 = await issuedTokenImplementationContract.originalChain() as string; // bytes32
+                    const originalTokenBytes = await issuedTokenImplementationContract.originalToken() as string; // bytes
+                    const chainToBytes32 = EthersUtils.keccak256(chainNameTo);
+                    if(originalChainBytes32 === chainToBytes32) {
+                        const originalTokenAddress = EthersUtils.bytesToAddress(originalTokenBytes);
                         return originalTokenAddress;
                     } else {
                         bridgeContract = new Contract(addressBridgeTo, BridgeABI, providerTo);
-                        const secondToken = await bridgeContract.getIssuedTokenAddressERC20(
-                            originalChainName,
-                            originalTokenAddress.toLocaleLowerCase()
+                        const secondToken = await bridgeContract.getIssuedTokenAddress(
+                            originalChainBytes32,
+                            originalTokenBytes
                         );
                         return secondToken;
                     }
                 } else {
                     bridgeContract = new Contract(addressBridgeTo, BridgeABI, providerTo);
-                    const secondToken = await bridgeContract.getIssuedTokenAddressERC20(
-                        chainNameFrom,
-                        token.toLocaleLowerCase()
+                    const chainBytesFromBytes32 = EthersUtils.keccak256(chainNameFrom);
+                    const originalTokenBytes = EthersUtils.addressToBytes(token);
+                    const secondToken = await bridgeContract.getIssuedTokenAddress(
+                        chainBytesFromBytes32,
+                        originalTokenBytes
                     );
                     return secondToken;
                 }

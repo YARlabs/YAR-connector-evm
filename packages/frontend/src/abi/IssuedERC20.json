@@ -208,6 +208,16 @@
     "name": "getOriginalTokenInfo",
     "outputs": [
       {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      },
+      {
         "internalType": "string",
         "name": "",
         "type": "string"
@@ -216,6 +226,11 @@
         "internalType": "string",
         "name": "",
         "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -248,14 +263,14 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_originalChainName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_originalChain",
+        "type": "bytes32"
       },
       {
-        "internalType": "string",
-        "name": "_originalTokenAddress",
-        "type": "string"
+        "internalType": "bytes",
+        "name": "_originalToken",
+        "type": "bytes"
       },
       {
         "internalType": "string",
@@ -311,7 +326,33 @@
   },
   {
     "inputs": [],
-    "name": "originalChainName",
+    "name": "originalChain",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "originalToken",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "originalTokenName",
     "outputs": [
       {
         "internalType": "string",
@@ -324,7 +365,7 @@
   },
   {
     "inputs": [],
-    "name": "originalTokenAddress",
+    "name": "originalTokenSymbol",
     "outputs": [
       {
         "internalType": "string",

@@ -1,34 +1,34 @@
 [
   {
-    "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "originalChainName",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "originalTokenAddress",
-        "type": "string"
-      },
-      {
-        "indexed": true,
         "internalType": "bytes32",
-        "name": "tokenId",
+        "name": "_currentChain",
         "type": "bytes32"
       },
       {
-        "indexed": false,
+        "internalType": "bool",
+        "name": "_isProxyChain",
+        "type": "bool"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "_registeredChains",
+        "type": "bytes32[]"
+      },
+      {
         "internalType": "address",
-        "name": "createdToken",
+        "name": "_issuedTokenImplementation",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_validator",
         "type": "address"
       }
     ],
-    "name": "ERC20DriverPublishedToken",
-    "type": "event"
+    "stateMutability": "nonpayable",
+    "type": "constructor"
   },
   {
     "anonymous": false,
@@ -47,27 +47,27 @@
       },
       {
         "indexed": false,
-        "internalType": "string",
-        "name": "originalChainName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "originalChain",
+        "type": "bytes32"
       },
       {
         "indexed": false,
-        "internalType": "string",
-        "name": "originalTokenAddress",
-        "type": "string"
+        "internalType": "bytes",
+        "name": "originalToken",
+        "type": "bytes"
       },
       {
         "indexed": false,
-        "internalType": "string",
-        "name": "initialChainName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "initialChain",
+        "type": "bytes32"
       },
       {
         "indexed": false,
-        "internalType": "string",
-        "name": "targetChainName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "targetChain",
+        "type": "bytes32"
       },
       {
         "indexed": false,
@@ -77,15 +77,15 @@
       },
       {
         "indexed": false,
-        "internalType": "string",
+        "internalType": "bytes",
         "name": "sender",
-        "type": "string"
+        "type": "bytes"
       },
       {
         "indexed": false,
-        "internalType": "string",
+        "internalType": "bytes",
         "name": "recipient",
-        "type": "string"
+        "type": "bytes"
       }
     ],
     "name": "ERC20DriverTransferFromOtherChain",
@@ -108,27 +108,27 @@
       },
       {
         "indexed": false,
-        "internalType": "string",
-        "name": "initialChainName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "initialChain",
+        "type": "bytes32"
       },
       {
         "indexed": false,
-        "internalType": "string",
-        "name": "originalChainName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "originalChain",
+        "type": "bytes32"
       },
       {
         "indexed": false,
-        "internalType": "string",
+        "internalType": "bytes",
         "name": "originalTokenAddress",
-        "type": "string"
+        "type": "bytes"
       },
       {
         "indexed": false,
-        "internalType": "string",
-        "name": "targetChainName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "targetChain",
+        "type": "bytes32"
       },
       {
         "indexed": false,
@@ -138,31 +138,49 @@
       },
       {
         "indexed": false,
-        "internalType": "string",
+        "internalType": "bytes",
         "name": "sender",
+        "type": "bytes"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "recipient",
+        "type": "bytes"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "tokenName",
         "type": "string"
       },
       {
         "indexed": false,
         "internalType": "string",
-        "name": "recipient",
+        "name": "tokenSymbol",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "tokenDecimals",
+        "type": "uint8"
       }
     ],
-    "name": "ERC20DriverTransferToOtherChain",
+    "name": "TransferToOtherChain",
     "type": "event"
   },
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_originalChainName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_originalChain",
+        "type": "bytes32"
       },
       {
-        "internalType": "string",
-        "name": "_originalTokenAddress",
-        "type": "string"
+        "internalType": "bytes",
+        "name": "_originalToken",
+        "type": "bytes"
       },
       {
         "internalType": "address",
@@ -170,7 +188,7 @@
         "type": "address"
       }
     ],
-    "name": "balancesERC20",
+    "name": "balances",
     "outputs": [
       {
         "internalType": "uint256",
@@ -182,19 +200,32 @@
     "type": "function"
   },
   {
-    "inputs": [
+    "inputs": [],
+    "name": "currentChain",
+    "outputs": [
       {
-        "internalType": "string",
-        "name": "_originalChainName",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_originalTokenAddress",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
       }
     ],
-    "name": "getIssuedTokenAddressERC20",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_originalChain",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_originalToken",
+        "type": "bytes"
+      }
+    ],
+    "name": "getIssuedTokenAddress",
     "outputs": [
       {
         "internalType": "address",
@@ -208,17 +239,17 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_originalChainName",
-        "type": "string"
+        "internalType": "uint256",
+        "name": "_nonce",
+        "type": "uint256"
       },
       {
-        "internalType": "string",
-        "name": "_originalTokenAddress",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_initialChain",
+        "type": "bytes32"
       }
     ],
-    "name": "getTokenIdERC20",
+    "name": "getTranferId",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -237,12 +268,12 @@
         "type": "uint256"
       },
       {
-        "internalType": "string",
-        "name": "_initialChainName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_initialChain",
+        "type": "bytes32"
       }
     ],
-    "name": "getTranferIdERC20",
+    "name": "getTransferId",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -255,36 +286,12 @@
   },
   {
     "inputs": [],
-    "name": "initialBlockNumberERC20",
+    "name": "initBlock",
     "outputs": [
       {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_initialChainName",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_externalNonce",
-        "type": "uint256"
-      }
-    ],
-    "name": "isExternalNonceAlreadyRegisteredERC20",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -294,35 +301,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_token",
+        "name": "_issuedToken",
         "type": "address"
       }
     ],
-    "name": "isIssuedToken",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_originalChainName",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_originalTokenAddress",
-        "type": "string"
-      }
-    ],
-    "name": "isIssuedTokenCreatedERC20",
+    "name": "isIssuedTokenPublished",
     "outputs": [
       {
         "internalType": "bool",
@@ -335,7 +318,52 @@
   },
   {
     "inputs": [],
-    "name": "nonceERC20",
+    "name": "isProxyChain",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "issuedTokenImplementation",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "issuedTokens",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nonce",
     "outputs": [
       {
         "internalType": "uint256",
@@ -349,30 +377,55 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_chainName",
-        "type": "string"
-      },
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "registeredChains",
+    "outputs": [
       {
         "internalType": "bool",
-        "name": "_value",
+        "name": "",
         "type": "bool"
       }
     ],
-    "name": "setChainRegistrationERC20",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "registeredNonces",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
       {
         "internalType": "address",
-        "name": "_issuedTokenImplementation",
+        "name": "_newValidator",
         "type": "address"
       }
     ],
-    "name": "setIssuedTokenImplementation",
+    "name": "setValidator",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -385,24 +438,24 @@
         "type": "uint256"
       },
       {
-        "internalType": "string",
-        "name": "_originalChainName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_originalChain",
+        "type": "bytes32"
       },
       {
-        "internalType": "string",
-        "name": "_originalTokenAddress",
-        "type": "string"
+        "internalType": "bytes",
+        "name": "_originalToken",
+        "type": "bytes"
       },
       {
-        "internalType": "string",
-        "name": "_initialChainName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_initialChain",
+        "type": "bytes32"
       },
       {
-        "internalType": "string",
-        "name": "_targetChainName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_targetChain",
+        "type": "bytes32"
       },
       {
         "internalType": "uint256",
@@ -410,51 +463,39 @@
         "type": "uint256"
       },
       {
-        "internalType": "string",
+        "internalType": "bytes",
         "name": "_sender",
-        "type": "string"
+        "type": "bytes"
       },
       {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "evmAddress",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "noEvmAddress",
-            "type": "string"
-          }
-        ],
-        "internalType": "struct UniversalAddressUtils.UniversalAddress",
+        "internalType": "bytes",
         "name": "_recipient",
-        "type": "tuple"
+        "type": "bytes"
       },
       {
         "components": [
           {
             "internalType": "string",
-            "name": "tokenName",
+            "name": "name",
             "type": "string"
           },
           {
             "internalType": "string",
-            "name": "tokenSymbol",
+            "name": "symbol",
             "type": "string"
           },
           {
             "internalType": "uint8",
-            "name": "tokenDecimals",
+            "name": "decimals",
             "type": "uint8"
           }
         ],
-        "internalType": "struct LibERC20Driver.TokenCreateInfo",
-        "name": "_tokenCreateInfo",
+        "internalType": "struct BridgeERC20.TokenInfo",
+        "name": "_tokenInfo",
         "type": "tuple"
       }
     ],
-    "name": "tranferFromOtherChainERC20",
+    "name": "tranferFromOtherChain",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -472,31 +513,32 @@
         "type": "uint256"
       },
       {
-        "internalType": "string",
-        "name": "_targetChainName",
-        "type": "string"
+        "internalType": "bytes32",
+        "name": "_targetChain",
+        "type": "bytes32"
       },
       {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "evmAddress",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "noEvmAddress",
-            "type": "string"
-          }
-        ],
-        "internalType": "struct UniversalAddressUtils.UniversalAddress",
+        "internalType": "bytes",
         "name": "_recipient",
-        "type": "tuple"
+        "type": "bytes"
       }
     ],
-    "name": "tranferToOtherChainERC20",
+    "name": "tranferToOtherChain",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "validator",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]
