@@ -1,7 +1,3 @@
-import dotenv from "dotenv";
-import path from "path";
-dotenv.config({ path: path.resolve(__dirname, "../.env.secrets") });
-
 export default {
   proxyBridge: "YAR",
   bridges: [
@@ -26,7 +22,7 @@ export default {
     {
       name: "ETHEREUM",
       rpcUrl: "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
-      address: "0xF9c0bF1CFAAB883ADb95fed4cfD60133BffaB18a",
+      address: "0x25d7D86C405f63427C9FF24c3de7aa64F5d246Da",
       privateKey: process.env.ETHEREUM_VALIDATOR_PRIVATE_KEY,
     },
   ],

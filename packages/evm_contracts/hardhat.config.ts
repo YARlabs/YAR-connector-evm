@@ -60,6 +60,49 @@ const config: HardhatUserConfig = {
       accounts: [CONFIG.chains.ethereumTest.validatorPrivateKey],
     },
   },
+  
+  etherscan: {
+    apiKey: {
+      yarTest: CONFIG.chains.yarTest.etherscan.apiKey,
+      polygonTest: CONFIG.chains.polygonTest.etherscan.apiKey,
+      binanceTest: CONFIG.chains.binanceTest.etherscan.apiKey,
+      ethereumTest: CONFIG.chains.ethereumTest.etherscan.apiKey,
+    },
+    customChains: [
+      {
+        network: 'yarTest',
+        chainId: CONFIG.chains.yarTest.chainId,
+        urls: {
+          apiURL: CONFIG.chains.yarTest.rpcUrl,
+          browserURL: CONFIG.chains.yarTest.etherscan.url,
+        },
+      },
+      {
+        network: 'polygonTest',
+        chainId: CONFIG.chains.polygonTest.chainId,
+        urls: {
+          apiURL: CONFIG.chains.polygonTest.rpcUrl,
+          browserURL: CONFIG.chains.polygonTest.etherscan.url,
+        },
+      },
+      {
+        network: 'binanceTest',
+        chainId: CONFIG.chains.binanceTest.chainId,
+        urls: {
+          apiURL: CONFIG.chains.binanceTest.rpcUrl,
+          browserURL: CONFIG.chains.binanceTest.etherscan.url,
+        },
+      },
+      {
+        network: 'ethereumTest',
+        chainId: CONFIG.chains.ethereumTest.chainId,
+        urls: {
+          apiURL: CONFIG.chains.ethereumTest.rpcUrl,
+          browserURL: CONFIG.chains.ethereumTest.etherscan.url,
+        },
+      },
+    ],
+  },
   abiExporter: {
     path: './abi',
   },
