@@ -46,9 +46,17 @@ export class EvmExecutor {
   }
 
   private async _executeTrasfers(trasfers: Array<ITransferModel>) {
+    const errors: Array<Error> = []
     for(const trasfer of trasfers) {
-      await this._tarsferFromOtherChain(trasfer)
-      await AppState.completeAwaitingTrasfer(this._currentChain, trasfer)
+      try {
+        await this._tarsferFromOtherChain(trasfer)
+        await AppState.completeAwaitingTrasfer(this._currentChain, trasfer)
+      } catch(e) {
+        errors.push(e)
+      }
+    }
+    if(errors.length) {
+      throw Error(errors.map(e => e.message).join(' ||| '))
     }
   }
 

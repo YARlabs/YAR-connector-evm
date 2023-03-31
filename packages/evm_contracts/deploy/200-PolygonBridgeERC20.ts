@@ -10,7 +10,7 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const validator = signers[0]
 
   const currentChain = EthersUtils.keccak256('POLYGON')
-  const isProxyChain = true
+  const isProxyChain = false
   const registeredChains = [
     EthersUtils.keccak256('YAR'),
     EthersUtils.keccak256('BINANCE'),
