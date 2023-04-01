@@ -1,0 +1,17 @@
+The order of changing bridge addresses
+
+1. Create a file named .env in the root of the "frontend" directory
+2. In the env file, initialize the following variables with the corresponding bridge addresses:
+
+```
+REACT_APP_UNIVERSAL_BRIDGE_CONTRACT_BINANCE=0x0000000000000000000000000000000000000000
+REACT_APP_UNIVERSAL_BRIDGE_CONTRACT_YAR=0x0000000000000000000000000000000000000000
+REACT_APP_UNIVERSAL_BRIDGE_CONTRACT_POLYGON=0x0000000000000000000000000000000000000000
+REACT_APP_UNIVERSAL_BRIDGE_CONTRACT_ETHEREUM=0x0000000000000000000000000000000000000000
+```
+
+3. Call the script to build the project: 
+
+```
+npm run build
+```
