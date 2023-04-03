@@ -15,6 +15,7 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     EthersUtils.keccak256('YAR'),
     EthersUtils.keccak256('BINANCE'),
     EthersUtils.keccak256('ETHEREUM'),
+    EthersUtils.keccak256('SKALE'),
   ]
   const IssuedERC20Deployment = await get('IssuedERC20')
 

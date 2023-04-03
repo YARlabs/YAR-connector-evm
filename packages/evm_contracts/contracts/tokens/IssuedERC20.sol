@@ -21,8 +21,8 @@ contract IssuedERC20 is Initializable, ERC20Upgradeable, OwnableUpgradeable {
     ) external initializer {
 
         ERC20Upgradeable.__ERC20_init(
-            string(abi.encodePacked("YAR_", _originalTokenName)),
-            string(abi.encodePacked("YAR_", _originalTokenSymbol))
+            string(abi.encodePacked("y", _originalTokenName)),
+            string(abi.encodePacked("y", _originalTokenSymbol))
         );
         OwnableUpgradeable.__Ownable_init();
         originalTokenName = _originalTokenName;

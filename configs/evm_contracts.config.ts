@@ -43,5 +43,15 @@ export default {
         apiKey: process.env.ETHEREUM_EXPLORER_API_KEY,
       },
     },
+
+    chaosSkaleTest: {
+      validatorPrivateKey: process.env.SKALE_VALIDATOR_PRIVATE_KEY,
+      rpcUrl: "https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix",
+      chainId: 1351057110,
+      etherscan: {
+        url: "https://staging-fast-active-bellatrix.explorer.staging-v3.skalenodes.com",
+        apiKey: process.env.SKALE_EXPLORER_API_KEY,
+      },
+    },
   },
 };

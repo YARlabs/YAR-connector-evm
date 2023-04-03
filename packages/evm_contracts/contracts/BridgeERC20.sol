@@ -74,6 +74,11 @@ contract BridgeERC20 {
         }
     }
 
+    function setChainRegister(bytes32 _chain, bool _value) external {
+        enforceIsValidator(msg.sender);
+        registeredChains[_chain] = _value;
+    }
+
     function enforceIsValidator(address account) internal view {
         require(account == validator, "BridgeERC20: Only validator!");
     }

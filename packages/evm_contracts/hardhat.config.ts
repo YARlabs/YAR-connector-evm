@@ -59,6 +59,10 @@ const config: HardhatUserConfig = {
       url: CONFIG.chains.ethereumTest.rpcUrl,
       accounts: [CONFIG.chains.ethereumTest.validatorPrivateKey],
     },
+    chaosSkaleTest: {
+      url: CONFIG.chains.chaosSkaleTest.rpcUrl,
+      accounts: [CONFIG.chains.chaosSkaleTest.validatorPrivateKey],
+    },
   },
   
   etherscan: {
@@ -67,6 +71,7 @@ const config: HardhatUserConfig = {
       polygonTest: CONFIG.chains.polygonTest.etherscan.apiKey,
       binanceTest: CONFIG.chains.binanceTest.etherscan.apiKey,
       ethereumTest: CONFIG.chains.ethereumTest.etherscan.apiKey,
+      chaosSkaleTest: CONFIG.chains.chaosSkaleTest.etherscan.apiKey,
     },
     customChains: [
       {
@@ -91,6 +96,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: CONFIG.chains.binanceTest.rpcUrl,
           browserURL: CONFIG.chains.binanceTest.etherscan.url,
+        },
+      },
+      {
+        network: 'chaosSkaleTest',
+        chainId: CONFIG.chains.chaosSkaleTest.chainId,
+        urls: {
+          apiURL: CONFIG.chains.chaosSkaleTest.rpcUrl,
+          browserURL: CONFIG.chains.chaosSkaleTest.etherscan.url,
         },
       },
       {

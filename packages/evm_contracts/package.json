@@ -9,10 +9,12 @@
     "deploy:PolygonTest": "hardhat deploy --network polygonTest --tags PolygonBridgeERC20",
     "deploy:BinanceTest": "hardhat deploy --network binanceTest --tags BinanceBridgeERC20",
     "deploy:EthereumTest": "hardhat deploy --network ethereumTest --tags EthereumBridgeERC20",
+    "deploy:SkaleTest": "hardhat deploy --network chaosSkaleTest --tags SkaleBridgeERC20",
     "verify:YarTest": "hardhat --network yarTest etherscan-verify --api-key $YAR_EXPLORER_API_KEY",
     "verify:PolygonTest": "hardhat --network polygonTest etherscan-verify --api-key $POLYGON_EXPLORER_API_KEY",
     "verify:BinanceTest": "hardhat --network binanceTest etherscan-verify --api-key $BINANCE_EXPLORER_API_KEY",
-    "verify:EthereumTest": "hardhat --network ethereumTest etherscan-verify --api-key $ETHEREUM_EXPLORER_API_KEY"
+    "verify:EthereumTest": "hardhat --network ethereumTest etherscan-verify --api-key $ETHEREUM_EXPLORER_API_KEY",
+    "verify:SkaleTest": "hardhat --network chaosSkaleTest etherscan-verify --api-key $SKALE_EXPLORER_API_KEY"
   },
   "author": "",
   "license": "ISC",
