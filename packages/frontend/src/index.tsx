@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import { Config, DAppProvider, Mumbai, Goerli, BSCTestnet } from "@usedapp/core";
 import { config } from './config';
+import { customIds } from "./utils/customIds";
 
 const DAppConfig: Config = {
   readOnlyChainId: Mumbai.chainId,
@@ -11,7 +12,8 @@ const DAppConfig: Config = {
     [Mumbai.chainId]: config.network.mumbai.url,
     [Goerli.chainId]: config.network.goerli.url,
     [BSCTestnet.chainId]: config.network.bsctestnet.url,
-    [10226688]: config.network.yar.url,
+    [customIds.yar]: config.network.yar.url,
+    [customIds.skale]: config.network.skale.url
   },
 };
 

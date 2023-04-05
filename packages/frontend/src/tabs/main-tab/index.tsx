@@ -7,6 +7,7 @@ import { BSCTestnet, Goerli, Mumbai } from "@usedapp/core";
 import { idToScanLink, idToChainName } from '../../utils/idToChainName';
 import { toast } from 'react-toastify';
 import { useGetTicker } from '../../hooks/useGetTicker';
+import { customIds } from '../../utils/customIds';
 
 const MainTab = () => {
     const { account } = useEthers();
@@ -22,16 +23,18 @@ const MainTab = () => {
 
     const ChainsIdFrom = [
         ['BSC', BSCTestnet.chainId],
-        ['YAR', 10226688],
+        ['YAR', customIds.yar],
         ['Polygon', Mumbai.chainId],
-        ['Ethereum', Goerli.chainId]
+        ['Ethereum', Goerli.chainId],
+        ['Skale', customIds.skale]
     ]
 
     const ChainsIdTo = [
         ['Polygon', Mumbai.chainId],
         ['BSC', BSCTestnet.chainId],
-        ['YAR', 10226688],
-        ['Ethereum', Goerli.chainId]
+        ['YAR', customIds.yar],
+        ['Ethereum', Goerli.chainId],
+        ['Skale', customIds.skale]
     ]
 
     useEffect(() => {
@@ -58,7 +61,7 @@ const MainTab = () => {
         const tx = await transferHook(token, reciever, Number(amount), chainIdFrom, chainIdTo);
         const secondToken = await getSecondTokenHook(token, chainIdFrom, chainIdTo);
         console.log('tx', tx);
-        toast(`First Token: ${"      "}${token}; Target Token: ${"  "}${secondToken}; from ${idToChainName[chainIdFrom]} to ${idToChainName[chainIdTo]} \n `, {
+        toast(`First Token: ${"      "}${token};${"      "}Target Token: ${"  "}${secondToken};${"      "} from ${idToChainName[chainIdFrom]} to ${idToChainName[chainIdTo]} \n `, {
             position: "bottom-left",
             autoClose: false,
             hideProgressBar: false,
@@ -136,6 +139,12 @@ const MainTab = () => {
                             target='_blank'
                             rel="noreferrer"
                         >in YAR</a>
+                        <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+                        <a 
+                            href={`https://staging-fast-active-bellatrix.explorer.staging-v3.skalenodes.com/address/${process.env.REACT_APP_UNIVERSAL_BRIDGE_CONTRACT_SKALE}`} 
+                            target='_blank'
+                            rel="noreferrer"
+                        >in SKALE</a>
                     </h5>
                     <div className='col-sm-offset-1'>
                         <div className="col-sm-12">

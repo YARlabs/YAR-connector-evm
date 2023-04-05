@@ -14,5 +14,8 @@ export const config = {
     yar: {
       url: "https://rpc1.testnet.yarchain.org",
     },
+    skale: {
+      url: "https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix"
+    }
   },
 };
