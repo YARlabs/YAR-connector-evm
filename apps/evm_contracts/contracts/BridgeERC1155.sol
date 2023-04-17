@@ -151,6 +151,7 @@ contract BridgeERC1155 is IERC1155Receiver {
         bytes calldata _recipient
     ) external {
         require(_tokenId > 0, "BridgeERC1155: _tokenId < 0");
+        require(_amount > 0, "BridgeERC1155: amount == 0");
         require(registeredChains[_targetChain], "BridgeERC1155: chain not registered");
 
         bool isIssuedToken = issuedTokens[_transferedToken];
