@@ -11,7 +11,7 @@
     "build_validator_erc20": "dotenv -- turbo run build_validator --filter=validator",
     "build_validator_erc721": "dotenv -- turbo run build_validator --filter=validator_erc721",
     "build_validator_erc1155": "dotenv -- turbo run build_validator --filter=validator_erc1155",
-    "run_validators": "dotenv -- turbo run run_validator",
+    "run_validators": "dotenv -- turbo run run_validator --filter=validator --filter=validator_erc721 --filter=validator_erc1155",
     "run_validators_dev": "dotenv -- turbo run run_validator_dev",
     "run_validator_erc20": "dotenv -- turbo run run_validator --filter=validator",
     "run_validator_erc721": "dotenv -- turbo run run_validator --filter=validator_erc721",
