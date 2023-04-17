@@ -1,0 +1,44 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "pipeline": {
+    "export_deployments_addresses": {},
+    "typechains": {},
+    "build_typechains": {
+      "dependsOn": ["typechains"]
+    },
+    "build_configs": {},
+    "build_ethers_utils": {},
+
+    "build_libs": {
+      "dependsOn": [
+        "build_typechains", 
+        "build_configs",
+        "build_ethers_utils"
+      ]
+    },
+    
+    "typechain": {
+      "dependsOn": [
+        "build_libs"
+      ]
+    },
+    "clear": {},
+    "node": {},
+    "build_validator": {},
+    "run_validator_dev": {
+      "persistent": true
+    },
+    "export_abi": {
+      "cache": false
+    },
+   
+    "build_frontend": {
+      "dependsOn": ["typechain"]
+    },
+    "frontend_dev": {
+      "dependsOn": ["typechain"],
+      "persistent": true
+    }
+  }
+}

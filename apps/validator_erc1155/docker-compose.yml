@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  app:
+    build: 
+      context: ../../
+      dockerfile: ./apps/validator_erc1155/Dockerfile
+    depends_on:
+        - mongo
+    restart: always
+    networks:
+      - app-network
+    environment:
+      - MONGO_EXPRESS_AUTH=${MONGO_EXPRESS_AUTH}
+      - MONGO_EXPRESS_USER=${MONGO_EXPRESS_USER}
+      - MODE=${MODE}
+      - YAR_VALIDATOR_PRIVATE_KEY=${YAR_VALIDATOR_PRIVATE_KEY}
+      - POLYGON_VALIDATOR_PRIVATE_KEY=${POLYGON_VALIDATOR_PRIVATE_KEY}
+      - BINANCE_VALIDATOR_PRIVATE_KEY=${BINANCE_VALIDATOR_PRIVATE_KEY}
+      - ETHEREUM_VALIDATOR_PRIVATE_KEY=${ETHEREUM_VALIDATOR_PRIVATE_KEY}
+      - SKALE_VALIDATOR_PRIVATE_KEY=${SKALE_VALIDATOR_PRIVATE_KEY}
+
+  mongo:
+    image: mongo
+    restart: always
+    networks:
+      - app-network
+
+  mongo-express:
+    image: mongo-express
+    depends_on:
+        - mongo
+    restart: always
+    networks:
+      - app-network
+    ports:
+      - "8887:8081"
+    environment:
+      - ME_CONFIG_BASICAUTH=${MONGO_EXPRESS_AUTH}
+      - ME_CONFIG_BASICAUTH_USERNAME=${MONGO_EXPRESS_USER}
+      - ME_CONFIG_BASICAUTH_PASSWORD=${MONGO_EXPRESS_PASSWORD}
+
+networks:
+  app-network:
+    driver: bridge
+

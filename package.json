@@ -1,21 +1,43 @@
 {
-  "name": "bridge_monorepo",
-  "version": "1.0.0",
-  "description": "",
+  "name": "yar_bridge",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "postinstall": "cd ./packages/evm_contracts && npm i && cd ../validator/app && npm i",
-    "local_node": "cd ./packages/evm_contracts && npx hardhat node --full-trace",
-    "contracts_test": "cd ./packages/evm_contracts && npx hardhat test --full-trace",
-    "dev": "cd ./packages/validator/app && npm run docker_dev",
-    "start": "cd ./packages/validator/app && npm run docker",
-    "clean": "cd ./packages/validator/app && npm run docker_clean"
+    "build_validators": "dotenv -- turbo run build_validator",
+    "build_validator_erc20": "dotenv -- turbo run build_validator --filter=validator",
+    "build_validator_erc721": "dotenv -- turbo run build_validator --filter=validator_erc721",
+    "build_validator_erc1155": "dotenv -- turbo run build_validator --filter=validator_erc1155",
+    "run_validators": "dotenv -- turbo run run_validator",
+    "run_validators_dev": "dotenv -- turbo run run_validator_dev",
+    "run_validator_erc20": "dotenv -- turbo run run_validator --filter=validator",
+    "run_validator_erc721": "dotenv -- turbo run run_validator --filter=validator_erc721",
+    "run_validator_erc1155_dev": "dotenv -- turbo run run_validator_dev --filter=validator_erc1155",
+    "local_node": "cd apps/evm_contracts && npx hardhat node --fulltrace",
+    "test_e2e": "cd apps/evm_contracts && npm run test_e2e",
+    "frontend_dev": "dotenv -- turbo run frontend_dev --filter=frontend",
+    "export_abi": "dotenv -- turbo run export_abi --filter=evm_contracts",
+    "build_frontend": "dotenv -- turbo run build_frontend",
+    "build_repo": "dotenv -- turbo run typechain",
+    "clear": "dotenv -- turbo run clear",
+    "deploy": "cd apps/evm_contracts && npm run deploy",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "update_addresses": "dotenv -- turbo run export_deployments_addresses --filter=evm_contracts && dotenv -- turbo run build_configs",
+    "update_contracts": "dotenv -- turbo run export_abi --filter=evm_contracts && dotenv -- turbo run build_typechains"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "devDependencies": {
+    "prettier": "latest",
+    "turbo": "latest"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "dependencies": {
-    "@types/node": "^18.15.10",
-    "dotenv": "^16.0.3",
-    "path": "^0.12.7"
-  }
+    "cross-env": "^7.0.3",
+    "dotenv-cli": "^7.2.1"
+  },
+  "packageManager": "npm@9.6.0"
 }

@@ -1,0 +1,19 @@
+{
+  "name": "ethers_utils",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build_ethers_utils": "tsc",
+    "clear": "rimraf ./dist"
+  },
+  "dependencies": {
+    "ethers": "^5.7.2"
+  },
+  "devDependencies": {
+    "rimraf": "^4.4.1",
+    "typescript": "^5.0.4",
+    "tsconfig": "*"
+  }
+}
