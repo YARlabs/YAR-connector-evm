@@ -1,4 +1,5 @@
-import { CHAINS_CONFIG, EXPLORERS_API_KEY, VALIDATOR_PRIVATE_KEYS } from 'configs'
+import { CHAINS_CONFIG } from 'configs'
+import { EXPLORERS_API_KEY, VALIDATOR_PRIVATE_KEYS } from 'configs_secret'
 
 export const CONFIG = {
   chains: {

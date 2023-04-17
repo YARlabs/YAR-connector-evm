@@ -1,0 +1,16 @@
+{
+  "name": "configs_secret",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build_configs": "tsc",
+    "clear": "rimraf ./dist"
+  },
+  "devDependencies": {
+    "rimraf": "^4.4.1",
+    "typescript": "^5.0.4",
+    "tsconfig": "*",
+    "dotenv": "^16.0.3"
+  }
+}

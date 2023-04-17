@@ -1,4 +1,5 @@
-import { BRIDGES_ADDRESSES, CHAINS_CONFIG, VALIDATOR_PRIVATE_KEYS } from "configs"
+import { BRIDGES_ADDRESSES, CHAINS_CONFIG } from "configs"
+import { VALIDATOR_PRIVATE_KEYS } from "configs_secret"
 
 const CONFIG = {
   proxyBridge: 'YAR',

@@ -49,6 +49,7 @@
   "dependencies": {
     "ethers_utils": "*",
     "configs": "*",
+    "configs_secret": "*",
     "dotenv": "^16.0.3"
   }
 }

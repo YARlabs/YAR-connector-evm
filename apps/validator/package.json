@@ -23,6 +23,7 @@
   "dependencies": {
     "ethers_utils": "*",
     "configs": "*",
+    "configs_secret": "*",
     "typechains": "*",
     "@ethersproject/experimental": "^5.7.0",
     "bullmq": "^3.10.1",

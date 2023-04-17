@@ -8,8 +8,7 @@
     "build_frontend": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
     "typechain": "typechain --target=ethers-v5 --out-dir ./src/typechain-types './src/abi/**/*.json' || echo 'typechain fail'",
     "clear": "rimraf ./build && rimraf ./src/typechain-types",
-    "frontend_dev": "npm run start",
-    "un": "echo 0"
+    "frontend_dev": "npm run start"
   },
   "dependencies": {
     "@metamask/detect-provider": "*",

@@ -12,7 +12,7 @@ export const idToChainName = {
 }
 
 export const idToBridgeAddress = {
-    [BSCTestnet.chainId]: BRIDGES_ADDRESSES.erc20.erc20.binanceTest,
+    [BSCTestnet.chainId]: BRIDGES_ADDRESSES.erc20.binanceTest,
     [Goerli.chainId]: BRIDGES_ADDRESSES.erc20.ethereumTest,
     [Mumbai.chainId]: BRIDGES_ADDRESSES.erc20.polygonTest,
     [customIds.yar]: BRIDGES_ADDRESSES.erc20.yarTest,
