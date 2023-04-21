@@ -17,7 +17,6 @@
         "build_ethers_utils"
       ]
     },
-    
     "typechain": {
       "dependsOn": [
         "build_libs"
@@ -35,13 +34,6 @@
     "export_abi": {
       "cache": false
     },
-   
-    "build_frontend": {
-      "dependsOn": ["typechain"]
-    },
-    "frontend_dev": {
-      "dependsOn": ["typechain"],
-      "persistent": true
-    }
+    "build_frontend": {}
   }
 }

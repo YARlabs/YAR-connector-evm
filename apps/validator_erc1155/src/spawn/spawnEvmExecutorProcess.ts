@@ -7,13 +7,13 @@ async function main() {
     name,
     processName,
     bridgeAddress,
-    providerUrl,
+    providerUrls,
     privateKey,
   }: {
     name: string
     processName: string
     bridgeAddress: string
-    providerUrl: string
+    providerUrls: string[]
     privateKey: string
   } = CliArgsParser.parse(process.argv)
 
@@ -22,7 +22,7 @@ async function main() {
       name,
       processName,
       bridgeAddress,
-      providerUrl,
+      providerUrls,
       privateKey,
     })
     await evmExecutor.init()

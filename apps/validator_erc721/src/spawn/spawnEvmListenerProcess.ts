@@ -7,7 +7,7 @@ async function main() {
     name,
     processName,
     bridgeAddress,
-    providerUrl,
+    providerUrls,
     numberOfBlocksToConfirm,
     poolingInterval,
     syncFrom,
@@ -16,7 +16,7 @@ async function main() {
     name: string
     processName: string
     bridgeAddress: string
-    providerUrl: string
+    providerUrls: string[]
     numberOfBlocksToConfirm: number
     poolingInterval: number
     syncFrom: number
@@ -28,7 +28,7 @@ async function main() {
       name,
       processName,
       bridgeAddress,
-      providerUrl,
+      providerUrls,
       numberOfBlocksToConfirm,
       poolingInterval,
       syncFrom,

@@ -4,38 +4,47 @@ import { BridgeERC1155, BridgeERC1155__factory } from 'typechains'
 import { EthersUtils } from 'ethers_utils'
 import { AppState } from '../AppState'
 import { IBatchTransferModel } from '../models/BatchTransferModel'
+import { SafetyProviderManager } from '../utils/SafetyProviderManager'
 
 export class EvmExecutor {
-  private readonly _provider: ethers.providers.JsonRpcProvider
-  private readonly _wallet: ethers.Wallet
-  private readonly _bridgeERC1155: BridgeERC1155
+  private _provider?: ethers.providers.JsonRpcProvider
+  private _wallet?: ethers.Wallet
+  private _bridgeERC1155?: BridgeERC1155
   private readonly _name: string
   private readonly _processName: string
   private readonly _currentChain: string
+  private readonly _privateKey: string
+  private readonly _providerUrls: string[]
+  private readonly _bridgeAddress: string
 
   constructor({
     name,
     processName,
     bridgeAddress,
-    providerUrl,
+    providerUrls,
     privateKey,
   }: {
     name: string
     processName: string
     bridgeAddress: string
-    providerUrl: string
+    providerUrls: string[]
     privateKey: string
   }) {
     this._name = name
     this._processName = processName
     this._currentChain = EthersUtils.keccak256(this._name)
-    this._provider = new ethers.providers.JsonRpcProvider({ url: providerUrl, timeout: 30000 })
-    this._wallet = new ethers.Wallet(privateKey, this._provider)
-    this._bridgeERC1155 = BridgeERC1155__factory.connect(bridgeAddress, this._wallet)
+    this._bridgeAddress = bridgeAddress
+    this._providerUrls = providerUrls
+    this._privateKey = privateKey
   }
 
 
   public async init() {
+    const providerUrl = await SafetyProviderManager.getProvider(this._providerUrls)
+    this._provider = new ethers.providers.JsonRpcProvider({ url: providerUrl, timeout: 30000 })
+    this._wallet = new ethers.Wallet(this._privateKey, this._provider)
+    this._bridgeERC1155 = BridgeERC1155__factory.connect(this._bridgeAddress, this._wallet)
+    
     const savedTrasfers = await AppState.getAwaitingTrasfers(this._currentChain, false)
     const savedBatchTrasfers = await AppState.getAwaitingBatchTrasfers(this._currentChain, false)
     await this._executeTrasfers(savedTrasfers)
@@ -81,14 +90,14 @@ export class EvmExecutor {
   }
 
   private async _tarsferFromOtherChain(transfer: ITransferModel) {
-    const alreadyRegistered = await this._bridgeERC1155.registeredNonces(transfer.initialChain, transfer.nonce)
+    const alreadyRegistered = await this._bridgeERC1155!.registeredNonces(transfer.initialChain, transfer.nonce)
     if(alreadyRegistered) {
       console.log(`${transfer.transferId.slice(0, 8)} Already completed`)
       return
     }
 
     console.log(`SEND TX ${transfer.transferId.slice(0, 8)}`)
-    const tx = await this._bridgeERC1155.tranferFromOtherChain(
+    const tx = await this._bridgeERC1155!.tranferFromOtherChain(
       transfer.nonce,
       transfer.originalChain,
       transfer.originalToken,
@@ -108,14 +117,14 @@ export class EvmExecutor {
 
   
   private async _batchTarsferFromOtherChain(transfer: IBatchTransferModel) {
-    const alreadyRegistered = await this._bridgeERC1155.registeredNonces(transfer.initialChain, transfer.nonce)
+    const alreadyRegistered = await this._bridgeERC1155!.registeredNonces(transfer.initialChain, transfer.nonce)
     if(alreadyRegistered) {
       console.log(`${transfer.transferId.slice(0, 8)} Already completed`)
       return
     }
 
     console.log(`SEND TX ${transfer.transferId.slice(0, 8)}`)
-    const tx = await this._bridgeERC1155.batchTranferFromOtherChain(
+    const tx = await this._bridgeERC1155!.batchTranferFromOtherChain(
       transfer.nonce,
       transfer.originalChain,
       transfer.originalToken,

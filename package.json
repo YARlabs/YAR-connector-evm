@@ -8,33 +8,21 @@
   ],
   "scripts": {
     "build_validators": "dotenv -- turbo run build_validator",
-    "build_validator_erc20": "dotenv -- turbo run build_validator --filter=validator",
-    "build_validator_erc721": "dotenv -- turbo run build_validator --filter=validator_erc721",
-    "build_validator_erc1155": "dotenv -- turbo run build_validator --filter=validator_erc1155",
-    "run_validators": "dotenv -- turbo run run_validator --filter=validator --filter=validator_erc721 --filter=validator_erc1155",
-    "run_validators_dev": "dotenv -- turbo run run_validator_dev",
-    "run_validator_erc20": "dotenv -- turbo run run_validator --filter=validator",
-    "run_validator_erc721": "dotenv -- turbo run run_validator --filter=validator_erc721",
-    "run_validator_erc1155_dev": "dotenv -- turbo run run_validator_dev --filter=validator_erc1155",
+    "run_validators": "dotenv -- turbo run run_validator --concurrency=20",
+    "run_validators_dev": "dotenv -- turbo run run_validator_dev --concurrency=20",
     "local_node": "cd apps/evm_contracts && npx hardhat node --fulltrace",
     "test_e2e": "cd apps/evm_contracts && npm run test_e2e",
-    "frontend_dev": "turbo run frontend_dev --filter=frontend",
-    "frontend_erc721_dev": "cd apps/frontend_erc721 && npm run start",
-    "frontend_erc1155_dev": "cd apps/frontend_erc1155 && npm run start",
     "export_abi": "dotenv -- turbo run export_abi --filter=evm_contracts",
     "build_frontend": "turbo run build_frontend",
-    "build_frontend_erc721": "cd apps/frontend_erc721 && build_frontend_erc721",
-    "build_frontend_erc1155": "cd apps/frontend_erc1155 && build_frontend_erc1155",
     "build_repo": "dotenv -- turbo run typechain",
     "clear": "dotenv -- turbo run clear",
-    "deploy": "cd apps/evm_contracts && npm run deploy",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "update_addresses": "dotenv -- turbo run export_deployments_addresses --filter=evm_contracts && dotenv -- turbo run build_configs",
     "update_contracts": "dotenv -- turbo run export_abi --filter=evm_contracts && dotenv -- turbo run build_typechains"
   },
   "devDependencies": {
     "prettier": "latest",
-    "turbo": "latest"
+    "turbo": "^1.9.3"
   },
   "engines": {
     "node": ">=14.0.0"

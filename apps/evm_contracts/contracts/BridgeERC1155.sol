@@ -150,7 +150,6 @@ contract BridgeERC1155 is IERC1155Receiver {
         bytes32 _targetChain,
         bytes calldata _recipient
     ) external {
-        require(_tokenId > 0, "BridgeERC1155: _tokenId < 0");
         require(_amount > 0, "BridgeERC1155: amount == 0");
         require(registeredChains[_targetChain], "BridgeERC1155: chain not registered");
 
@@ -206,12 +205,16 @@ contract BridgeERC1155 is IERC1155Receiver {
         bytes32 _targetChain,
         bytes calldata _recipient
     ) external {
-        require(_tokenIds.length > 0, "BridgeERC1155: _tokenIds.length == 0");
+        uint256 tokensLength = _tokenIds.length;
+        require(tokensLength > 0, "BridgeERC1155: _tokenIds.length == 0");
         require(
-            _tokenIds.length == _amounts.length,
+            tokensLength == _amounts.length,
             "BridgeERC1155: _tokenIds.length != _amounts.length"
         );
         require(registeredChains[_targetChain], "BridgeERC1155: chain not registered");
+        for(uint256 i; i < tokensLength; i++) {
+            require(_amounts[i] > 0, "BridgeERC1155: _amounts contains zero value!");
+        }
 
         bool isIssuedToken = issuedTokens[_transferedToken];
         bytes32 initialChain = currentChain;
@@ -241,9 +244,8 @@ contract BridgeERC1155 is IERC1155Receiver {
             IERC1155MetadataURI token = IERC1155MetadataURI(_transferedToken);
             originalChain = initialChain;
             originalToken = abi.encode(_transferedToken);
-            uint256 l = _tokenIds.length;
-            tokenUris = new string[](l);
-            for (uint256 i; i < l; i++) {
+            tokenUris = new string[](tokensLength);
+            for (uint256 i; i < tokensLength; i++) {
                 try token.uri(_tokenIds[i]) returns (string memory _tokenUri) {
                     tokenUris[i] = _tokenUri;
                 } catch {}

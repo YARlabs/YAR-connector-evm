@@ -22,7 +22,7 @@ async function main() {
           name=${bridgeConfig.name} \
           processName=${bridgeConfig.name}Listener \
           bridgeAddress=${bridgeConfig.address} \
-          providerUrl=${bridgeConfig.rpcUrl} \
+          providerUrls=[${bridgeConfig.rpcUrls.join(',')}] \
           numberOfBlocksToConfirm=${1} \
           poolingInterval=${5000} \
           syncFrom=${0} \
@@ -38,7 +38,7 @@ async function main() {
           name=${bridgeConfig.name} \
           processName=${bridgeConfig.name}Executor \
           bridgeAddress=${bridgeConfig.address} \
-          providerUrl=${bridgeConfig.rpcUrl} \
+          providerUrls=[${bridgeConfig.rpcUrls.join(',')}] \
           privateKey=${bridgeConfig.privateKey} \
           `,
     })

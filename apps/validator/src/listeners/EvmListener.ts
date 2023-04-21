@@ -3,13 +3,11 @@ import { ITransferModel } from '../models/TransferModel'
 import { BridgeERC20, BridgeERC20__factory } from 'typechains'
 import { EthersUtils } from 'ethers_utils'
 import { AppState } from '../AppState'
-
-
-
+import { SafetyProviderManager } from '../utils/SafetyProviderManager'
 
 export class EvmListener {
-  private readonly _provider: ethers.providers.JsonRpcProvider
-  private readonly _bridgeERC20: BridgeERC20
+  private _provider?: ethers.providers.JsonRpcProvider
+  private _bridgeERC20?: BridgeERC20
   private readonly _numberOfBlocksToConfirm: number
   private readonly _poolingInterval: number
   private _previousBlock: number
@@ -20,12 +18,14 @@ export class EvmListener {
   private _syncFrom?: number
 
   private readonly _proxyChain: string
+  private readonly _providerUrls: string[]
+  private readonly _bridgeAddress: string
 
   constructor({
     name,
     processName,
     bridgeAddress,
-    providerUrl,
+    providerUrls,
     numberOfBlocksToConfirm,
     poolingInterval,
     syncFrom,
@@ -34,7 +34,7 @@ export class EvmListener {
     name: string
     processName: string
     bridgeAddress: string
-    providerUrl: string
+    providerUrls: string[]
     numberOfBlocksToConfirm: number
     poolingInterval: number
     syncFrom?: number
@@ -47,13 +47,17 @@ export class EvmListener {
     this._proxyChain = EthersUtils.keccak256(proxyChain)
     this._numberOfBlocksToConfirm = numberOfBlocksToConfirm
     this._poolingInterval = poolingInterval
-    this._provider = new ethers.providers.JsonRpcProvider({url: providerUrl, timeout: 30000})
-    this._bridgeERC20 = BridgeERC20__factory.connect(bridgeAddress, this._provider)
     this._syncFrom = syncFrom
     this._previousBlock = -1
+    this._bridgeAddress = bridgeAddress
+    this._providerUrls = providerUrls
   }
 
   public async init() {
+    const providerUrl = await SafetyProviderManager.getProvider(this._providerUrls)
+    this._provider = new ethers.providers.JsonRpcProvider({url: providerUrl, timeout: 30000})
+    this._bridgeERC20 = BridgeERC20__factory.connect(this._bridgeAddress, this._provider)
+
     const previousBlockFromDb = await AppState.getPreviousBlock(this._processName)
     if(previousBlockFromDb !== undefined) {
       this._syncFrom = previousBlockFromDb
@@ -71,7 +75,7 @@ export class EvmListener {
 
     setInterval(async () => {
       const startBlock = (await AppState.getPreviousBlock(this._processName))! + 1
-      const currentBlock = await this._provider.getBlockNumber()
+      const currentBlock = await this._provider!.getBlockNumber()
       let confirmedBlock = currentBlock - this._numberOfBlocksToConfirm
       if (confirmedBlock - startBlock > this._limitOfBlocksForGetLogs)
         confirmedBlock = startBlock + this._limitOfBlocksForGetLogs
@@ -83,9 +87,11 @@ export class EvmListener {
 
       const transfers = await this._getTransfers(startBlock, confirmedBlock)
       if(transfers.length) console.log(`Pooling ${transfers.length} events on blocks ${startBlock}-${confirmedBlock}`)
+      const awatingPromises: Promise<void>[] = []
       for (const transfer of transfers) {
-        this._addTask(transfer)
+        awatingPromises.push(this._addTask(transfer))
       }
+      await Promise.all(awatingPromises)
       
       await AppState.setPreviousBlock(this._processName, confirmedBlock)
     }, this._poolingInterval)
@@ -105,8 +111,8 @@ export class EvmListener {
     endBlock: number,
   ): Promise<Array<ITransferModel>> {
     return (
-      await this._bridgeERC20.queryFilter(
-        this._bridgeERC20.filters.TransferToOtherChain(),
+      await this._bridgeERC20!.queryFilter(
+        this._bridgeERC20!.filters.TransferToOtherChain(),
         startBlock,
         endBlock,
       )

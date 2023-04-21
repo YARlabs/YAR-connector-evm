@@ -70,7 +70,7 @@ export class BridgeERC20E2EUtils {
 
       let receipt: ContractReceipt
       _yarBridge.once(_yarBridge.filters.TransferFromOtherChain(), async () => {
-        resolve(receipt)
+        resolve(await tx.wait())
       })
 
       receipt = await tx.wait()
@@ -102,7 +102,7 @@ export class BridgeERC20E2EUtils {
 
       let receipt: ContractReceipt
       originalBridge.once(originalBridge.filters.TransferFromOtherChain(), async () => {
-        resolve(receipt)
+        resolve(await tx.wait())
       })
 
       receipt = await tx.wait()
@@ -133,7 +133,7 @@ export class BridgeERC20E2EUtils {
 
       let receipt: ContractReceipt
       secondaryBridge.once(secondaryBridge.filters.TransferFromOtherChain(), async () => {
-        resolve(receipt)
+        resolve(await tx.wait())
       })
 
       receipt = await tx.wait()
@@ -165,7 +165,7 @@ export class BridgeERC20E2EUtils {
 
       let receipt: ContractReceipt
       originalBridge.once(originalBridge.filters.TransferFromOtherChain(), async () => {
-        resolve(receipt)
+        resolve(await tx.wait())
       })
 
       receipt = await tx.wait()
@@ -198,7 +198,7 @@ export class BridgeERC20E2EUtils {
 
       let receipt: ContractReceipt
       thirdBridge.once(thirdBridge.filters.TransferFromOtherChain(), async () => {
-        resolve(receipt)
+        resolve(await tx.wait())
       })
 
       receipt = await tx.wait()
@@ -232,7 +232,7 @@ export class BridgeERC20E2EUtils {
 
       let receipt: ContractReceipt
       secondaryBridge.once(secondaryBridge.filters.TransferFromOtherChain(), async () => {
-        resolve(receipt)
+        resolve(await tx.wait())
       })
 
       receipt = await tx.wait()
@@ -262,7 +262,7 @@ export class BridgeERC20E2EUtils {
 
       let receipt: ContractReceipt
       secondaryBridge.once(secondaryBridge.filters.TransferFromOtherChain(), async () => {
-        resolve(receipt)
+        resolve(await tx.wait())
       })
 
       receipt = await tx.wait()
@@ -294,7 +294,7 @@ export class BridgeERC20E2EUtils {
 
       let receipt: ContractReceipt
       originalBridge.once(originalBridge.filters.TransferFromOtherChain(), async () => {
-        resolve(receipt)
+        resolve(await tx.wait())
       })
 
       receipt = await tx.wait()

@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "npm run typechain",
     "start": "cross-env GENERATE_SOURCEMAP=false react-scripts start",
-    "build_frontend_erc721": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
+    "build_frontend": "cross-env GENERATE_SOURCEMAP=false react-scripts build",
     "typechain": "typechain --target=ethers-v5 --out-dir ./src/typechain-types './src/abi/**/*.json' || echo 'typechain fail'",
     "clear": "rimraf ./build && rimraf ./src/typechain-types"
   },

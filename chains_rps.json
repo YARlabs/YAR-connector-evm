@@ -1,0 +1,28 @@
+{
+    "yarTest": [
+        "https://rpc1.testnet.yarchain.org"
+    ],
+    "polygonTest": [
+        "https://rpc-mumbai.maticvigil.com",
+        "https://polygon-mumbai.blockpi.network/v1/rpc/public",
+        "https://matic-mumbai.chainstacklabs.com",
+        "https://polygon-testnet.public.blastapi.io",
+        "https://endpoints.omniatech.io/v1/matic/mumbai/public"
+    ],
+    "binanceTest": [
+        "https://data-seed-prebsc-1-s1.binance.org:8545",
+        "https://data-seed-prebsc-2-s3.binance.org:8545",
+        "https://data-seed-prebsc-1-s3.binance.org:8545",
+        "https://data-seed-prebsc-2-s1.binance.org:8545",
+        "https://data-seed-prebsc-1-s2.binance.org:8545"
+    ],
+    "ethereumTest": [
+        "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
+        "https://goerli.blockpi.network/v1/rpc/public",
+        "https://rpc.ankr.com/eth_goerli",
+        "https://goerli.blockpi.network/v1/rpc/public"
+    ],
+    "chaosSkaleTest": [
+        "https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix"
+    ]
+}
