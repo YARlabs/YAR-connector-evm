@@ -24,7 +24,9 @@
     },
     "clear": {},
     "node": {},
-    "build_validator": {},
+    "build_validator": {
+      "cache": false
+    },
     "run_validator": {
       "persistent": true
     },
