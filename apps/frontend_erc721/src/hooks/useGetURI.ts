@@ -9,13 +9,7 @@ export const useGetURI = () => {
             const provider = new providers.JsonRpcProvider(idToRpcUrl[chainId]);
             const contractToken = IERC721Metadata__factory.connect(token, provider);
             try {
-                console.log("token", token);
-                
-                console.log("try 1");
-                console.log(nftId, typeof nftId);
-                
                 const uri = await contractToken.tokenURI(nftId);
-                console.log("try 2");
                 return uri;
             } catch(error: any) {
                 const errorMessage =

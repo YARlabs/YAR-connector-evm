@@ -11,6 +11,7 @@ import { useGetTicker } from "../../hooks/useGetTicker";
 import { customIds } from "../../utils/customIds";
 import { BRIDGES_ADDRESSES } from "configs";
 import { bridgesLinks } from "../../utils/bridgesLinks";
+import { useGetImageLink } from "../../hooks/useGetImageLink";
 
 const MainTab = () => {
   const { account } = useEthers();
@@ -24,6 +25,7 @@ const MainTab = () => {
   const [chainIdTo, setChainIdTo] = useState(Mumbai.chainId);
   const [isDisable, setDisable] = useState(false);
   const [ticker, setTicker] = useState("");
+  const [imageLink, setImageLink] = useState("");
 
   const ChainsIdFrom = [
     ["BSC", BSCTestnet.chainId],
@@ -45,6 +47,7 @@ const MainTab = () => {
     if (!account) return;
   }, [account]);
 
+  const imageHook = useGetImageLink();
   const uriHook = useGetURI();
   const transferHook = useTransferToOtherChain();
   const getSecondTokenHook = useGetSecondToken();
@@ -113,25 +116,28 @@ const MainTab = () => {
     if (address.length === 42) {
       const ticker = await tickerHook(address, chainIdFrom);
       if (ticker) setTicker(ticker);
-      
       if (id) {
-        
         const uri = await uriHook(address, id, chainIdFrom);
-        
-        if (uri) setUri(
-          `<table>
-              <tr>
-                  <td>URI:</td>
-                  <td><a href="${uri}" target='_blank'>${uri}</a></td>
-              </tr>
-          </table>`
-        );
+        if (uri) {
+          setUri(
+            `<table>
+                <tr>
+                    <td>URI:</td>
+                    <td><a href="${uri}" target='_blank'>${uri}</a></td>
+                </tr>
+            </table>`
+          );
+          const imageLink = await imageHook(uri);
+          setImageLink(imageLink);
+        } 
       } else {
         setUri("")
+        setImageLink("");
       }
     } else {
       setTicker("");
       setUri("");
+      setImageLink("");
     }
   };
 
@@ -151,15 +157,20 @@ const MainTab = () => {
                 </tr>
             </table>`
           )
+          const imageLink = await imageHook(uri);
+          setImageLink(imageLink);
         } else {
           setUri("");
+          setImageLink("");
         }
       } else {
         setUri("");
+        setImageLink("");
       }
     } else {
       setTicker("");
       setUri("");
+      setImageLink("");
     }
   };
 
@@ -176,8 +187,11 @@ const MainTab = () => {
               </tr>
           </table>`
         );
+        const imageLink = await imageHook(uri);
+        setImageLink(imageLink);
       } else {
         setUri("");
+        setImageLink("");
       }
     }
   }
@@ -346,6 +360,10 @@ const MainTab = () => {
           </div>
           <div className="clearfix"></div>
         </div>
+        {
+          imageLink &&
+          <img src={imageLink} alt=""></img>
+        }
       </div>
     </>
   );
