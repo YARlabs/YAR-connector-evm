@@ -9,6 +9,7 @@ import { idToScanLink, idToChainName } from "../../utils/idToChainName";
 import { toast } from "react-toastify";
 import { customIds } from "../../utils/customIds";
 import { BRIDGES_ADDRESSES } from "configs";
+import { bridgesLinks } from "../../utils/bridgesLinks";
 
 const MainTab = () => {
   const { account } = useEthers();
@@ -172,6 +173,23 @@ const MainTab = () => {
     <>
       <div className="tab-pane" style={{ display: "block" }}>
         <div className="row">
+          <h5 className="text-center">
+            <a
+              href={bridgesLinks.erc20}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Bridge for 20
+            </a>
+            <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+            <a
+              href={bridgesLinks.erc721}
+              target="_blank"
+              rel="noreferrer"
+            >
+              for 721
+            </a>
+          </h5>
           <h5 className="text-center">
             <a
               href={`https://mumbai.polygonscan.com/address/${BRIDGES_ADDRESSES.erc1155.polygonTest}`}
