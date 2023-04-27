@@ -265,7 +265,7 @@ const MainTab = () => {
             </div>
 
             {notify ? (
-              <div dangerouslySetInnerHTML={{ __html: notify }}></div>
+              <div style={{margin: "15px"}} dangerouslySetInnerHTML={{ __html: notify }}></div>
             ) : null}
           </div>
         </div>
