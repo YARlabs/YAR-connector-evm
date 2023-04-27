@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import axios from 'axios';
 
-export const useGetImageLink = () => {
+export const useGetContent = () => {
 
     return useCallback(
       async (uri: string) => {
@@ -11,7 +11,7 @@ export const useGetImageLink = () => {
                     headers: {}
                 }
             )
-            return request.data.image;
+            return request.data;
         } catch (error: any) {
             const errorMessage =
             error?.error?.message ||
