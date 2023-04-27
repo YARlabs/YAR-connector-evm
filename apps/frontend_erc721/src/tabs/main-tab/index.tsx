@@ -5,13 +5,16 @@ import { useGetSecondToken } from "../../hooks/useGetSecondToken";
 import { useValidationBeforeTransfer } from "../../hooks/useValidationBeforeTransfer";
 import { useGetURI } from "../../hooks/useGetURI";
 import { BSCTestnet, Goerli, Mumbai } from "@usedapp/core";
+import Modal from 'react-modal';
 import { idToScanLink, idToChainName } from "../../utils/idToChainName";
 import { toast } from "react-toastify";
 import { useGetTicker } from "../../hooks/useGetTicker";
 import { customIds } from "../../utils/customIds";
 import { BRIDGES_ADDRESSES } from "configs";
 import { bridgesLinks } from "../../utils/bridgesLinks";
-import { useGetImageLink } from "../../hooks/useGetImageLink";
+import { useGetContent } from "../../hooks/useGetContent";
+import { JsonView, defaultStyles } from 'react-json-view-lite';
+import 'react-json-view-lite/dist/index.css';
 
 const MainTab = () => {
   const { account } = useEthers();
@@ -26,6 +29,8 @@ const MainTab = () => {
   const [isDisable, setDisable] = useState(false);
   const [ticker, setTicker] = useState("");
   const [imageLink, setImageLink] = useState("");
+  const [modalIsOpen, setIsOpen] = useState(false);
+  const [jsonMetadata, setJsonMetadata] = useState({});
 
   const ChainsIdFrom = [
     ["BSC", BSCTestnet.chainId],
@@ -47,7 +52,7 @@ const MainTab = () => {
     if (!account) return;
   }, [account]);
 
-  const imageHook = useGetImageLink();
+  const contentHook = useGetContent();
   const uriHook = useGetURI();
   const transferHook = useTransferToOtherChain();
   const getSecondTokenHook = useGetSecondToken();
@@ -127,17 +132,20 @@ const MainTab = () => {
                 </tr>
             </table>`
           );
-          const imageLink = await imageHook(uri);
-          setImageLink(imageLink);
+          const jsonContent = await contentHook(uri);
+          setJsonMetadata(jsonContent);
+          setImageLink(jsonContent.image);
         } 
       } else {
         setUri("")
         setImageLink("");
+        setJsonMetadata({});
       }
     } else {
       setTicker("");
       setUri("");
       setImageLink("");
+      setJsonMetadata({});
     }
   };
 
@@ -157,22 +165,34 @@ const MainTab = () => {
                 </tr>
             </table>`
           )
-          const imageLink = await imageHook(uri);
-          setImageLink(imageLink);
+          const jsonContent = await contentHook(uri);
+          setImageLink(jsonContent.image);
+          setJsonMetadata(jsonContent);
         } else {
           setUri("");
           setImageLink("");
+          setJsonMetadata("");
         }
       } else {
         setUri("");
         setImageLink("");
+        setJsonMetadata("");
       }
     } else {
       setTicker("");
       setUri("");
       setImageLink("");
+      setJsonMetadata("");
     }
   };
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
 
   const changeNftId = async (nftId: string) => {
     setId(nftId);
@@ -187,11 +207,13 @@ const MainTab = () => {
               </tr>
           </table>`
         );
-        const imageLink = await imageHook(uri);
-        setImageLink(imageLink);
+        const jsonContent = await contentHook(uri);
+        setImageLink(jsonContent.image);
+        setJsonMetadata(jsonContent);
       } else {
         setUri("");
         setImageLink("");
+        setJsonMetadata("");
       }
     }
   }
@@ -358,6 +380,22 @@ const MainTab = () => {
               {isDisable ? <div className="spinner"></div> : "Transfer"}
             </button>
           </div>
+          {
+            Object.keys(jsonMetadata).length !== 0 && 
+            <div className="pull-left">
+              <button
+                type="button"
+                className="btn btn-fill btn-danger btn-wd"
+                value="Transfer"
+                onClick={openModal}
+                disabled={isDisable}
+                style={{ height: "42px" }}
+              >
+                Show Metadata
+              </button>
+            </div>
+          }
+          
           <div className="clearfix"></div>
         </div>
         {
@@ -365,6 +403,13 @@ const MainTab = () => {
           <img src={imageLink} alt=""></img>
         }
       </div>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+      >
+        <button className="pull-right" onClick={closeModal}>&#215;</button>
+        <JsonView data={jsonMetadata} shouldInitiallyExpand={(level) => true} style={defaultStyles} />
+      </Modal>
     </>
   );
 };
