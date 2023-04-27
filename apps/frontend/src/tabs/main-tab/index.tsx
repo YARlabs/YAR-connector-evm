@@ -187,7 +187,7 @@ const MainTab = () => {
               in SKALE
             </a>
           </h5>
-          <div className="col-sm-offset-1">
+          <div className="col-sm-offset">
             <div className="col-sm-12">
               <div className="form-group label-floating">
                 <label className="control-label">Contract:</label>
