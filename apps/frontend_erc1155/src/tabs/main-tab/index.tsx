@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { customIds } from "../../utils/customIds";
 import { BRIDGES_ADDRESSES } from "configs";
 import { bridgesLinks } from "../../utils/bridgesLinks";
+import { useGetImageLink } from "../../hooks/useGetImageLink";
 
 const MainTab = () => {
   const { account } = useEthers();
@@ -23,6 +24,7 @@ const MainTab = () => {
   const [chainIdFrom, setChainIdFrom] = useState(BSCTestnet.chainId);
   const [chainIdTo, setChainIdTo] = useState(Mumbai.chainId);
   const [isDisable, setDisable] = useState(false);
+  const [imageLink, setImageLink] = useState("");
 
   const ChainsIdFrom = [
     ["BSC", BSCTestnet.chainId],
@@ -44,6 +46,7 @@ const MainTab = () => {
     if (!account) return;
   }, [account]);
 
+  const imageHook = useGetImageLink();
   const uriHook = useGetURI();
   const transferHook = useTransferToOtherChain();
   const getSecondTokenHook = useGetSecondToken();
@@ -121,11 +124,15 @@ const MainTab = () => {
               </tr>
           </table>`
         );
+        const imageLink = await imageHook(uri);
+        setImageLink(imageLink);
       } else {
         setUri("");
+        setImageLink("");
       }
     } else {
       setUri("");
+      setImageLink("");
     }
   };
 
@@ -142,11 +149,15 @@ const MainTab = () => {
                 </tr>
             </table>`
           )
+          const imageLink = await imageHook(uri);
+          setImageLink(imageLink);
         } else {
           setUri("");
+          setImageLink("");
         }
     } else {
       setUri("");
+      setImageLink("");
     }
   };
 
@@ -163,8 +174,11 @@ const MainTab = () => {
               </tr>
           </table>`
         );
+        const imageLink = await imageHook(uri);
+        setImageLink(imageLink);
       } else {
         setUri("");
+        setImageLink("");
       }
     }
   }
@@ -338,6 +352,10 @@ const MainTab = () => {
           </div>
           <div className="clearfix"></div>
         </div>
+        {
+          imageLink &&
+          <img src={imageLink} alt=""></img>
+        }
       </div>
     </>
   );
