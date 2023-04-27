@@ -1,6 +1,6 @@
 const bridgesLinks = {
-    erc20: "#",
-    erc1155: "#"
+    erc20: "https://evm.connector.testnet.yarchain.org/",
+    erc1155: "https://erc1155.evm.connector.testnet.yarchain.org/"
 }
 
 export { bridgesLinks };

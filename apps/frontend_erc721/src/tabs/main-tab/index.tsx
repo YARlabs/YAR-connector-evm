@@ -48,6 +48,19 @@ const MainTab = () => {
     ["Skale", customIds.skale],
   ];
 
+  const customStyles = {
+    content: {
+      minWidth: '500px',
+      minHeight: '100px',
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
+
   useEffect(() => {
     if (!account) return;
   }, [account]);
@@ -125,9 +138,9 @@ const MainTab = () => {
         const uri = await uriHook(address, id, chainIdFrom);
         if (uri) {
           setUri(
-            `<table>
+            `<table style="background: #ccc;">
                 <tr>
-                    <td>URI:</td>
+                    <td>URI:${" "}</td>
                     <td><a href="${uri}" target='_blank'>${uri}</a></td>
                 </tr>
             </table>`
@@ -158,9 +171,9 @@ const MainTab = () => {
         const uri = await uriHook(token, id, chainId);
         if (uri) {
           setUri(
-            `<table>
+            `<table style="background: #ccc;">
                 <tr>
-                    <td>URI:</td>
+                    <td>URI:${" "}</td>
                     <td><a href="${uri}" target='_blank'>${uri}</a></td>
                 </tr>
             </table>`
@@ -200,9 +213,9 @@ const MainTab = () => {
       const uri = await uriHook(token, nftId, chainIdFrom);
       if (uri) {
         setUri(
-          `<table>
+          `<table style="background: #ccc;">
               <tr>
-                  <td>URI:</td>
+                  <td>URI:${" "}</td>
                   <td><a href="${uri}" target='_blank'>${uri}</a></td>
               </tr>
           </table>`
@@ -280,7 +293,7 @@ const MainTab = () => {
               in SKALE
             </a>
           </h5>
-          <div className="col-sm-offset-1">
+          <div className="col-sm-offset">
             <div className="col-sm-12">
               <div className="form-group label-floating">
                 <label className="control-label">Contract:</label>
@@ -358,11 +371,11 @@ const MainTab = () => {
             </div>
 
             {uri ? (
-              <div dangerouslySetInnerHTML={{ __html: uri }}></div>
+              <div style={{margin: "15px"}} dangerouslySetInnerHTML={{ __html: uri }}></div>
             ) : null}
 
             {notify ? (
-              <div dangerouslySetInnerHTML={{ __html: notify }}></div>
+              <div style={{margin: "15px"}} dangerouslySetInnerHTML={{ __html: notify }}></div>
             ) : null}
           </div>
         </div>
@@ -400,12 +413,15 @@ const MainTab = () => {
         </div>
         {
           imageLink &&
-          <img src={imageLink} alt=""></img>
+          <div style={{width: "100%" ,display: "flex", justifyContent: "center"}}>
+            <img src={imageLink} alt=""></img>
+          </div>
         }
       </div>
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
+        style={customStyles}
       >
         <button className="pull-right" onClick={closeModal}>&#215;</button>
         <JsonView data={jsonMetadata} shouldInitiallyExpand={(level) => true} style={defaultStyles} />
