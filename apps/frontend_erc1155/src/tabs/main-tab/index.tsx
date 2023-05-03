@@ -223,19 +223,21 @@ const MainTab = () => {
         <div className="row">
           <h5 className="text-center">
             <a
+              className="btn btn-fill btn-danger btn-wd"
               href={bridgesLinks.erc20}
               target="_blank"
               rel="noreferrer"
             >
-              Bridge for 20
+              ERC20
             </a>
             <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
             <a
+              className="btn btn-fill btn-danger btn-wd"
               href={bridgesLinks.erc721}
               target="_blank"
               rel="noreferrer"
             >
-              for 721
+              ERC721
             </a>
           </h5>
           <h5 className="text-center">
