@@ -191,7 +191,7 @@ const MainTab = () => {
   return (
     <>
       <div className="" style={{ display: "block" }}>
-        <div className="row">
+        <div className="row" style={{padding: "30px"}}>
           <h5 className="text-center">
             <a
               className="btn btn-fill btn-danger btn-wd"
@@ -201,7 +201,6 @@ const MainTab = () => {
             >
               ERC20
             </a>
-            <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
             <a
               className="btn btn-fill btn-danger btn-wd"
               href={bridgesLinks.erc1155}

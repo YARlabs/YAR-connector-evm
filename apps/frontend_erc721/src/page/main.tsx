@@ -14,7 +14,7 @@ const main = () => {
                                         <img src='https://yarchain.org/img/yar_logo.svg' alt='' style={{ width: '25%' }} />
                                         { <ConnectWallet /> }
                                     </div>
-                                    <div className="tab-content">
+                                    <div className="">
                                         { <MainTab /> }
                                     </div>
                                 </form>
