@@ -5,15 +5,15 @@ import { useGetSecondToken } from "../../hooks/useGetSecondToken";
 import { useValidationBeforeTransfer } from "../../hooks/useValidationBeforeTransfer";
 import { useGetURI } from "../../hooks/useGetURI";
 import { BSCTestnet, Goerli, Mumbai } from "@usedapp/core";
-import Modal from 'react-modal';
 import { idToScanLink, idToChainName } from "../../utils/idToChainName";
 import { toast } from "react-toastify";
 import { customIds } from "../../utils/customIds";
 import { BRIDGES_ADDRESSES } from "configs";
 import { bridgesLinks } from "../../utils/bridgesLinks";
 import { useGetContent } from "../../hooks/useGetContent";
-import { JsonView, defaultStyles } from 'react-json-view-lite';
 import 'react-json-view-lite/dist/index.css';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 const MainTab = () => {
   const { account } = useEthers();
@@ -28,7 +28,6 @@ const MainTab = () => {
   const [chainIdTo, setChainIdTo] = useState(Mumbai.chainId);
   const [isDisable, setDisable] = useState(false);
   const [imageLink, setImageLink] = useState("");
-  const [modalIsOpen, setIsOpen] = useState(false);
   const [jsonMetadata, setJsonMetadata] = useState({});
 
   const ChainsIdFrom = [
@@ -46,19 +45,6 @@ const MainTab = () => {
     ["Ethereum", Goerli.chainId],
     ["Skale", customIds.skale],
   ];
-
-  const customStyles = {
-    content: {
-      minWidth: '500px',
-      minHeight: '100px',
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      transform: 'translate(-50%, -50%)',
-    },
-  };
 
   useEffect(() => {
     if (!account) return;
@@ -134,14 +120,7 @@ const MainTab = () => {
     if (address.length === 42) {
       const uri = await uriHook(address, id, chainIdFrom);
       if (uri) {
-        setUri(
-          `<table style="background: #ccc;">
-              <tr>
-                  <td>URI:${" "}</td>
-                  <td><a href="${uri}" target='_blank'>${uri}</a></td>
-              </tr>
-          </table>`
-        );
+        setUri(uri);
         const jsonContent = await contentHook(uri);
         setJsonMetadata(jsonContent);
         setImageLink(jsonContent.image);
@@ -162,14 +141,7 @@ const MainTab = () => {
     if (token.length === 42) {
         const uri = await uriHook(token, id, chainId);
         if (uri) {
-          setUri(
-            `<table style="background: #ccc;">
-                <tr>
-                    <td>URI:${" "}</td>
-                    <td><a href="${uri}" target='_blank'>${uri}</a></td>
-                </tr>
-            </table>`
-          )
+          setUri(uri);
           const jsonContent = await contentHook(uri);
           setImageLink(jsonContent.image);
           setJsonMetadata(jsonContent);
@@ -185,27 +157,12 @@ const MainTab = () => {
     }
   };
 
-  function closeModal() {
-    setIsOpen(false);
-  }
-
-  function openModal() {
-    setIsOpen(true);
-  }
-
   const changeNftId = async (nftId: string) => {
     setId(nftId);
     if (token.length === 42) {
       const uri = await uriHook(token, nftId, chainIdFrom);
       if (uri) {
-        setUri(
-          `<table style="background: #ccc;">
-              <tr>
-                  <td>URI:${" "}</td>
-                  <td><a href="${uri}" target='_blank'>${uri}</a></td>
-              </tr>
-          </table>`
-        );
+        setUri(uri);
         const jsonContent = await contentHook(uri);
         setImageLink(jsonContent.image);
         setJsonMetadata(jsonContent);
@@ -219,7 +176,7 @@ const MainTab = () => {
 
   return (
     <>
-      <div className="tab-pane" style={{ display: "block" }}>
+      <div className="" style={{ display: "block" }}>
         <div className="row">
           <h5 className="text-center">
             <a
@@ -363,13 +320,43 @@ const MainTab = () => {
               </div>
             </div>
 
-            {uri ? (
-              <div style={{margin: "15px"}} dangerouslySetInnerHTML={{ __html: uri }}></div>
-            ) : null}
+            {uri ? (<div className="col-sm-12">
+              <div className="form-group label-floating">
+                <label className="control-label">URI:</label>
+                <a
+                  className="form-control"
+                  href={uri}
+                >
+                  {uri}
+                </a>
+              </div>
+            </div>) : null}
 
             {notify ? (
               <div style={{margin: "15px"}} dangerouslySetInnerHTML={{ __html: notify }}></div>
             ) : null}
+          </div>
+        </div>
+
+        <div className="wizard-navigation">
+          <ul className="nav nav-pills" >
+            <li><a href="#image" data-toggle="tab">image</a></li>
+            <li><a href="#json" data-toggle="tab">json</a></li>
+          </ul> 
+        </div>  
+        <div className="tab-content" style={{minHeight: "0px"}}>
+          <div className="tab-pane" id="image">
+            {
+              imageLink &&
+              <div style={{width: "100%" ,display: "flex", justifyContent: "center"}}>
+                <img src={imageLink} alt=""></img>
+              </div>
+            }
+          </div>
+          <div className="tab-pane" id="json">
+          <SyntaxHighlighter language="json" showLineNumbers style={docco}>
+            { JSON.stringify(jsonMetadata, undefined, 4) }
+          </SyntaxHighlighter>
           </div>
         </div>
 
@@ -386,38 +373,9 @@ const MainTab = () => {
               {isDisable ? <div className="spinner"></div> : "Transfer"}
             </button>
           </div>
-          {
-            Object.keys(jsonMetadata).length !== 0 && 
-            <div className="pull-left">
-              <button
-                type="button"
-                className="btn btn-fill btn-danger btn-wd"
-                value="Transfer"
-                onClick={openModal}
-                disabled={isDisable}
-                style={{ height: "42px" }}
-              >
-                Show Metadata
-              </button>
-            </div>
-          }
           <div className="clearfix"></div>
         </div>
-        {
-          imageLink &&
-          <div style={{width: "100%" ,display: "flex", justifyContent: "center"}}>
-            <img src={imageLink} alt=""></img>
-          </div>
-        }
       </div>
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        style={customStyles}
-      >
-        <button className="pull-right" onClick={closeModal}>&#215;</button>
-        <JsonView data={jsonMetadata} shouldInitiallyExpand={(level) => true} style={defaultStyles} />
-      </Modal>
     </>
   );
 };
