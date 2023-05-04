@@ -130,19 +130,22 @@ const MainTab = () => {
       <div className="tab-pane" style={{ display: "block" }}>
         <div className="row">
           <h5 className="text-center">
-            <a
+            <div
               className="btn btn-fill btn-danger btn-wd"
+              style={{cursor: "default"}}
+            >
+              ERC20
+            </div>
+            <a
+              className="btn btn-fill btn-default btn-wd"
               href={bridgesLinks.erc721}
-              target="_blank"
               rel="noreferrer"
             >
               ERC721
             </a>
-            <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
             <a
-              className="btn btn-fill btn-danger btn-wd"
+              className="btn btn-fill btn-default btn-wd"
               href={bridgesLinks.erc1155}
-              target="_blank"
               rel="noreferrer"
             >
               ERC1155
