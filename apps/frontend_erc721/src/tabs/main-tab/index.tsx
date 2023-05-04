@@ -372,7 +372,7 @@ const MainTab = () => {
           </div>
         </div>
         <div className="wizard-footer">
-          { uri &&
+          { token && reciever && id &&
             <div className="pull-right">
               <button
                 type="button"
