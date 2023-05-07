@@ -8,12 +8,10 @@ import { BSCTestnet, Goerli, Mumbai } from "@usedapp/core";
 import { idToScanLink, idToChainName } from "../../utils/idToChainName";
 import { toast } from "react-toastify";
 import { customIds } from "../../utils/customIds";
-import { BRIDGES_ADDRESSES } from "configs";
-import { bridgesLinks } from "../../utils/bridgesLinks";
 import { useGetContent } from "../../hooks/useGetContent";
 import 'react-json-view-lite/dist/index.css';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+import Links from "../../components/links/links";
+import DataTabs from "../../components/data-tabs/tabs";
 
 const MainTab = () => {
   const { account } = useEthers();
@@ -178,69 +176,7 @@ const MainTab = () => {
     <>
       <div className="" style={{ display: "block" }}>
         <div className="row" style={{padding: "30px"}}>
-          <h5 className="text-center">
-            <a
-              className="btn btn-fill btn-default btn-wd"
-              href={bridgesLinks.erc20}
-              rel="noreferrer"
-            >
-              ERC20
-            </a>
-            <a
-              className="btn btn-fill btn-default btn-wd"
-              href={bridgesLinks.erc721}
-              rel="noreferrer"
-            >
-              ERC721
-            </a>
-            <div
-              className="btn btn-fill btn-danger btn-wd"
-              style={{cursor: "default"}}
-            >
-              ERC1155
-            </div>
-          </h5>
-          <h5 className="text-center">
-            <a
-              href={`https://mumbai.polygonscan.com/address/${BRIDGES_ADDRESSES.erc1155.polygonTest}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Contract in Polygon
-            </a>
-            <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-            <a
-              href={`https://testnet.bscscan.com/address/${BRIDGES_ADDRESSES.erc1155.binanceTest}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              in BSC
-            </a>
-            <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-            <a
-              href={`https://goerli.etherscan.io/address/${BRIDGES_ADDRESSES.erc1155.ethereumTest}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              in Ethereum
-            </a>
-            <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-            <a
-              href={`https://explorer.testnet.yarchain.org/address/${BRIDGES_ADDRESSES.erc1155.yarTest}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              in YAR
-            </a>
-            <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
-            <a
-              href={`https://staging-fast-active-bellatrix.explorer.staging-v3.skalenodes.com/address/${BRIDGES_ADDRESSES.erc1155.chaosSkaleTest}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              in SKALE
-            </a>
-          </h5>
+          <Links/>
           <div className="col-sm-offset">
             <div className="col-sm-12">
               <div className="form-group label-floating">
@@ -341,30 +277,7 @@ const MainTab = () => {
           </div>
         </div>
 
-        <div style={{ visibility: Object.keys(jsonMetadata).length !== 0 ? "visible" : "hidden",
-                      height: Object.keys(jsonMetadata).length !== 0 ? "max-content" : "0" }} >
-          <div className="wizard-navigation">
-            <ul className="nav nav-pills" >
-              <li><a href="#image" data-toggle="tab">image</a></li>
-              <li><a href="#json" data-toggle="tab">json</a></li>
-            </ul> 
-          </div>  
-          <div className="tab-content" style={{minHeight: "0px"}}>
-            <div className="tab-pane" id="image">
-              {
-                imageLink &&
-                <div style={{width: "100%" ,display: "flex", justifyContent: "center"}}>
-                  <img src={imageLink} alt=""></img>
-                </div>
-              }
-            </div>
-            <div className="tab-pane" id="json">
-              <SyntaxHighlighter language="json" showLineNumbers style={docco}>
-                { JSON.stringify(jsonMetadata, undefined, 4) }
-              </SyntaxHighlighter>
-            </div>
-          </div>
-        </div>      
+        <DataTabs metaData={jsonMetadata} image={imageLink} />     
         
 
         <div className="wizard-footer">
