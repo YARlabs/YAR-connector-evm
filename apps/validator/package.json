@@ -6,30 +6,29 @@
     "start": "ts-node ./src/main.ts",
     "clear": "rimraf ./src/typechain-types",
     "build_validator": "docker compose build",
-    "build_validator_dev": "cross-env MODE=development MONGO_EXPRESS_AUTH=false MONGO_EXPRESS_USER=\"\" MONGO_EXPRESS_PASSWORD=\"\" docker compose build",
-    "run_validator": "docker compose up",
-    "run_validator_dev": "cross-env MODE=development MONGO_EXPRESS_AUTH=false MONGO_EXPRESS_USER=\"\" MONGO_EXPRESS_PASSWORD=\"\" npm run run_validator"
+    "validator": "docker compose up",
+    "validator_dev": "cross-env MODE=development MONGO_EXPRESS_AUTH=false MONGO_EXPRESS_USER=\"\" MONGO_EXPRESS_PASSWORD=\"\" npm run validator"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "rimraf": "^4.4.1",
     "@typechain/ethers-v5": "^10.2.0",
+    "rimraf": "^4.4.1",
     "ts-node": "^10.9.1",
     "typechain": "^8.1.1",
     "typescript": "^4.9.4"
   },
   "dependencies": {
-    "ethers_utils": "*",
-    "configs": "*",
-    "configs_secret": "*",
-    "typechains": "*",
     "@ethersproject/experimental": "^5.7.0",
     "bullmq": "^3.10.1",
+    "configs": "*",
+    "configs_secret": "*",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "ethers": "^5.7.2",
-    "mongodb": "^5.1.0"
+    "ethers_utils": "*",
+    "mongodb": "^5.1.0",
+    "typechains": "*"
   }
 }

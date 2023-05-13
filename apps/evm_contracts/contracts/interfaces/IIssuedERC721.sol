@@ -14,9 +14,11 @@ interface IIssuedERC721 {
         view
         returns (bytes32, bytes memory, string memory, string memory);
 
-    function mint(address _recipient, uint256 _tokenId) external;
+    function mint(address _recipient, uint256 _tokenId, string calldata _uri) external;
 
     function burn(uint256 _tokenId) external;
 
     function permissionedTransferFrom(address _from, address _to, uint256 _tokenId) external;
+
+    function tokenURI(uint256 _tokenId) external view returns (string memory);
 }

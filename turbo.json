@@ -24,13 +24,11 @@
     },
     "clear": {},
     "node": {},
-    "build_validator": {
-      "cache": false
-    },
-    "run_validator": {
+    "build_validator": {},
+    "validator": {
       "persistent": true
     },
-    "run_validator_dev": {
+    "validator_dev": {
       "persistent": true
     },
     "export_abi": {

@@ -10,6 +10,7 @@ contract IssuedERC721 is Initializable, ERC721Upgradeable, OwnableUpgradeable {
     bytes public originalToken;
     string public originalTokenName;
     string public originalTokenSymbol;
+    mapping(uint256 => string) uris;
 
     function initialize(
         bytes32 _originalChain,
@@ -29,11 +30,16 @@ contract IssuedERC721 is Initializable, ERC721Upgradeable, OwnableUpgradeable {
         originalToken = _originalToken;
     }
 
+    function tokenURI(uint256 _tokenId) public view override returns (string memory) {
+        return uris[_tokenId];
+    }
+
     function getOriginalTokenInfo() external view returns (bytes32, bytes memory, string memory, string memory) {
         return (originalChain, originalToken, originalTokenName, originalTokenSymbol);
     }
 
-    function mint(address _recipient, uint256 _tokenId) external onlyOwner {
+    function mint(address _recipient, uint256 _tokenId, string calldata _uri) external onlyOwner {
+        uris[_tokenId] = _uri;
         _safeMint(_recipient, _tokenId);
     }
 

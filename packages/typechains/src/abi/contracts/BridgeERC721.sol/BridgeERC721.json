@@ -159,6 +159,12 @@
         "internalType": "string",
         "name": "tokenSymbol",
         "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "tokenUri",
+        "type": "string"
       }
     ],
     "name": "TransferToOtherChain",
@@ -528,6 +534,11 @@
           {
             "internalType": "string",
             "name": "symbol",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "tokenUri",
             "type": "string"
           }
         ],

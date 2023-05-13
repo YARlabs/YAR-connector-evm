@@ -9,6 +9,7 @@ WORKDIR /monorepo
 COPY .gitignore .gitignore
 COPY --from=builder /monorepo/out/json/ ./
 COPY --from=builder /monorepo/out/package-lock.json ./package-lock.json
+COPY --from=builder /monorepo/chains_rps.json ./chains_rps.json
 RUN npm install
 RUN npm install tr46
 COPY --from=builder /monorepo/out/full/ ./

@@ -8,7 +8,6 @@ import { ERC1967ProxyCreate2 } from "./utils/ERC1967ProxyCreate2.sol";
 import { IIssuedERC721 } from "./interfaces/IIssuedERC721.sol";
 
 contract BridgeERC721 is IERC721Receiver {
-
     address public validator;
 
     bytes32 public currentChain;
@@ -38,7 +37,8 @@ contract BridgeERC721 is IERC721Receiver {
         bytes sender,
         bytes recipient,
         string tokenName,
-        string tokenSymbol
+        string tokenSymbol,
+        string tokenUri
     );
 
     event TransferFromOtherChain(
@@ -114,12 +114,14 @@ contract BridgeERC721 is IERC721Receiver {
         bytes memory originalToken;
         string memory tokenName;
         string memory tokenSymbol;
+        string memory tokenUri;
 
         if (isIssuedToken) {
             // There ISSUED token
             IIssuedERC721 issuedToken = IIssuedERC721(_transferedToken);
             (originalChain, originalToken, tokenName, tokenSymbol) = issuedToken
                 .getOriginalTokenInfo();
+            tokenUri = issuedToken.tokenURI(_tokenId);
             if (originalChain == _targetChain && isProxyChain) {
                 issuedToken.permissionedTransferFrom(msg.sender, address(this), _tokenId);
             } else {
@@ -140,6 +142,11 @@ contract BridgeERC721 is IERC721Receiver {
             } catch {
                 tokenSymbol = "";
             }
+            try token.tokenURI(_tokenId) returns (string memory _tokenUri) {
+                tokenUri = _tokenUri;
+            } catch {
+                tokenUri = "";
+            }
             token.safeTransferFrom(msg.sender, address(this), _tokenId);
         }
 
@@ -154,13 +161,15 @@ contract BridgeERC721 is IERC721Receiver {
             abi.encode(msg.sender),
             _recipient,
             tokenName,
-            tokenSymbol
+            tokenSymbol,
+            tokenUri
         );
     }
 
     struct TokenInfo {
         string name;
         string symbol;
+        string tokenUri;
     }
 
     function tranferFromOtherChain(
@@ -196,13 +205,21 @@ contract BridgeERC721 is IERC721Receiver {
             if (currentChain == _originalChain) {
                 // This is ORIGINAL chain
                 address originalTokenAddress = abi.decode(_originalToken, (address));
-                IERC721Metadata(originalTokenAddress).safeTransferFrom(address(this), recipientAddress, _tokenId);
+                IERC721Metadata(originalTokenAddress).safeTransferFrom(
+                    address(this),
+                    recipientAddress,
+                    _tokenId
+                );
             } else {
                 // This is SECONDARY chain
                 address issuedTokenAddress = getIssuedTokenAddress(_originalChain, _originalToken);
                 if (!isIssuedTokenPublished(issuedTokenAddress))
                     publishNewToken(_originalChain, _originalToken, _tokenInfo);
-                IIssuedERC721(issuedTokenAddress).mint(recipientAddress, _tokenId);
+                IIssuedERC721(issuedTokenAddress).mint(
+                    recipientAddress,
+                    _tokenId,
+                    _tokenInfo.tokenUri
+                );
             }
 
             emit TransferFromOtherChain(
@@ -216,7 +233,6 @@ contract BridgeERC721 is IERC721Receiver {
                 _sender,
                 _recipient
             );
-
         } else {
             // This is PROXY chain
             require(isProxyChain, "BridgeERC721: Only proxy bridge!");
@@ -228,9 +244,13 @@ contract BridgeERC721 is IERC721Receiver {
             if (_targetChain == _originalChain) {
                 // BURN PROXY ISSUED TOKENS
                 IIssuedERC721(issuedTokenAddress).burn(_tokenId);
-            } else if(_initialChain == _originalChain) {
+            } else if (_initialChain == _originalChain) {
                 // LOCK PROXY ISSUED TOKENS
-                IIssuedERC721(issuedTokenAddress).mint(address(this), _tokenId);
+                IIssuedERC721(issuedTokenAddress).mint(
+                    address(this),
+                    _tokenId,
+                    _tokenInfo.tokenUri
+                );
             }
 
             bytes memory sender = _sender; // TODO: fix Error HH600
@@ -245,7 +265,8 @@ contract BridgeERC721 is IERC721Receiver {
                 sender,
                 _recipient,
                 _tokenInfo.name,
-                _tokenInfo.symbol
+                _tokenInfo.symbol,
+                _tokenInfo.tokenUri
             );
         }
     }

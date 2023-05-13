@@ -7,9 +7,9 @@
     "packages/*"
   ],
   "scripts": {
-    "build_validators": "dotenv -- turbo run build_validator",
-    "run_validators": "dotenv -- turbo run run_validator --concurrency=20",
-    "run_validators_dev": "dotenv -- turbo run run_validator_dev --concurrency=20",
+    "build_validator": "dotenv -- turbo run build_validator",
+    "run_validator": "dotenv -- turbo run validator --concurrency=20",
+    "validator_dev": "dotenv -- turbo run validator_dev --concurrency=20",
     "local_node": "cd apps/evm_contracts && npx hardhat node --fulltrace",
     "test_e2e": "cd apps/evm_contracts && npm run test_e2e",
     "export_abi": "dotenv -- turbo run export_abi --filter=evm_contracts",
@@ -29,7 +29,8 @@
   },
   "dependencies": {
     "cross-env": "^7.0.3",
-    "dotenv-cli": "^7.2.1"
+    "dotenv-cli": "^7.2.1",
+    "tsup": "^6.7.0"
   },
   "packageManager": "npm@9.6.0"
 }

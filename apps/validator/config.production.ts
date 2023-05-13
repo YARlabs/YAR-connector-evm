@@ -7,37 +7,53 @@ const CONFIG = {
   bridges: [
     {
       name: 'YAR',
-      // rpcUrl: CHAINS_CONFIG.yarTest.rpc,
       rpcUrls: CHAINS_RPS.yarTest,
-      address: BRIDGES_ADDRESSES.erc20.yarTest,
+      addresses: {
+        erc20: BRIDGES_ADDRESSES.erc20.yarTest,
+        erc721: BRIDGES_ADDRESSES.erc721.yarTest,
+        erc1155: BRIDGES_ADDRESSES.erc1155.yarTest,
+      },
       privateKey: VALIDATOR_PRIVATE_KEYS.yarTest,
     },
     {
       name: 'POLYGON',
-      // rpcUrl: CHAINS_CONFIG.polygonTest.rpc,
       rpcUrls: CHAINS_RPS.polygonTest,
       address: BRIDGES_ADDRESSES.erc20.polygonTest,
+      addresses: {
+        erc20: BRIDGES_ADDRESSES.erc20.polygonTest,
+        erc721: BRIDGES_ADDRESSES.erc721.polygonTest,
+        erc1155: BRIDGES_ADDRESSES.erc1155.polygonTest,
+      },
       privateKey: VALIDATOR_PRIVATE_KEYS.polygonTest,
     },
     {
       name: 'BINANCE',
-      // rpcUrl: CHAINS_CONFIG.binanceTest.rpc,
       rpcUrls: CHAINS_RPS.binanceTest,
-      address: BRIDGES_ADDRESSES.erc20.binanceTest,
+      addresses: {
+        erc20: BRIDGES_ADDRESSES.erc20.binanceTest,
+        erc721: BRIDGES_ADDRESSES.erc721.binanceTest,
+        erc1155: BRIDGES_ADDRESSES.erc1155.binanceTest,
+      },
       privateKey: VALIDATOR_PRIVATE_KEYS.binanceTest,
     },
     {
       name: 'ETHEREUM',
-      // rpcUrl: CHAINS_CONFIG.ethereumTest.rpc,
       rpcUrls: CHAINS_RPS.ethereumTest,
-      address: BRIDGES_ADDRESSES.erc20.ethereumTest,
+      addresses: {
+        erc20: BRIDGES_ADDRESSES.erc20.ethereumTest,
+        erc721: BRIDGES_ADDRESSES.erc721.ethereumTest,
+        erc1155: BRIDGES_ADDRESSES.erc1155.ethereumTest,
+      },
       privateKey: VALIDATOR_PRIVATE_KEYS.ethereumTest,
     },
     {
       name: 'SKALE',
-      // rpcUrl: CHAINS_CONFIG.chaosSkaleTest.rpc,
       rpcUrls: CHAINS_RPS.chaosSkaleTest,
-      address: BRIDGES_ADDRESSES.erc20.chaosSkaleTest,
+      addresses: {
+        erc20: BRIDGES_ADDRESSES.erc20.chaosSkaleTest,
+        erc721: BRIDGES_ADDRESSES.erc721.chaosSkaleTest,
+        erc1155: BRIDGES_ADDRESSES.erc1155.chaosSkaleTest,
+      },
       privateKey: VALIDATOR_PRIVATE_KEYS.chaosSkaleTest,
     },
   ],

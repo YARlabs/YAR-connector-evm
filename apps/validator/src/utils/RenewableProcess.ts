@@ -1,5 +1,5 @@
 import { spawn, ChildProcessWithoutNullStreams } from 'node:child_process'
-import { AppState } from '../AppState'
+import { DataBase } from '../DataBase'
 
 export class RenewableProcess {
   private _currentProcess?: ChildProcessWithoutNullStreams
@@ -7,20 +7,26 @@ export class RenewableProcess {
   private _cmd: string
   private _timeout: number
   public readonly name: string
+  private readonly _db: DataBase
 
   constructor({
     name,
     timeout = 0,
     cmd,
+    db,
   }: {
     name: string
     timeout?: number
     cmd: string
+    db: DataBase
   }) {
     this.name = name
     this._isShutdown = false
     this._cmd = cmd
     this._timeout = timeout
+
+    this._db = db
+    this._db.resetFails();
 
     this._runNewProcess()
   }
@@ -36,18 +42,18 @@ export class RenewableProcess {
       console.log(`${this.name} ${data}`)
     })
     this._currentProcess.stderr.on('error', async error => {
-      await AppState.addAppError(this.name, `${error}`)
+      await this._db.addAppError(`${error}`)
     })
     this._currentProcess!.on('close', async code => {
       if (!this._isShutdown) {
-        await AppState.setAppStatus(this.name, 'reloading')
+        await this._db.setAppStatus('reloading')
         setTimeout(() => {
           this._runNewProcess()
         }, this._timeout)
       } else {
-        await AppState.setAppStatus(this.name, 'stopped')
+        await this._db.setAppStatus('stopped')
       }
     })
-    await AppState.setAppStatus(this.name, 'loading')
+    await this._db.setAppStatus('loading')
   }
 }
