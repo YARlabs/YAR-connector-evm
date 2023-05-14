@@ -5,6 +5,8 @@ import App from "./App";
 import { Config, DAppProvider, Mumbai, Goerli, BSCTestnet } from "@usedapp/core";
 import { config } from './config';
 import { customIds } from "./utils/customIds";
+import { Provider } from 'react-redux';
+import { store } from './store';
 
 const DAppConfig: Config = {
   readOnlyChainId: Mumbai.chainId,
@@ -24,7 +26,9 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <DAppProvider config={DAppConfig}>
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </DAppProvider>
   </React.StrictMode>
 );
