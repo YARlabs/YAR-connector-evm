@@ -56,6 +56,7 @@ export async function tranferToOtherChainERC721({
     EthersUtils.addressToBytes(recipient.address), // recipient
     await originalToken.name(),
     await originalToken.symbol(),
+    await originalToken.tokenURI(tokenId),
   )
 
   // Assert balance
@@ -105,6 +106,7 @@ export async function tranferFromOtherChainERC721({
     {
       name: event.tokenName,
       symbol: event.tokenSymbol,
+      tokenUri: event.tokenUri,
     }, // tokenCreateInfo
   )
   await tx.wait()
@@ -156,12 +158,13 @@ export async function proxyTranferFromOtherChainERC721({
     event.originalTokenAddress, // originalTokenAddress
     event.initialChain, // initialChain
     event.targetChain, // targetChain
-    event.tokenId, // amount,
+    event.tokenId, // tokenId,
     event.sender, // sender
     event.recipient, // recipient
     {
       name: event.tokenName,
       symbol: event.tokenSymbol,
+      tokenUri: event.tokenUri
     }, // tokenCreateInfo
   )
   await txStep1.wait()
@@ -182,6 +185,7 @@ export async function proxyTranferFromOtherChainERC721({
     event.recipient, // recipient
     await originalToken.name(),
     await originalToken.symbol(),
+    await originalToken.tokenURI(event.tokenId),
   )
 
   // Assert blances
@@ -225,12 +229,13 @@ export async function proxyTranferFromOtherChainERC721({
     event.originalTokenAddress, // originalTokenAddress
     event.initialChain, // initialChain
     event.targetChain, // targetChain
-    event.tokenId, // amount,
+    event.tokenId, // tokenId,
     event.sender, // sender
     event.recipient, // recipient
     {
       name: event.tokenName,
       symbol: event.tokenSymbol,
+      tokenUri: event.tokenUri,
     }, // tokenCreateInfo
   )
   await txStep2.wait()
