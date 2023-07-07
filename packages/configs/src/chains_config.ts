@@ -24,9 +24,9 @@ export const CHAINS_CONFIG = {
   },
 
   chaosSkaleTest: {
-    rpc: "https://staging-v3.skalenodes.com/v1/staging-fast-active-bellatrix",
-    chainId: 1351057110,
+    rpc: "https://staging-v3.skalenodes.com/v1/staging-legal-crazy-castor",
+    chainId: 476158412,
     explorer:
-      "https://staging-fast-active-bellatrix.explorer.staging-v3.skalenodes.com",
+      "https://staging-legal-crazy-castor.explorer.staging-v3.skalenodes.com",
   },
 };
