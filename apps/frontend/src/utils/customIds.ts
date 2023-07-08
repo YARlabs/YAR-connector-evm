@@ -1,6 +1,8 @@
+import { CHAINS_CONFIG } from "configs";
+
 const customIds = {
-    yar: 10226688,
-    skale: 1351057110
+    yar: CHAINS_CONFIG.yarTest.chainId,
+    skale: CHAINS_CONFIG.chaosSkaleTest.chainId
 }
 
 export { customIds };
