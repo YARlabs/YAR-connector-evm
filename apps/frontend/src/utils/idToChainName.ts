@@ -1,7 +1,7 @@
 import { BSCTestnet, Goerli, Mumbai } from "@usedapp/core";
 import { config } from "../config";
 import { customIds } from "./customIds";
-import { BRIDGES_ADDRESSES } from "configs";
+import { BRIDGES_ADDRESSES, CHAINS_CONFIG } from "configs";
 
 export const idToChainName = {
     [BSCTestnet.chainId]: 'BINANCE',
@@ -28,10 +28,10 @@ export const idToRpcUrl = {
 }
 
 export const idToScanLink = {
-    [BSCTestnet.chainId]: 'https://testnet.bscscan.com/',
-    [Goerli.chainId]: 'https://goerli.etherscan.io/',
-    [Mumbai.chainId]: 'https://mumbai.polygonscan.com/',
-    [customIds.yar]: 'https://explorer.testnet.yarchain.org/',
-    [customIds.skale]: 'https://staging-fast-active-bellatrix.explorer.staging-v3.skalenodes.com/'
+    [BSCTestnet.chainId]: CHAINS_CONFIG.binanceTest.explorer + '/',
+    [Goerli.chainId]: CHAINS_CONFIG.ethereumTest.explorer + '/',
+    [Mumbai.chainId]: CHAINS_CONFIG.polygonTest.explorer + '/',
+    [customIds.yar]: CHAINS_CONFIG.yarTest.explorer + '/',
+    [customIds.skale]: CHAINS_CONFIG.chaosSkaleTest.explorer + '/',
 }
 
