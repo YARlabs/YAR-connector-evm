@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "cross-env": "^7.0.3",
-    "dotenv-cli": "^7.2.1",
+    "dotenv-cli": "^7.3.0",
     "tsup": "^6.7.0"
   },
   "packageManager": "npm@9.6.0"
