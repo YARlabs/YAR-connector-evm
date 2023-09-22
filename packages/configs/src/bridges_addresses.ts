@@ -12,7 +12,7 @@ export const BRIDGES_ADDRESSES = {
     chaosSkaleTest: "0xA4a52100c26308f8Df26873635Bd5600Be56938B",
   },
   erc721: {
-    yarTest: "0xda53B08F0B71924cbeDb6d8f610db7F2EE2584cE",
+    yarTest: "0x7916a662a72632eb7bEDaF370b3ba746D9eB5942",
 
     polygonTest: "0xF625fa80586c73aB194197F0cF3a9184B7556d27",
   
@@ -23,7 +23,7 @@ export const BRIDGES_ADDRESSES = {
     chaosSkaleTest: "0x64707dd524F8F086c92b1fd5B61edb94BEF9fBff",
   },
   erc1155: {
-    yarTest: "0xFeFA9db28299b4bb018B9b174a2B65B9E43542B4",
+    yarTest: "0xaEebB284b50C4c01975F613B46f03492590ff06b",
 
     polygonTest: "0xB6fB34226340FE80c7B9176569abe97043f8ca6e",
   
