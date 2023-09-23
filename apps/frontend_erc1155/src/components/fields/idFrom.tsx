@@ -1,21 +1,12 @@
 import { useTypedSelector } from "../../hooks/useTypedSelector";
-import { BSCTestnet, Goerli, Mumbai } from "@usedapp/core";
-import { customIds } from "../../utils/customIds";
 import { useActions } from "../../hooks/useActions";
 import { useGetURI } from "../../hooks/useGetURI";
 import { useGetContent } from "../../hooks/useGetContent";
+import { idToChainName } from "../../utils/idToChainName";
 
 const ChainIdFromField = () => {
     const {chainIdFrom, token, tokenId} = useTypedSelector(state => state.main);
     const {SetChainIdFrom, SetUri, SetImageLink, SetJsonMetadata} = useActions();
-
-    const ChainsIdFrom = [
-        ["BSC", BSCTestnet.chainId],
-        ["YAR", customIds.yar],
-        ["Polygon", Mumbai.chainId],
-        ["Ethereum", Goerli.chainId],
-        ["Skale", customIds.skale],
-    ];
 
     const uriHook = useGetURI();
     const contentHook = useGetContent();
@@ -51,9 +42,9 @@ const ChainIdFromField = () => {
                     onChange={(e) => changeChainIdFrom(Number(e.target.value))}
                     defaultValue={chainIdFrom}
                 >
-                    {ChainsIdFrom.map((_, i) => (
-                    <option key={i + "from"} value={_[1] as number}>
-                        {_[0]}
+                    {Object.keys(idToChainName).map((chainId, i) => (
+                    <option key={i + "from"} value={Number(chainId)}>
+                        {idToChainName[Number(chainId)]}
                     </option>
                     ))}
                 </select>

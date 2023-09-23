@@ -1,19 +1,10 @@
 import { useTypedSelector } from "../../hooks/useTypedSelector";
-import { BSCTestnet, Goerli, Mumbai } from "@usedapp/core";
-import { customIds } from "../../utils/customIds";
 import { useActions } from "../../hooks/useActions";
+import { idToChainName } from "../../utils/idToChainName";
 
 const ChainIdToField = () => {
     const {chainIdTo} = useTypedSelector(state => state.main);
     const {SetChainIdTo} = useActions();
-
-    const ChainsIdTo = [
-        ["Polygon", Mumbai.chainId],
-        ["BSC", BSCTestnet.chainId],
-        ["YAR", customIds.yar],
-        ["Ethereum", Goerli.chainId],
-        ["Skale", customIds.skale],
-    ];
 
     function changeChainIdTo(id: number) {
         SetChainIdTo(id)
@@ -29,9 +20,9 @@ const ChainIdToField = () => {
                     onChange={(e) => changeChainIdTo(Number(e.target.value))}
                     defaultValue={chainIdTo}
                 >
-                    {ChainsIdTo.map((_, i) => (
-                    <option key={i + "to"} value={_[1] as number}>
-                        {_[0]}
+                    {Object.keys(idToChainName).map((chainId, i) => (
+                    <option key={i + "to"} value={Number(chainId)}>
+                        {idToChainName[Number(chainId)]}
                     </option>
                     ))}
                 </select>

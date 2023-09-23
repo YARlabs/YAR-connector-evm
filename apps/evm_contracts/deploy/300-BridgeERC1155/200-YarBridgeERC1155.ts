@@ -12,10 +12,13 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const currentChain = EthersUtils.keccak256('YAR')
   const isProxyChain = true
   const registeredChains = [
-    EthersUtils.keccak256('POLYGON'),
     EthersUtils.keccak256('BINANCE'),
     EthersUtils.keccak256('ETHEREUM'),
+    EthersUtils.keccak256('POLYGON'),
     EthersUtils.keccak256('SKALE'),
+    EthersUtils.keccak256('ARBITRUM'),
+    EthersUtils.keccak256('AVAX'),
+    EthersUtils.keccak256('BASE'),
   ]
   const IssuedERC1155Deployment = await get('IssuedERC1155')
 

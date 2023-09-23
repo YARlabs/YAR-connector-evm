@@ -8,7 +8,7 @@ import 'hardhat-abi-exporter'
 import '@nomicfoundation/hardhat-chai-matchers'
 import 'hardhat-contract-sizer'
 
-import {CONFIG} from './config'
+import { CONFIG } from './config'
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -42,6 +42,7 @@ const config: HardhatUserConfig = {
         accountsBalance: '1000000000000000000000000000',
       },
       loggingEnabled: true,
+      // loggingEnabled: false,
     },
     yarTest: {
       url: CONFIG.chains.yarTest.rpcUrl,
@@ -63,8 +64,23 @@ const config: HardhatUserConfig = {
       url: CONFIG.chains.chaosSkaleTest.rpcUrl,
       accounts: [CONFIG.chains.chaosSkaleTest.validatorPrivateKey],
     },
+    optimismTest: {
+      url: CONFIG.chains.optimismTest.rpcUrl,
+      accounts: [CONFIG.chains.optimismTest.validatorPrivateKey],
+    },
+    arbitrumTest: {
+      url: CONFIG.chains.arbitrumTest.rpcUrl,
+      accounts: [CONFIG.chains.arbitrumTest.validatorPrivateKey],
+    },
+    avaxTest: {
+      url: CONFIG.chains.avaxTest.rpcUrl,
+      accounts: [CONFIG.chains.avaxTest.validatorPrivateKey],
+    },
+    baseTest: {
+      url: CONFIG.chains.baseTest.rpcUrl,
+      accounts: [CONFIG.chains.baseTest.validatorPrivateKey],
+    },
   },
-  
   etherscan: {
     apiKey: {
       yarTest: CONFIG.chains.yarTest.etherscan.apiKey,

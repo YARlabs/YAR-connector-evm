@@ -16,6 +16,18 @@ export const config = {
     },
     skale: {
       url: CHAINS_CONFIG.chaosSkaleTest.rpc
-    }
+    },
+    optimism: {
+      url: CHAINS_CONFIG.optimismTest.rpc
+    },
+    arbitrum: {
+      url: CHAINS_CONFIG.arbitrumTest.rpc
+    },
+    avax: {
+      url: CHAINS_CONFIG.arbitrumTest.rpc
+    },
+    base: {
+      url: CHAINS_CONFIG.baseTest.rpc
+    },
   },
 };

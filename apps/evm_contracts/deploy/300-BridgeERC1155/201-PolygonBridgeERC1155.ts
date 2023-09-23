@@ -9,32 +9,32 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const signers = await ethers.getSigners()
   const validator = signers[0]
 
-  const currentChain = EthersUtils.keccak256('YAR')
-  const isProxyChain = true
+  const currentChain = EthersUtils.keccak256('POLYGON')
+  const isProxyChain = false
   const registeredChains = [
     EthersUtils.keccak256('BINANCE'),
     EthersUtils.keccak256('ETHEREUM'),
-    EthersUtils.keccak256('POLYGON'),
     EthersUtils.keccak256('SKALE'),
+    EthersUtils.keccak256('YAR'),
     EthersUtils.keccak256('ARBITRUM'),
     EthersUtils.keccak256('AVAX'),
     EthersUtils.keccak256('BASE'),
   ]
-  const IssuedERC721Deployment = await get('IssuedERC721')
+  const IssuedERC1155Deployment = await get('IssuedERC1155')
 
-  const deployment = await deploy('YarBridgeERC721', {
-    contract: 'BridgeERC721',
+  const deployment = await deploy('PolygonBridgeERC1155', {
+    contract: 'BridgeERC1155',
     from: validator.address,
     args: [
       currentChain, // _currentChain,
       isProxyChain, // _isProxyChain,
       registeredChains, // _registeredChains,
-      IssuedERC721Deployment.address, // _issuedTokenImplementation,
+      IssuedERC1155Deployment.address, // _issuedTokenImplementation,
       validator.address, // _validator
     ],
   })
 }
 
-deploy.tags = ['YarBridge', 'YarBridgeERC721']
-deploy.dependencies = ['IssuedERC721']
+deploy.tags = ['PolygonBridge', 'PolygonBridgeERC1155']
+deploy.dependencies = ['IssuedERC1155']
 export default deploy

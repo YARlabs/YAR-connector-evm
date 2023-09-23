@@ -46,13 +46,13 @@ npm run build_repo
 Build validators
 
 ```shell
-npm run build_validators
+npm run build_validator
 ```
 
 To run the validator, run the command
 
 ```shell
-npm run run_validators
+npm run run_validator
 ```
 
 This will launch a docker container with the application and all its environment
@@ -65,7 +65,7 @@ To see the status, you can use the docker utilities, or look in the database int
 
 E2E test:
 
-npm run build_validators
+npm run build_validator
 npm run local_node (wait private keys)
 npm run run_validator_dev (wait ready status in http://host:8888/db/AppLog/AppStatus)
 npm run test_e2e

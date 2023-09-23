@@ -29,4 +29,32 @@ export const CHAINS_CONFIG = {
     explorer:
       "https://staging-legal-crazy-castor.explorer.staging-v3.skalenodes.com",
   },
+
+  optimismTest: {
+    rpc: "https://rpc.ankr.com/optimism_testnet",
+    chainId: 420,
+    explorer:
+      "https://goerli-optimism.etherscan.io",
+  },
+  
+  arbitrumTest: {
+    rpc: "https://arbitrum-goerli.publicnode.com",
+    chainId: 421613,
+    explorer:
+      "https://testnet.arbiscan.io",
+  },
+  
+  avaxTest: {
+    rpc: "https://rpc.ankr.com/avalanche_fuji",
+    chainId: 43113,
+    explorer:
+      "https://testnet.snowtrace.io",
+  },
+  
+  baseTest: {
+    rpc: "https://base-goerli.blockpi.network/v1/rpc/public",
+    chainId: 84531,
+    explorer:
+      "https://goerli.basescan.org",
+  },
 };

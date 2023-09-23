@@ -9,20 +9,20 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const signers = await ethers.getSigners()
   const validator = signers[0]
 
-  const currentChain = EthersUtils.keccak256('YAR')
-  const isProxyChain = true
+  const currentChain = EthersUtils.keccak256('SKALE')
+  const isProxyChain = false
   const registeredChains = [
     EthersUtils.keccak256('BINANCE'),
     EthersUtils.keccak256('ETHEREUM'),
     EthersUtils.keccak256('POLYGON'),
-    EthersUtils.keccak256('SKALE'),
+    EthersUtils.keccak256('YAR'),
     EthersUtils.keccak256('ARBITRUM'),
     EthersUtils.keccak256('AVAX'),
     EthersUtils.keccak256('BASE'),
   ]
   const IssuedERC721Deployment = await get('IssuedERC721')
 
-  const deployment = await deploy('YarBridgeERC721', {
+  const deployment = await deploy('SkaleBridgeERC721', {
     contract: 'BridgeERC721',
     from: validator.address,
     args: [
@@ -35,6 +35,6 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   })
 }
 
-deploy.tags = ['YarBridge', 'YarBridgeERC721']
+deploy.tags = ['SkaleBridge', 'SkaleBridgeERC721']
 deploy.dependencies = ['IssuedERC721']
 export default deploy

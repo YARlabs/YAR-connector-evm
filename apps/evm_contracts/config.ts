@@ -1,56 +1,43 @@
 import { CHAINS_CONFIG } from 'configs'
 import { EXPLORERS_API_KEY, VALIDATOR_PRIVATE_KEYS } from 'configs_secret'
 
-export const CONFIG = {
+const chains = {
+  'yarTest': true,
+  'polygonTest': true,
+  'binanceTest': true,
+  'ethereumTest': true,
+  'chaosSkaleTest': true,
+  'optimismTest': true,
+  'arbitrumTest': true,
+  'avaxTest': true,
+  'baseTest': true,
+}
+
+export const CONFIG: {
   chains: {
-    yarTest: {
-      validatorPrivateKey: VALIDATOR_PRIVATE_KEYS.yarTest,
-      rpcUrl: CHAINS_CONFIG.yarTest.rpc,
-      chainId: CHAINS_CONFIG.yarTest.chainId,
+    [key in keyof typeof chains]: {
+      validatorPrivateKey: string
+      rpcUrl: string
+      chainId: number
       etherscan: {
-        url: CHAINS_CONFIG.yarTest.explorer,
-        apiKey: EXPLORERS_API_KEY.yarTest,
-      },
-    },
+        url: string
+        apiKey: string
+      }
+    }
+  }
+} = {
+  chains: {} as any,
+}
 
-    polygonTest: {
-      validatorPrivateKey: VALIDATOR_PRIVATE_KEYS.polygonTest,
-      rpcUrl: CHAINS_CONFIG.polygonTest.rpc,
-      chainId: CHAINS_CONFIG.polygonTest.chainId,
-      etherscan: {
-        url: CHAINS_CONFIG.polygonTest.explorer,
-        apiKey: EXPLORERS_API_KEY.polygonTest,
-      },
+for (const chain of Object.keys(chains)) {
+  if(chains[chain] == false) continue
+  CONFIG.chains[chain] = {
+    validatorPrivateKey: VALIDATOR_PRIVATE_KEYS[chain],
+    rpcUrl: CHAINS_CONFIG[chain].rpc,
+    chainId: CHAINS_CONFIG[chain].chainId,
+    etherscan: {
+      url: CHAINS_CONFIG[chain].explorer,
+      apiKey: EXPLORERS_API_KEY[chain] ?? '',
     },
-
-    binanceTest: {
-      validatorPrivateKey: VALIDATOR_PRIVATE_KEYS.binanceTest,
-      rpcUrl: CHAINS_CONFIG.binanceTest.rpc,
-      chainId: CHAINS_CONFIG.binanceTest.chainId,
-      etherscan: {
-        url: CHAINS_CONFIG.binanceTest.explorer,
-        apiKey: EXPLORERS_API_KEY.binanceTest,
-      },
-    },
-
-    ethereumTest: {
-      validatorPrivateKey: VALIDATOR_PRIVATE_KEYS.ethereumTest,
-      rpcUrl: CHAINS_CONFIG.ethereumTest.rpc,
-      chainId: CHAINS_CONFIG.ethereumTest.chainId,
-      etherscan: {
-        url: CHAINS_CONFIG.ethereumTest.explorer,
-        apiKey: EXPLORERS_API_KEY.ethereumTest,
-      },
-    },
-
-    chaosSkaleTest: {
-      validatorPrivateKey: VALIDATOR_PRIVATE_KEYS.chaosSkaleTest,
-      rpcUrl: CHAINS_CONFIG.chaosSkaleTest.rpc,
-      chainId: CHAINS_CONFIG.chaosSkaleTest.chainId,
-      etherscan: {
-        url: CHAINS_CONFIG.chaosSkaleTest.explorer,
-        apiKey: EXPLORERS_API_KEY.chaosSkaleTest,
-      },
-    },
-  },
+  }
 }

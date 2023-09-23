@@ -18,7 +18,8 @@
     "clear": "dotenv -- turbo run clear",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "update_addresses": "dotenv -- turbo run export_deployments_addresses --filter=evm_contracts && dotenv -- turbo run build_configs",
-    "update_contracts": "dotenv -- turbo run export_abi --filter=evm_contracts && dotenv -- turbo run build_typechains"
+    "update_contracts": "dotenv -- turbo run export_abi --filter=evm_contracts && dotenv -- turbo run build_typechains",
+    "chains_rpc_validate": "node chains_rpc_validate.js"
   },
   "devDependencies": {
     "prettier": "latest",
