@@ -67,6 +67,38 @@ const Links = () => {
             >
               in SKALE
             </a>
+            <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+            <a
+              href={`${CHAINS_CONFIG.optimismTest.explorer}/address/${BRIDGES_ADDRESSES.erc20.optimismTest}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              in Optimism
+            </a>
+            <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+            <a
+              href={`${CHAINS_CONFIG.arbitrumTest.explorer}/address/${BRIDGES_ADDRESSES.erc20.arbitrumTest}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              in Arbitrum
+            </a>
+            <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+            <a
+              href={`${CHAINS_CONFIG.avaxTest.explorer}/address/${BRIDGES_ADDRESSES.erc20.avaxTest}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              in Avalanche
+            </a>
+            <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+            <a
+              href={`${CHAINS_CONFIG.baseTest.explorer}/address/${BRIDGES_ADDRESSES.erc20.baseTest}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              in BASE
+            </a>
         </h5>
     </>
   );
