@@ -16,6 +16,7 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     EthersUtils.keccak256('POLYGON'),
     EthersUtils.keccak256('SKALE'),
     EthersUtils.keccak256('YAR'),
+    EthersUtils.keccak256('OPTIMISM'),
     EthersUtils.keccak256('ARBITRUM'),
     EthersUtils.keccak256('AVAX'),
     EthersUtils.keccak256('BASE'),

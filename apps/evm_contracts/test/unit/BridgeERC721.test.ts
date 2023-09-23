@@ -73,7 +73,7 @@ describe('test_key_unit BridgeERC721', () => {
       })
 
       for (const chains of TEST_DATA.chains)
-        describe(`chain ${chains}`, () => {
+        describe(`chain ${JSON.stringify(chains)}`, () => {
           let originalBridge: BridgeERC721
           let secondBridge: BridgeERC721
           let thirdBridge: BridgeERC721

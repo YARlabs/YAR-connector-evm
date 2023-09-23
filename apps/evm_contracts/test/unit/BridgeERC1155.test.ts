@@ -59,7 +59,7 @@ const TEST_DATA = {
 
 describe('test_key_unit BridgeERC1155', () => {
   for (const chains of TEST_DATA.chains) {
-    describe(`chain ${chains}`, () => {
+    describe(`chain ${JSON.stringify(chains)}`, () => {
       let yarBridge: BridgeERC1155
 
       let testToken: MockERC1155
