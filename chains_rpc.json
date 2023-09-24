@@ -26,7 +26,7 @@
     "chaosSkaleTest": [
         "https://staging-v3.skalenodes.com/v1/staging-legal-crazy-castor"
     ],
-    "optimizmTest": [
+    "optimismTest": [
         "https://rpc.ankr.com/optimism_testnet",
         "https://optimism-goerli.blockpi.network/v1/rpc/public",
         "https://goerli.optimism.io"

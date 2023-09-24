@@ -1,61 +1,73 @@
-import { BRIDGES_ADDRESSES, CHAINS_CONFIG } from "configs"
-import { VALIDATOR_PRIVATE_KEYS } from "configs_secret"
-import CHAINS_RPS from '../../chains_rps.json'
+import { BRIDGES_ADDRESSES } from 'configs'
+import { VALIDATOR_PRIVATE_KEYS } from 'configs_secret'
+import CHAINS_RPC from '../../chains_rpc.json'
 
-const CONFIG = {
+const chains = [
+  {
+    name: 'YAR',
+    tag: 'yarTest',
+  },
+  {
+    name: 'POLYGON',
+    tag: 'polygonTest',
+  },
+  {
+    name: 'BINANCE',
+    tag: 'binanceTest',
+  },
+  {
+    name: 'ETHEREUM',
+    tag: 'ethereumTest',
+  },
+  {
+    name: 'SKALE',
+    tag: 'chaosSkaleTest',
+  },
+  {
+    name: 'OPTIMISM',
+    tag: 'optimismTest',
+  },
+  {
+    name: 'ARBITRUM',
+    tag: 'arbitrumTest',
+  },
+  {
+    name: 'AVAX',
+    tag: 'avaxTest',
+  },
+  {
+    name: 'BASE',
+    tag: 'baseTest',
+  },
+]
+const CONFIG: {
+  proxyBridge: string
+  bridges: Array<{
+    name: string,
+    rpcUrls: string[]
+    addresses: {
+      erc20: string
+      erc721: string
+      erc1155: string
+    }
+    privateKey: string
+  }>
+} = {
   proxyBridge: 'YAR',
-  bridges: [
-    {
-      name: 'YAR',
-      rpcUrls: CHAINS_RPS.yarTest,
-      addresses: {
-        erc20: BRIDGES_ADDRESSES.erc20.yarTest,
-        erc721: BRIDGES_ADDRESSES.erc721.yarTest,
-        erc1155: BRIDGES_ADDRESSES.erc1155.yarTest,
-      },
-      privateKey: VALIDATOR_PRIVATE_KEYS.yarTest,
-    },
-    {
-      name: 'POLYGON',
-      rpcUrls: CHAINS_RPS.polygonTest,
-      address: BRIDGES_ADDRESSES.erc20.polygonTest,
-      addresses: {
-        erc20: BRIDGES_ADDRESSES.erc20.polygonTest,
-        erc721: BRIDGES_ADDRESSES.erc721.polygonTest,
-        erc1155: BRIDGES_ADDRESSES.erc1155.polygonTest,
-      },
-      privateKey: VALIDATOR_PRIVATE_KEYS.polygonTest,
-    },
-    {
-      name: 'BINANCE',
-      rpcUrls: CHAINS_RPS.binanceTest,
-      addresses: {
-        erc20: BRIDGES_ADDRESSES.erc20.binanceTest,
-        erc721: BRIDGES_ADDRESSES.erc721.binanceTest,
-        erc1155: BRIDGES_ADDRESSES.erc1155.binanceTest,
-      },
-      privateKey: VALIDATOR_PRIVATE_KEYS.binanceTest,
-    },
-    {
-      name: 'ETHEREUM',
-      rpcUrls: CHAINS_RPS.ethereumTest,
-      addresses: {
-        erc20: BRIDGES_ADDRESSES.erc20.ethereumTest,
-        erc721: BRIDGES_ADDRESSES.erc721.ethereumTest,
-        erc1155: BRIDGES_ADDRESSES.erc1155.ethereumTest,
-      },
-      privateKey: VALIDATOR_PRIVATE_KEYS.ethereumTest,
-    },
-    {
-      name: 'SKALE',
-      rpcUrls: CHAINS_RPS.chaosSkaleTest,
-      addresses: {
-        erc20: BRIDGES_ADDRESSES.erc20.chaosSkaleTest,
-        erc721: BRIDGES_ADDRESSES.erc721.chaosSkaleTest,
-        erc1155: BRIDGES_ADDRESSES.erc1155.chaosSkaleTest,
-      },
-      privateKey: VALIDATOR_PRIVATE_KEYS.chaosSkaleTest,
-    },
-  ],
+  bridges: [],
 }
+
+for (const { name, tag } of chains) {
+  CONFIG.bridges.push({
+    name,
+    rpcUrls: CHAINS_RPC[tag],
+    addresses: {
+      erc20: BRIDGES_ADDRESSES.erc20[tag],
+      erc721: BRIDGES_ADDRESSES.erc721[tag],
+      erc1155: BRIDGES_ADDRESSES.erc1155[tag],
+    },
+    privateKey: VALIDATOR_PRIVATE_KEYS[tag],
+  })
+}
+
 export default CONFIG

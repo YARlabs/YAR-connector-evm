@@ -9,11 +9,11 @@ WORKDIR /monorepo
 COPY .gitignore .gitignore
 COPY --from=builder /monorepo/out/json/ ./
 COPY --from=builder /monorepo/out/package-lock.json ./package-lock.json
-COPY --from=builder /monorepo/chains_rps.json ./chains_rps.json
+COPY --from=builder /monorepo/chains_rpc.json ./chains_rpc.json
 RUN npm install
 RUN npm install tr46
 COPY --from=builder /monorepo/out/full/ ./
-COPY --from=builder /monorepo/chains_rps.json ./chains_rps.json
+COPY --from=builder /monorepo/chains_rpc.json ./chains_rpc.json
 COPY turbo.json turbo.json
 
 FROM node:18-alpine AS runner

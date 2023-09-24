@@ -1,5 +1,5 @@
 import { BRIDGES_ADDRESSES } from 'configs';
-import {readFile, readdir, writeFile} from 'node:fs/promises'
+import {readFile, writeFile} from 'node:fs/promises'
 import path from "path";
     
 async function main() {
@@ -27,6 +27,14 @@ export const BRIDGES_ADDRESSES = {
     ethereumTest: "${await getAddress('../deployments/ethereumTest/EthereumBridgeERC20.json') ?? BRIDGES_ADDRESSES.erc20.ethereumTest}",
   
     chaosSkaleTest: "${await getAddress('../deployments/chaosSkaleTest/SkaleBridgeERC20.json') ?? BRIDGES_ADDRESSES.erc20.chaosSkaleTest}",
+
+    optimismTest: "${await getAddress('../deployments/optimismTest/OptimismBridgeERC20.json') ?? BRIDGES_ADDRESSES.erc20.optimismTest}",
+    
+    arbitrumTest: "${await getAddress('../deployments/arbitrumTest/ArbitrumBridgeERC20.json') ?? BRIDGES_ADDRESSES.erc20.arbitrumTest}",
+    
+    avaxTest: "${await getAddress('../deployments/avaxTest/AvaxBridgeERC20.json') ?? BRIDGES_ADDRESSES.erc20.avaxTest}",
+    
+    baseTest: "${await getAddress('../deployments/baseTest/BaseBridgeERC20.json') ?? BRIDGES_ADDRESSES.erc20.baseTest}",
   },
   erc721: {
     yarTest: "${await getAddress('../deployments/yarTest/YarBridgeERC721.json') ?? BRIDGES_ADDRESSES.erc721.yarTest}",
@@ -38,6 +46,14 @@ export const BRIDGES_ADDRESSES = {
     ethereumTest: "${await getAddress('../deployments/ethereumTest/EthereumBridgeERC721.json') ?? BRIDGES_ADDRESSES.erc721.ethereumTest}",
   
     chaosSkaleTest: "${await getAddress('../deployments/chaosSkaleTest/SkaleBridgeERC721.json') ?? BRIDGES_ADDRESSES.erc721.chaosSkaleTest}",
+
+    optimismTest: "${await getAddress('../deployments/optimismTest/OptimismBridgeERC721.json') ?? BRIDGES_ADDRESSES.erc721.optimismTest}",
+    
+    arbitrumTest: "${await getAddress('../deployments/arbitrumTest/ArbitrumBridgeERC721.json') ?? BRIDGES_ADDRESSES.erc721.arbitrumTest}",
+    
+    avaxTest: "${await getAddress('../deployments/avaxTest/AvaxBridgeERC721.json') ?? BRIDGES_ADDRESSES.erc721.avaxTest}",
+    
+    baseTest: "${await getAddress('../deployments/baseTest/BaseBridgeERC721.json') ?? BRIDGES_ADDRESSES.erc721.baseTest}",
   },
   erc1155: {
     yarTest: "${await getAddress('../deployments/yarTest/YarBridgeERC1155.json') ?? BRIDGES_ADDRESSES.erc1155.yarTest}",
@@ -49,6 +65,14 @@ export const BRIDGES_ADDRESSES = {
     ethereumTest: "${await getAddress('../deployments/ethereumTest/EthereumBridgeERC1155.json') ?? BRIDGES_ADDRESSES.erc1155.ethereumTest}",
   
     chaosSkaleTest: "${await getAddress('../deployments/chaosSkaleTest/SkaleBridgeERC1155.json') ?? BRIDGES_ADDRESSES.erc1155.chaosSkaleTest}",
+
+    optimismTest: "${await getAddress('../deployments/optimismTest/OptimismBridgeERC1155.json') ?? BRIDGES_ADDRESSES.erc1155.optimismTest}",
+    
+    arbitrumTest: "${await getAddress('../deployments/arbitrumTest/ArbitrumBridgeERC1155.json') ?? BRIDGES_ADDRESSES.erc1155.arbitrumTest}",
+    
+    avaxTest: "${await getAddress('../deployments/avaxTest/AvaxBridgeERC1155.json') ?? BRIDGES_ADDRESSES.erc1155.avaxTest}",
+    
+    baseTest: "${await getAddress('../deployments/baseTest/BaseBridgeERC1155.json') ?? BRIDGES_ADDRESSES.erc1155.baseTest}",
   },
  };`)    
 }
