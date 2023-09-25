@@ -37,7 +37,7 @@ const Links = () => {
             </a>
             <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
             <a
-              href={`${CHAINS_CONFIG.binanceTest.explorer}/${BRIDGES_ADDRESSES.erc20.binanceTest}`}
+              href={`${CHAINS_CONFIG.binanceTest.explorer}/address/${BRIDGES_ADDRESSES.erc20.binanceTest}`}
               target="_blank"
               rel="noreferrer"
             >
@@ -45,7 +45,7 @@ const Links = () => {
             </a>
             <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
             <a
-              href={`${CHAINS_CONFIG.ethereumTest.explorer}/${BRIDGES_ADDRESSES.erc20.ethereumTest}`}
+              href={`${CHAINS_CONFIG.ethereumTest.explorer}/address/${BRIDGES_ADDRESSES.erc20.ethereumTest}`}
               target="_blank"
               rel="noreferrer"
             >

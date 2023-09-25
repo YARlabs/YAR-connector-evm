@@ -29,7 +29,7 @@ const Links = () => {
         </h5>
         <h5 className="text-center">
             <a
-                href={`${CHAINS_CONFIG.polygonTest.explorer}/${BRIDGES_ADDRESSES.erc721.polygonTest}`}
+                href={`${CHAINS_CONFIG.polygonTest.explorer}/address/${BRIDGES_ADDRESSES.erc721.polygonTest}`}
                 target="_blank"
                 rel="noreferrer"
             >
@@ -37,7 +37,7 @@ const Links = () => {
             </a>
             <span>&nbsp;&nbsp;|&nbsp;&nbsp;</span>
             <a
-                href={`${CHAINS_CONFIG.binanceTest.explorer}/${BRIDGES_ADDRESSES.erc721.binanceTest}`}
+                href={`${CHAINS_CONFIG.binanceTest.explorer}/address/${BRIDGES_ADDRESSES.erc721.binanceTest}`}
                 target="_blank"
                 rel="noreferrer"
             >
