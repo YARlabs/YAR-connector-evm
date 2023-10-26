@@ -2,9 +2,15 @@ import axios from 'axios'
 import { ethers, network } from 'hardhat'
 import { IERC20Metadata__factory } from '../../typechain-types'
 import { setBalance } from '@nomicfoundation/hardhat-network-helpers'
+import { NATIVE_TOKEN } from '../../constants/externalAddresses'
 
 export default class ERC20MinterV2 {
   public static async mint(tokenAddress: string, recipient: string, maxAmountFormated?: number) {
+    if(tokenAddress == NATIVE_TOKEN) {
+      const balance = await ethers.provider.getBalance(recipient);
+      await setBalance(recipient, balance.add(ethers.utils.parseEther(`${maxAmountFormated}`)))
+      return
+    }
     // const response = await axios.get(`https://etherscan.io/token/tokenholderchart/${tokenAddress}`)
     const response = await axios.get(`https://ethplorer.io/service/service.php?tabName=holders&data=${tokenAddress}&page=chart%3Dcandlestick%26pageTab%3Dholders&showTx=all`)
     // const matches = response.data.matchAll(new RegExp(`/token/${tokenAddress}.a=(.*?)'`, 'g'))

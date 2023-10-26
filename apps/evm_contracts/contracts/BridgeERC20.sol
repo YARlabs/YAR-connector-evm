@@ -28,6 +28,11 @@ contract BridgeERC20 {
 
     uint256 public initBlock;
 
+    string public nativeName;
+    string public nativeSymbol;
+    uint8 public nativeDecimals;
+    uint256 public nativeTransferGasLimit;
+
     event TransferToOtherChain(
         bytes32 indexed transferId,
         uint256 nonce,
@@ -60,7 +65,11 @@ contract BridgeERC20 {
         bool _isProxyChain,
         bytes32[] memory _registeredChains,
         address _issuedTokenImplementation,
-        address _validator
+        address _validator,
+        string memory _nativeName,
+        string memory _nativeSymbol,
+        uint8 _nativeDecimals,
+        uint256 _nativeTransferGasLimit
     ) {
         initBlock = block.number;
         currentChain = _currentChain;
@@ -72,6 +81,11 @@ contract BridgeERC20 {
         for (uint256 i; i < l; i++) {
             registeredChains[_registeredChains[i]] = true;
         }
+
+        nativeName = _nativeName;
+        nativeSymbol = _nativeSymbol;
+        nativeDecimals = _nativeDecimals;
+        nativeTransferGasLimit = _nativeTransferGasLimit;
     }
 
     function setChainRegister(bytes32 _chain, bool _value) external {
@@ -97,7 +111,7 @@ contract BridgeERC20 {
         uint256 _amount,
         bytes32 _targetChain,
         bytes calldata _recipient
-    ) external {
+    ) external payable {
         require(_amount > 0, "BridgeERC20: _amount < 0");
         require(registeredChains[_targetChain], "BridgeERC20: chain not registered");
 
@@ -122,25 +136,35 @@ contract BridgeERC20 {
             }
         } else {
             // There ORIGINAL token
-            IERC20Metadata token = IERC20Metadata(_transferedToken);
             originalChain = initialChain;
             originalToken = abi.encode(_transferedToken);
-            try token.name() returns (string memory _tokenName) {
-                tokenName = _tokenName;
-            } catch {
-                tokenName = "";
+            if (_transferedToken == address(0)) {
+                // Native
+                require(_amount == msg.value, "amount < msg.value!");
+                tokenName = nativeName;
+                tokenSymbol = nativeSymbol;
+                tokenDecimals = nativeDecimals;
+            } else {
+                // ERC20
+                IERC20Metadata token = IERC20Metadata(_transferedToken);
+
+                try token.name() returns (string memory _tokenName) {
+                    tokenName = _tokenName;
+                } catch {
+                    tokenName = "";
+                }
+                try token.symbol() returns (string memory _tokenSymbol) {
+                    tokenSymbol = _tokenSymbol;
+                } catch {
+                    tokenSymbol = "";
+                }
+                try token.decimals() returns (uint8 _tokenDecimals) {
+                    tokenDecimals = _tokenDecimals;
+                } catch {
+                    tokenDecimals = 1;
+                }
+                token.safeTransferFrom(msg.sender, address(this), _amount);
             }
-            try token.symbol() returns (string memory _tokenSymbol) {
-                tokenSymbol = _tokenSymbol;
-            } catch {
-                tokenSymbol = "";
-            }
-            try token.decimals() returns (uint8 _tokenDecimals) {
-                tokenDecimals = _tokenDecimals;
-            } catch {
-                tokenDecimals = 1;
-            }
-            token.safeTransferFrom(msg.sender, address(this), _amount);
         }
 
         emit TransferToOtherChain(
@@ -198,7 +222,18 @@ contract BridgeERC20 {
             if (currentChain == _originalChain) {
                 // This is ORIGINAL chain
                 address originalTokenAddress = abi.decode(_originalToken, (address));
-                IERC20Metadata(originalTokenAddress).safeTransfer(recipientAddress, _amount);
+
+                if (originalTokenAddress == address(0)) {
+                    // Native
+                    (bool success, ) = payable(recipientAddress).call{
+                        value: _amount,
+                        gas: nativeTransferGasLimit
+                    }("");
+                    require(success, "failed transfer native tokens!");
+                } else {
+                    // ERC20
+                    IERC20Metadata(originalTokenAddress).safeTransfer(recipientAddress, _amount);
+                }
             } else {
                 // This is SECONDARY chain
                 address issuedTokenAddress = getIssuedTokenAddress(_originalChain, _originalToken);
@@ -218,7 +253,6 @@ contract BridgeERC20 {
                 _sender,
                 _recipient
             );
-
         } else {
             // This is PROXY chain
             require(isProxyChain, "BridgeERC20: Only proxy bridge!");
@@ -230,7 +264,7 @@ contract BridgeERC20 {
             if (_targetChain == _originalChain) {
                 // BURN PROXY ISSUED TOKENS
                 IIssuedERC20(issuedTokenAddress).burn(address(this), _amount);
-            } else if(_initialChain == _originalChain) {
+            } else if (_initialChain == _originalChain) {
                 // LOCK PROXY ISSUED TOKENS
                 IIssuedERC20(issuedTokenAddress).mint(address(this), _amount);
             }
@@ -312,8 +346,14 @@ contract BridgeERC20 {
         bytes calldata _originalToken,
         address _account
     ) external view returns (uint256) {
-        if (currentChain == _originalChain)
-            return IERC20Metadata(abi.decode(_originalToken, (address))).balanceOf(_account);
+        if (currentChain == _originalChain) {
+            address originalTokenAddress = abi.decode(_originalToken, (address));
+            if (originalTokenAddress == address(0)) {
+                return _account.balance;
+            } else {
+                return IERC20Metadata(abi.decode(_originalToken, (address))).balanceOf(_account);
+            }
+        }
 
         address issuedTokenAddress = getIssuedTokenAddress(_originalChain, _originalToken);
 
