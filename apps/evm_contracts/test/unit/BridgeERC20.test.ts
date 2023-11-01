@@ -14,6 +14,7 @@ import {
   HBTC,
   LUSD,
   MIM,
+  NATIVE_TOKEN,
   RENBTC,
   SBTC,
   STETH,
@@ -32,9 +33,8 @@ import { BigNumber } from 'ethers'
 
 const TEST_DATA = {
   tokens: [
+    NATIVE_TOKEN,
     USDT, //
-    DAI,
-    CRV3,
   ],
   chains: [
     {
@@ -81,7 +81,11 @@ describe('test_key_unit BridgeERC20', () => {
 
         testToken = IERC20Metadata__factory.connect(token, user1)
         await ERC20MinterV2.mint(testToken.address, user1.address, 1000)
-        testTokenAmount = await testToken.balanceOf(user1.address)
+        if(testToken.address == NATIVE_TOKEN) {
+          testTokenAmount = ethers.utils.parseEther(`${1000}`)
+        } else {
+          testTokenAmount = await testToken.balanceOf(user1.address)
+        }
         initSnapshot = await ethers.provider.send('evm_snapshot', [])
       })
 
@@ -103,7 +107,8 @@ describe('test_key_unit BridgeERC20', () => {
               validator,
             )
 
-            await testToken.connect(user1).approve(originalBridge.address, testTokenAmount)
+            if (testToken.address != NATIVE_TOKEN)
+              await testToken.connect(user1).approve(originalBridge.address, testTokenAmount)
 
             const SecondBridgeDeployment = await deployments.get(chains.second)
             secondBridge = BridgeERC20__factory.connect(SecondBridgeDeployment.address, validator)
@@ -247,6 +252,7 @@ describe('test_key_unit BridgeERC20', () => {
               logId: 'logId-1200',
               event: eventStep1,
               yarChain: yarBridge,
+              originalChain: originalBridge,
               targetChain: secondBridge,
               validator,
             })
@@ -271,6 +277,7 @@ describe('test_key_unit BridgeERC20', () => {
               logId: 'logId-1400',
               event: eventStep2,
               yarChain: yarBridge,
+              originalChain: originalBridge,
               targetChain: originalBridge,
               validator,
             })
@@ -295,6 +302,7 @@ describe('test_key_unit BridgeERC20', () => {
               logId: 'logId-1600',
               event: eventStep1,
               yarChain: yarBridge,
+              originalChain: originalBridge,
               targetChain: secondBridge,
               validator,
             })
@@ -319,6 +327,7 @@ describe('test_key_unit BridgeERC20', () => {
               logId: 'logId-1800',
               event: eventStep2,
               yarChain: yarBridge,
+              originalChain: originalBridge,
               targetChain: thirdBridge,
               validator,
             })
@@ -343,6 +352,7 @@ describe('test_key_unit BridgeERC20', () => {
               logId: 'logId-2000',
               event: eventStep3,
               yarChain: yarBridge,
+              originalChain: originalBridge,
               targetChain: secondBridge,
               validator,
             })
@@ -353,7 +363,8 @@ describe('test_key_unit BridgeERC20', () => {
             // YarBridge and:
             const originalBridge = yarBridge
 
-            await testToken.connect(user1).approve(originalBridge.address, testTokenAmount)
+            if (testToken.address != NATIVE_TOKEN)
+              await testToken.connect(user1).approve(originalBridge.address, testTokenAmount)
 
             // User YAR(ORIGINAL) ---> SECONDARY
             const eventStep1 = await tranferToOtherChainERC20({

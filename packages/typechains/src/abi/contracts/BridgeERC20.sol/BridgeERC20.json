@@ -25,6 +25,26 @@
         "internalType": "address",
         "name": "_validator",
         "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_nativeName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_nativeSymbol",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_nativeDecimals",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_nativeTransferGasLimit",
+        "type": "uint256"
       }
     ],
     "stateMutability": "nonpayable",
@@ -363,6 +383,58 @@
   },
   {
     "inputs": [],
+    "name": "nativeDecimals",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nativeName",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nativeSymbol",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nativeTransferGasLimit",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "nonce",
     "outputs": [
       {
@@ -543,7 +615,7 @@
     ],
     "name": "tranferToOtherChain",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {

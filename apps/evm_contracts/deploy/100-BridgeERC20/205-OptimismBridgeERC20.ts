@@ -21,6 +21,10 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     EthersUtils.keccak256('AVAX'),
     EthersUtils.keccak256('BASE'),
   ]
+  const nativeName = 'Optimism Token'
+  const nativeSymbol = 'OP'
+  const nativeDecimals = 18
+  const nativeTransferGasLimit = 35000
   const IssuedERC20Deployment = await get('IssuedERC20')
 
   const deployment = await deploy('OptimismBridgeERC20', {
@@ -32,6 +36,10 @@ const deploy: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       registeredChains, // _registeredChains,
       IssuedERC20Deployment.address, // _issuedTokenImplementation,
       validator.address, // _validator
+      nativeName, // _nativeName
+      nativeSymbol, // _nativeSymbol
+      nativeDecimals, // _nativeDecimals
+      nativeTransferGasLimit, // _nativeTransferGasLimit
     ],
   })
 }

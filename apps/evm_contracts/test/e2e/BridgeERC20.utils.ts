@@ -6,7 +6,7 @@ import {
   IERC20Metadata,
   IERC20Metadata__factory,
 } from '../../typechain-types'
-import { WETH } from '../../constants/externalAddresses'
+import { NATIVE_TOKEN, WETH } from '../../constants/externalAddresses'
 import ERC20MinterV2 from '../../test/utils/ERC20MinterV2'
 import { EthersUtils } from 'ethers_utils'
 import { ContractReceipt } from 'ethers'
@@ -19,9 +19,12 @@ export class BridgeERC20E2EUtils {
   private _polygonBridge: BridgeERC20
   private _binanceBridge: BridgeERC20
   private _ethereumBridge: BridgeERC20
-  private _testToken: IERC20Metadata
+  // private _testToken: IERC20Metadata
+  private _testTokenAddress: string
 
-  async init() {
+  async init(testTokenAddress: string) {
+    this._testTokenAddress = testTokenAddress
+
     const accounts = await ethers.getSigners()
     this._validator = accounts[0]
     this._user1 = accounts[8]
@@ -46,26 +49,35 @@ export class BridgeERC20E2EUtils {
       this._validator,
     )
 
-    this._testToken = IERC20Metadata__factory.connect(WETH, this._validator)
+    // this._testToken = IERC20Metadata__factory.connect(WETH, this._validator)
   }
 
   async originalToYar(): Promise<ContractReceipt> {
     return new Promise(async (resolve, reject) => {
       const sender = this._user1
       const recipient = this._user2
-      const _testToken = this._testToken.connect(sender)
       const originalBridge = this._polygonBridge
       const _yarBridge = this._yarBridge
+      const _testTokenAddress = this._testTokenAddress
 
-      await ERC20MinterV2.mint(_testToken.address, sender.address, 10000)
-      const testTokenAmount = await _testToken.balanceOf(sender.address)
+      const formatedAmount = 10000
+      await ERC20MinterV2.mint(_testTokenAddress, sender.address, formatedAmount)
+      let testTokenAmount = ethers.utils.parseUnits(`${formatedAmount}`, 18)
 
-      await (await _testToken.approve(originalBridge.address, testTokenAmount)).wait()
+      if(_testTokenAddress != NATIVE_TOKEN) {
+        const testToken = IERC20Metadata__factory.connect(_testTokenAddress, sender)
+        testTokenAmount = await testToken.balanceOf(sender.address)
+        await (await testToken.approve(originalBridge.address, testTokenAmount)).wait(1)
+      }
+
       const tx = await originalBridge.connect(sender).tranferToOtherChain(
-        _testToken.address, // _transferedToken
+        _testTokenAddress, // _transferedToken
         testTokenAmount, // _amount
         await _yarBridge.currentChain(), // _targetChainName
         EthersUtils.addressToBytes(recipient.address), // _recipient
+        {
+          value: _testTokenAddress == NATIVE_TOKEN ? testTokenAmount : 0
+        }
       )
 
       let receipt: ContractReceipt
@@ -84,11 +96,11 @@ export class BridgeERC20E2EUtils {
       const sender = this._user2
       const recipient = this._user1
       const _yarBridge = this._yarBridge
-      const _testToken = this._testToken.connect(sender)
+      const _testTokenAddress = this._testTokenAddress
 
       const issuedTokenAddress = await _yarBridge.getIssuedTokenAddress(
         await originalBridge.currentChain(),
-        EthersUtils.addressToBytes(_testToken.address),
+        EthersUtils.addressToBytes(_testTokenAddress),
       )
       const issuedToken = IERC20Metadata__factory.connect(issuedTokenAddress, sender)
       const issuedTokenBalance = await issuedToken.balanceOf(sender.address)
@@ -116,19 +128,26 @@ export class BridgeERC20E2EUtils {
       const secondaryBridge = this._binanceBridge
       const sender = this._user1
       const recipient = this._user2
-      const _testToken = this._testToken.connect(sender)
+      const _testTokenAddress = this._testTokenAddress
 
-      // Token
-      await ERC20MinterV2.mint(_testToken.address, sender.address, 10000)
-      const testTokenAmount = await _testToken.balanceOf(sender.address)
+      const formatedAmount = 10000
+      await ERC20MinterV2.mint(_testTokenAddress, sender.address, formatedAmount)
+      let testTokenAmount = ethers.utils.parseUnits(`${formatedAmount}`, 18)
 
-      await _testToken.approve(originalBridge.address, testTokenAmount)
+      if(_testTokenAddress != NATIVE_TOKEN) {
+        const testToken = IERC20Metadata__factory.connect(_testTokenAddress, sender)
+        testTokenAmount = await testToken.balanceOf(sender.address)
+        await (await testToken.approve(originalBridge.address, testTokenAmount)).wait(1)
+      }
 
       const tx = await originalBridge.connect(sender).tranferToOtherChain(
-        _testToken.address, // _transferedToken
+        _testTokenAddress, // _transferedToken
         testTokenAmount, // _amount
         await secondaryBridge.currentChain(), // _targetChainName
         EthersUtils.addressToBytes(recipient.address), // _recipient
+        {
+          value: _testTokenAddress == NATIVE_TOKEN ? testTokenAmount : 0
+        }
       )
 
       let receipt: ContractReceipt
@@ -147,11 +166,11 @@ export class BridgeERC20E2EUtils {
       const secondaryBridge = this._binanceBridge
       const sender = this._user2
       const recipient = this._user1
-      const _testToken = this._testToken.connect(sender)
+      const _testTokenAddress = this._testTokenAddress
 
       const issuedTokenAddress = await secondaryBridge.getIssuedTokenAddress(
         await originalBridge.currentChain(),
-        EthersUtils.addressToBytes(_testToken.address),
+        EthersUtils.addressToBytes(_testTokenAddress),
       )
       const issuedToken = IERC20Metadata__factory.connect(issuedTokenAddress, sender)
       const issuedTokenBalance = await issuedToken.balanceOf(sender.address)
@@ -180,11 +199,11 @@ export class BridgeERC20E2EUtils {
       const thirdBridge = this._ethereumBridge
       const sender = this._user2
       const recipient = this._user1
-      const _testToken = this._testToken.connect(sender)
+      const _testTokenAddress = this._testTokenAddress
 
       const issuedTokenAddress = await secondaryBridge.getIssuedTokenAddress(
         await originalBridge.currentChain(),
-        EthersUtils.addressToBytes(_testToken.address),
+        EthersUtils.addressToBytes(_testTokenAddress),
       )
       const issuedToken = IERC20Metadata__factory.connect(issuedTokenAddress, sender)
       const issuedTokenBalance = await issuedToken.balanceOf(sender.address)
@@ -213,11 +232,11 @@ export class BridgeERC20E2EUtils {
       const thirdBridge = this._ethereumBridge
       const sender = this._user1
       const recipient = this._user2
-      const testToken = this._testToken.connect(sender)
+      const _testTokenAddress = this._testTokenAddress
 
       const issuedTokenAddress = await thirdBridge.getIssuedTokenAddress(
         await originalBridge.currentChain(),
-        EthersUtils.addressToBytes(testToken.address),
+        EthersUtils.addressToBytes(_testTokenAddress),
       )
 
       const issuedToken = IERC20Metadata__factory.connect(issuedTokenAddress, sender)
@@ -246,18 +265,26 @@ export class BridgeERC20E2EUtils {
       const secondaryBridge = this._polygonBridge
       const sender = this._user1
       const recipient = this._user2
-      const testToken = this._testToken.connect(sender)
+      const _testTokenAddress = this._testTokenAddress
 
-      await ERC20MinterV2.mint(testToken.address, sender.address, 10000)
-      const testTokenAmount = await testToken.balanceOf(sender.address)
+      const formatedAmount = 10000
+      await ERC20MinterV2.mint(_testTokenAddress, sender.address, formatedAmount)
+      let testTokenAmount = ethers.utils.parseUnits(`${formatedAmount}`, 18)
 
-      await testToken.approve(yarBridge.address, testTokenAmount)
+      if(_testTokenAddress != NATIVE_TOKEN) {
+        const testToken = IERC20Metadata__factory.connect(_testTokenAddress, sender)
+        testTokenAmount = await testToken.balanceOf(sender.address)
+        await (await testToken.approve(yarBridge.address, testTokenAmount)).wait(1)
+      }
 
       const tx = await yarBridge.connect(sender).tranferToOtherChain(
-        testToken.address, // _transferedToken
+        _testTokenAddress, // _transferedToken
         testTokenAmount, // _amount
         await secondaryBridge.currentChain(), // _targetChainName
         EthersUtils.addressToBytes(recipient.address), // _recipient
+        {
+          value: _testTokenAddress == NATIVE_TOKEN ? testTokenAmount : 0
+        }
       )
 
       let receipt: ContractReceipt
@@ -276,11 +303,11 @@ export class BridgeERC20E2EUtils {
       const secondaryBridge = this._polygonBridge
       const sender = this._user2
       const recipient = this._user1
-      const testToken = this._testToken.connect(sender)
+      const _testTokenAddress = this._testTokenAddress
 
       const issuedTokenAddress = await secondaryBridge.getIssuedTokenAddress(
         await originalBridge.currentChain(),
-        EthersUtils.addressToBytes(testToken.address),
+        EthersUtils.addressToBytes(_testTokenAddress),
       )
       const issuedToken = IERC20Metadata__factory.connect(issuedTokenAddress, sender)
       const issuedTokenBalance = await issuedToken.balanceOf(sender.address)
