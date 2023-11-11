@@ -24,7 +24,7 @@ export const config = {
       url: CHAINS_CONFIG.arbitrumTest.rpc
     },
     avax: {
-      url: CHAINS_CONFIG.arbitrumTest.rpc
+      url: CHAINS_CONFIG.avaxTest.rpc
     },
     base: {
       url: CHAINS_CONFIG.baseTest.rpc
