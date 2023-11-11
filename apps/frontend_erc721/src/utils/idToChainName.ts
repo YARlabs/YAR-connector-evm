@@ -33,7 +33,7 @@ export const idToRpcUrl = {
     [CHAINS_CONFIG.chaosSkaleTest.chainId]: config.network.skale.url,
     [CHAINS_CONFIG.optimismTest.chainId]:config.network.optimism.url,
     [CHAINS_CONFIG.arbitrumTest.chainId]: config.network.arbitrum.url,
-    [CHAINS_CONFIG.avaxTest.chainId]: config.network.arbitrum.url,
+    [CHAINS_CONFIG.avaxTest.chainId]: config.network.avax.url,
     [CHAINS_CONFIG.baseTest.chainId]: config.network.base.url,
 }
 
